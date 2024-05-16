@@ -21,7 +21,6 @@ class Seance
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $heureFin = null;
-
     #[ORM\ManyToOne(inversedBy: 'seances')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Film $film = null;
@@ -38,6 +37,10 @@ class Seance
      */
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'seance', orphanRemoval: true)]
     private Collection $reservations;
+
+    #[ORM\ManyToOne(inversedBy: 'seances')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Salle $salle = null;
 
     public function __construct()
     {
@@ -135,6 +138,18 @@ class Seance
                 $reservation->setSeance(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSalle(): ?Salle
+    {
+        return $this->salle;
+    }
+
+    public function setSalle(?Salle $salle): static
+    {
+        $this->salle = $salle;
 
         return $this;
     }

@@ -36,6 +36,12 @@ class Cinema
     #[ORM\OneToMany(targetEntity: Diffusion::class, mappedBy: 'cinemas', orphanRemoval: true)]
     private Collection $diffusions;
 
+    /**
+     * @var Collection<int, Salle>
+     */
+    #[ORM\OneToMany(targetEntity: Salle::class, mappedBy: 'cinema', orphanRemoval: true)]
+    private Collection $salles;
+
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
 
@@ -43,6 +49,7 @@ class Cinema
     {
         $this->seances = new ArrayCollection();
         $this->diffusions = new ArrayCollection();
+        $this->salles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,5 +152,36 @@ class Cinema
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Salle>
+     */
+    public function getSalles(): Collection
+    {
+        return $this->salles;
+    }
+
+    public function addSalle(Salle $salle): static
+    {
+        if (!$this->salles->contains($salle)) {
+            $this->salles->add($salle);
+            $salle->setCinema($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSalle(Salle $salle): static
+    {
+        if ($this->salles->removeElement($salle)) {
+            // set the owning side to null (unless already changed)
+            if ($salle->getCinema() === $this) {
+                $salle->setCinema(null);
+            }
+        }
+
+        return $this;
+    }
+
 
 }
