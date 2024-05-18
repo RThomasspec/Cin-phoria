@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    {{ form_start(formFilm) }}
+        {{ form_row(formFilm.titre) }}
+        {{ form_row(formFilm.description) }}
+        {{ form_row(formFilm.AgeMinimum) }}
+        {# {{ form_row(formFilm.coupDeCoeur) }} #}
+        {{ form_row(formFilm.note) }}
+        {{ form_row(formFilm.affiche) }}
+        
+        <button type="submit">
+        {% if editMode %}
+        Modifier
+        {% else %}
+        Créer
+        </button>
+        {% endif %}
+
+
+    {{ form_end(formFilm) }}
+{% endblock %}

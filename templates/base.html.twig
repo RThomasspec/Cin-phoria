@@ -35,10 +35,8 @@
     </div>
 </nav>
 <div class="container">
-    {% block body %}{% endblock %}
-</div>
-
-<footer>
+    {% block body %}
+    <footer>
     <ul class="nav nav-pills flex-column">
         <li class="nav-item">
             <a class="nav-link" href="#">Adresse du cinéma</a>
@@ -50,7 +48,10 @@
             <a class="nav-link" href="#">Horaires</a>
         </li>
     </ul>
-</footer>
+</footer>{% endblock %}
+</div>
+
+
 
 </body>
 </html>
