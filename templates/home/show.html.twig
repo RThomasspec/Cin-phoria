@@ -1,0 +1,25 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+	<article>
+		<h2>
+			{{ film.titre}}
+		</h2>
+		<div class="content">
+			<p>
+				{{film.description}}
+			</p>
+			<p>
+				{{film.AgeMinimum}}
+			</p>
+			<p>
+				{{film.note}}
+			</p>
+			<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
+{# if personne connecté est du personnel alors l'utilisateur à un bouton qui le redirige vers le lien du film pour le modifier
+<a href="{{film_validation}}" class="btn btn-primary"> </a>
+#}
+		</article>
+
+	{% endblock %}

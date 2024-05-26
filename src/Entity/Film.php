@@ -31,9 +31,6 @@ class Film
     #[ORM\Column]
     private ?int $note = null;
 
-    #[ORM\Column(type: Types::BLOB)]
-    private $affichage;
-
     /**
      * @var Collection<int, Seance>
      */
@@ -51,6 +48,12 @@ class Film
      */
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'film')]
     private Collection $avis;
+
+    #[ORM\Column(length: 255)]
+    private ?string $idImage = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $affichage = null;
 
     public function __construct()
     {
@@ -121,18 +124,6 @@ class Film
     public function setNote(int $note): static
     {
         $this->note = $note;
-
-        return $this;
-    }
-
-    public function getAffichage()
-    {
-        return $this->affichage;
-    }
-
-    public function setAffichage($affichage): static
-    {
-        $this->affichage = $affichage;
 
         return $this;
     }
@@ -223,6 +214,30 @@ class Film
                 $avi->setFilm(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIdImage(): ?string
+    {
+        return $this->idImage;
+    }
+
+    public function setIdImage(string $idImage): static
+    {
+        $this->idImage = $idImage;
+
+        return $this;
+    }
+
+    public function getAffichage(): ?string
+    {
+        return $this->affichage;
+    }
+
+    public function setAffichage(string $affichage): static
+    {
+        $this->affichage = $affichage;
 
         return $this;
     }

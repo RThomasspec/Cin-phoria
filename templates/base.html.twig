@@ -1,57 +1,87 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Welcome!{% endblock %}</title>
-    <link rel="stylesheet" href="../css/custom.css">    
-    <link rel="stylesheet" href="https://bootswatch.com/5/darkly/bootstrap.min.css">
-    
-    {% block stylesheets %}{% endblock %}
-</head>
-<body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">CINEPHORIA</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor04"
-                aria-controls="navbarColor04" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarColor04">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Films</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Réservation</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Connexion</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<div class="container">
-    {% block body %}
-    <footer>
-    <ul class="nav nav-pills flex-column">
-        <li class="nav-item">
-            <a class="nav-link" href="#">Adresse du cinéma</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">Numéro de GSM</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">Horaires</a>
-        </li>
-    </ul>
-</footer>{% endblock %}
-</div>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Welcome!
+			{% endblock %}
+		</title>
+		<link rel="stylesheet" href="../css/custom.css">
+		<link rel="stylesheet" href="https://bootswatch.com/5/darkly/bootstrap.min.css"> {% block stylesheets %}{% endblock %}
+		</head>
+		<body>
+			<nav class="navbar navbar-expand-lg bg-body-tertiary">
+				<div class="container-fluid">
+					<a class="navbar-brand" href="{{ path('home')}}">CINEPHORIA</a>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor04" aria-controls="navbarColor04" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarColor04">
+						<ul class="navbar-nav me-auto">
+							<li class="nav-item">
+								<a class="nav-link" href="#">Films</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#">Réservation</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#">Contact</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#">Connexion</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('film_create')}}">Enregistrement d'un film</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<div class="container">
+				{% block body %}
+
+					{% for film in films %}
+						<article>
+							<h2>
+								{{ film.titre}}
+							</h2>
+							<div class="content">
+								<p>
+									{{film.description}}
+								</p>
+								<p>
+									{{film.AgeMinimum}}
+								</p>
+								<p>
+									{{film.note}}
+								</p>
 
 
+								<a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-primary">
+									<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}"></a>
 
-</body>
-</html>
+							</div>
+						</article>
+
+
+					{% endfor %}
+
+
+					<footer>
+						<ul class="nav nav-pills flex-column">
+							<li class="nav-item">
+								<a class="nav-link" href="#">Adresse du cinéma</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#">Numéro de GSM</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#">Horaires</a>
+							</li>
+						</ul>
+					</footer>
+				{% endblock %}
+			</div>
+		</body>
+	</html>
+</body></html>
