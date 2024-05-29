@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\File;
 use Imagine\Gd\Imagine;
-use Imagine\Imagine\Box;
+use Imagine\Image\Box;
 use App\Entity\Film;
 use App\Form\FilmType;
 use App\Repository\FilmRepository;
@@ -39,12 +39,19 @@ class MenuController extends AbstractController
     // mais si je n'ai pas de Film via son id je veux une véritable instance de mon film d'ou la condition
     public function formFilm(Film $film = null, Request $request, ObjectManager $manager)
     {
-        $enregistre = false;
+        $imagePath = '/public/uploads/images/';
+
         if (!$film) {
             $film = new Film();
         }
 
+
         $form = $this->createForm(FilmType::class, $film);
+        //$imageAbsolutePath = $this->getParameter('kernel.project_dir') .$imagePath.$film->getIdImage();
+
+        //$imageFile = new File($imageAbsolutePath);
+        //$form->get('affichage')->setData($imageFile);
+
         $form->handleRequest($request);
 
 

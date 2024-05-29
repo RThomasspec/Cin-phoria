@@ -6,6 +6,7 @@ use App\Repository\UtilisateurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 class Utilisateur
@@ -25,7 +26,14 @@ class Utilisateur
     private ?string $mail = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $mdp = null;
+    #[Assert\EqualTo('confirm_password', message : "Le mot de passe est différent")]
+    #[Assert\Length(min: 8, minMessage: 'Votre mot de passe doit comporter au minimum 8 caractères')]
+
+    private ?string $password = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\EqualTo('password', message: "Le mot de passe est différent")]
+    private ?string $confirm_password = null;
 
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
@@ -97,14 +105,14 @@ class Utilisateur
         return $this;
     }
 
-    public function getMdp(): ?string
+    public function getpassword(): ?string
     {
-        return $this->mdp;
+        return $this->password;
     }
 
-    public function setMdp(string $mdp): static
+    public function setpassword(string $password): static
     {
-        $this->mdp = $mdp;
+        $this->password = $password;
 
         return $this;
     }
@@ -207,6 +215,18 @@ class Utilisateur
                 $avi->setUtilisateur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getConfirmPassword(): ?string
+    {
+        return $this->confirm_password;
+    }
+
+    public function setConfirmPassword(string $confirm_password): static
+    {
+        $this->confirm_password = $confirm_password;
 
         return $this;
     }

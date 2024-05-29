@@ -7,7 +7,7 @@
 			{% endblock %}
 		</title>
 		<link rel="stylesheet" href="../css/custom.css">
-		<link rel="stylesheet" href="https://bootswatch.com/5/darkly/bootstrap.min.css"> {% block stylesheets %}{% endblock %}
+		<link rel="stylesheet" href="https://bootswatch.com/5/flatly/bootstrap.min.css"> {% block stylesheets %}{% endblock %}
 		</head>
 		<body>
 			<nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -18,9 +18,22 @@
 					</button>
 					<div class="collapse navbar-collapse" id="navbarColor04">
 						<ul class="navbar-nav me-auto">
-							<li class="nav-item">
-								<a class="nav-link" href="#">Films</a>
+
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Cinémas</a>
+								<div class="dropdown-menu">
+									<a class="dropdown-item" href="#">Cinéphoria de Nantes</a>
+									<a class="dropdown-item" href="#">Cinéphoria de Bordeaux</a>
+									<a class="dropdown-item" href="#">Cinéphoria de Paris</a>
+									<a class="dropdown-item" href="#">Cinéphoria de Toulouse</a>
+									<a class="dropdown-item" href="#">Cinéphoria de Lille</a>
+
+									<div class="dropdown-divider"> Belgique</div>
+                                    <a class="dropdown-item" href="#">Cinéphoria de Charleroi</a>
+									<a class="dropdown-item" href="#">Cinéphoria de Liège</a>
+								</div>
 							</li>
+
 							<li class="nav-item">
 								<a class="nav-link" href="#">Réservation</a>
 							</li>
@@ -32,6 +45,9 @@
 							</li>
 							<li class="nav-item">
 								<a class="nav-link" href="{{ path('film_create')}}">Enregistrement d'un film</a>
+							</li>
+                            <li class="nav-item">
+								<a class="nav-link" href="{{ path('security_registration')}}">Inscription</a>
 							</li>
 						</ul>
 					</div>
