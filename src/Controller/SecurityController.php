@@ -9,12 +9,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class SecurityController extends AbstractController
 {
     #[Route('/inscription', name: 'security_registration')]
-    public function registration(Request $request, ObjectManager $manager): Response
+    public function registration(Request $request, ObjectManager $manager, UserPasswordHasherInterface $encoder ): Response
     {
 
         $user = new Utilisateur();
@@ -31,6 +31,8 @@ class SecurityController extends AbstractController
             // ROLE_EMPLOYEE : Le rôle pour les employés.
             // ROLE_CLIENT : Le rôle pour les clients.
             $user->setStatut("ROLE_CLIENT");
+            $hash = $encoder->hashPassword($user, $user->getpassword());
+            $user->setpassword($hash);
             $manager->persist($user);
             $manager->flush();
         }

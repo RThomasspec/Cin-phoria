@@ -7,9 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
-class Utilisateur
+class Utilisateur implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -26,7 +27,6 @@ class Utilisateur
     private ?string $mail = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\EqualTo('confirm_password', message : "Le mot de passe est différent")]
     #[Assert\Length(min: 8, minMessage: 'Votre mot de passe doit comporter au minimum 8 caractères')]
 
     private ?string $password = null;
@@ -229,6 +229,12 @@ class Utilisateur
         $this->confirm_password = $confirm_password;
 
         return $this;
+    }
+
+    public function getPasswordHasherName(): ?string
+    {
+
+        return null; // use the default hasher
     }
 
 
