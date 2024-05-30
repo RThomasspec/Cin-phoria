@@ -7,12 +7,25 @@
 	</h1>
 
 	{{ form_start(form) }}
-
-    {{ form_row(form.nom, {'label' : 'Nom d\'utilisateur ', 'attr' :{'placeholder' : 'Nom d\'utilisateur'}})}}
-	{{ form_row(form.prenom, {'label' : 'Prénom de l\'utilisateur ', 'attr' :{'placeholder' : 'Prénom de l\'utilisateur'}})}}
-    {{ form_row(form.mail, {'label' : 'Email de l\'utilisateur ', 'attr' :{'placeholder' : 'Email de l\'utilisateur'}})}}
-    {{ form_row(form.password, {'label' : 'Mot de passe ', 'attr' :{'placeholder' : 'Mot de passe'}})}}
-    {{ form_row(form.confirm_password, {'label' : 'Confirmation du mot de passe ', 'attr' :{'placeholder' : 'Répétez votre mot de passe'}})}}
+	<div class="form-group">
+		{{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(form.nom) }}
+	</div>
+	<div class="form-group">
+		{{ form_label(form.prenom, 'Prénom', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(form.prenom) }}
+	</div>
+	<div class="form-group">
+		{{ form_label(form.mail, 'Adresse mail', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(form.mail, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(form.mail) }}
+	</div>
+	<div class="form-group">
+		{{ form_widget(form.password)}}
+		{{ form_errors(form.password) }}
+	</div>
 
 	<button type="submit" class="btn btn-primary">
 		Inscription !

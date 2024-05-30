@@ -31,7 +31,7 @@
 				{{ form_widget(formFilm.coupDeCoeur, {'attr': {'class': 'form-check-input'}}) }}
 				{{ form_errors(formFilm.coupDeCoeur) }}
 			</div>
-		<span>
+			<span>
 				<div class="form-group">
 					{{ form_label(formFilm.affichage, 'Affiche (Image file)', {'label_attr': {'class': 'form-label mt-4'}}) }}
 					{{ form_widget(formFilm.affichage, {'attr': {'class': 'form-control'}}) }}
@@ -48,9 +48,9 @@
 				{{ form_end(formFilm) }}
 			</div>
 
-            <div>
-            <img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
-        </div>
+			<div>
+				<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
+			</div>
 
 
 			{{ form_end(formFilm) }}

@@ -6,13 +6,25 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         users_in_memory: { memory: null }
+        # Nom du provider
+        in_database:
+            # Nom de l'entité sur le quel il est basé, et donc sur le quel il va rechercher en base
+            entity:
+                class: App/entity/Utilisateur
+                # Il va rechercher les utilisateur par leur email
+                property: mail
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: in_database
+           #Permet de dire que l'on utilisera un formulaire pour la connexion
+            form_login:
+                login_path: security_login
+               # Symfony utilise la meme route pour chercher le formulaire et vérifier les données du formulaire
+                check_path: security_login
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

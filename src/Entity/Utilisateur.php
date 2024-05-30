@@ -5,11 +5,14 @@ namespace App\Entity;
 use App\Repository\UtilisateurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Validator as AppAssert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
+#[UniqueEntity('mail')]
 class Utilisateur implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -24,16 +27,13 @@ class Utilisateur implements PasswordAuthenticatedUserInterface
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Email]
     private ?string $mail = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Length(min: 8, minMessage: 'Votre mot de passe doit comporter au minimum 8 caractères')]
 
     private ?string $password = null;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\EqualTo('password', message: "Le mot de passe est différent")]
-    private ?string $confirm_password = null;
 
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
@@ -215,18 +215,6 @@ class Utilisateur implements PasswordAuthenticatedUserInterface
                 $avi->setUtilisateur(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getConfirmPassword(): ?string
-    {
-        return $this->confirm_password;
-    }
-
-    public function setConfirmPassword(string $confirm_password): static
-    {
-        $this->confirm_password = $confirm_password;
 
         return $this;
     }
