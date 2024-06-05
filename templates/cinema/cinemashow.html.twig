@@ -1,0 +1,32 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+	{% for diffusion in cinema.getDiffusions %}
+		{% for film in diffusion.getFilms %}
+
+			<article>
+				<h2>
+					{{ film.titre}}
+				</h2>
+				<div class="content">
+					<p>
+						{{film.description}}
+					</p>
+					<p>
+						{{film.AgeMinimum}}
+					</p>
+					<p>
+						{{film.note}}
+					</p>
+
+
+					<a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-primary">
+						<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}"></a>
+
+				</div>
+			</article>
+		{% endfor %}
+	{% endfor %}
+
+
+{% endblock %}

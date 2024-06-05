@@ -1,4 +1,7 @@
 security:
+    role_hierarchy:
+        ROLE_ADMIN:       [ROLE_CLIENT, ROLE_EMPLOYE]
+
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         App\Entity\User: 'auto'
@@ -10,7 +13,7 @@ security:
         in_database:
             # Nom de l'entité sur le quel il est basé, et donc sur le quel il va rechercher en base
             entity:
-                class: App/entity/Utilisateur
+                class: App\Entity\Utilisateur
                 # Il va rechercher les utilisateur par leur email
                 property: mail
     firewalls:
@@ -25,6 +28,22 @@ security:
                 login_path: security_login
                # Symfony utilise la meme route pour chercher le formulaire et vérifier les données du formulaire
                 check_path: security_login
+                #default_target_path: /
+                #username_parameter: username
+                #password_parameter: password
+            custom_authenticator: App\Security\LoginFormAuthenticator
+            # Définit qule authenticateur utiliser en premier 
+            entry_point: App\Security\LoginFormAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+                always_remember_me: true
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -35,8 +54,9 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+
+        # - { path: ^/film_create, roles: ROLE_ADMIN, ROLE_EMPLOYE }
+        # - { path: ^/security_registration, roles: ROLE_USER }
 
 when@test:
     security:

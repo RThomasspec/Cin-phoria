@@ -22,33 +22,44 @@
 							<li class="nav-item dropdown">
 								<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Cinémas</a>
 								<div class="dropdown-menu">
-									<a class="dropdown-item" href="#">Cinéphoria de Nantes</a>
-									<a class="dropdown-item" href="#">Cinéphoria de Bordeaux</a>
-									<a class="dropdown-item" href="#">Cinéphoria de Paris</a>
-									<a class="dropdown-item" href="#">Cinéphoria de Toulouse</a>
-									<a class="dropdown-item" href="#">Cinéphoria de Lille</a>
+									<a class="dropdown-item" href=""{{ path('cinema_show', {'id': 1}) }}"">Cinéphoria de Nantes</a>
+									<a class="dropdown-item" href=""{{ path('cinema_show', {'id': 2}) }}"">Cinéphoria de Bordeaux</a>
+									<a class="dropdown-item" href=""{{ path('cinema_show', {'id': 3}) }}"">Cinéphoria de Paris</a>
+									<a class="dropdown-item" href=""{{ path('cinema_show', {'id': 4}) }}"">Cinéphoria de Toulouse</a>
+									<a class="dropdown-item" href=""{{ path('cinema_show', {'id': 5}) }}"">Cinéphoria de Lille</a>
 
-									<div class="dropdown-divider"> Belgique</div>
-                                    <a class="dropdown-item" href="#">Cinéphoria de Charleroi</a>
+									<div class="dropdown-divider">
+										Belgique</div>
+									<a class="dropdown-item" href="#">Cinéphoria de Charleroi</a>
 									<a class="dropdown-item" href="#">Cinéphoria de Liège</a>
 								</div>
 							</li>
-
+                            {# Devoir creer le IsGranted pou cette route  !!#}
+                            {% if is_granted('ROLE_CLIENT') %}
 							<li class="nav-item">
 								<a class="nav-link" href="#">Réservation</a>
 							</li>
+                            {% endif %}
 							<li class="nav-item">
 								<a class="nav-link" href="#">Contact</a>
 							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="#">Connexion</a>
-							</li>
+                            {% if is_granted('ROLE_EMPLOYE') %}
 							<li class="nav-item">
 								<a class="nav-link" href="{{ path('film_create')}}">Enregistrement d'un film</a>
 							</li>
-                            <li class="nav-item">
+                            {% endif %}
+							<li class="nav-item">
 								<a class="nav-link" href="{{ path('security_registration')}}">Inscription</a>
 							</li>
+                            {% if not app.user %}
+							<li class="nav-item"> 
+								<a class="nav-link" href="{{ path('app_login')}}">Connexion</a>
+							</li>
+                            {% else %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('app_logout')}}">Déconnection</a>
+							</li>
+                            {% endif %}
 						</ul>
 					</div>
 				</div>

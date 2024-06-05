@@ -3,9 +3,11 @@
 namespace App\Form;
 
 use App\Entity\Film;
+use App\Entity\Cinema;
 use Doctrine\DBAL\Types\BooleanType;
 use Doctrine\DBAL\Types\StringType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -84,6 +86,11 @@ class FilmType extends AbstractType
                        // 'maxHeightMessage' => 'The image height is too large (maximum height is {{ max_height }}px)',
                     ]),
                 ],
+            ])
+            ->add('cinema', EntityType::class, [
+                'class' => Cinema::class,
+                'choice_label' => 'name',
+                'mapped' => false // Important pour indiquer que ce champ ne fait pas partie de l'entité Film
             ]);
         ;
     }

@@ -2,13 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Cinema;
+use App\Entity\Diffusion;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use App\Entity\Film;
@@ -27,9 +29,9 @@ class MenuController extends AbstractController
         ]);
     }
 
-
-
-
+// le isgranted est unique on ne peux mettre qu'un role mais grace à la hiérarchisation dans le security.yaml ROLE_ADMION sera
+// au-dessus de ROLE_EMPLOYE ce qui permet sont accés également à ce controlleur 
+    #[IsGranted('ROLE_EMPLOYE', message: 'You are not allowed to access the admin dashboard.')]
     #[Route('/film/new', name: 'film_create')]
     #[Route('/film/{id}/edit', name: 'film_edit')]
 
@@ -38,7 +40,9 @@ class MenuController extends AbstractController
     // il va donc falloir que je dise en paramtre que le Film peut etre null et si il est null on viens l'intancier pour qu'il soit vide
     // mais si je n'ai pas de Film via son id je veux une véritable instance de mon film d'ou la condition
     public function formFilm(Film $film = null, Request $request, ObjectManager $manager)
-    {
+    {   
+       // #[IsGranted('ROLE_ADMIN', message: 'You are not allowed to access the admin dashboard.')]
+
         $imagePath = '/public/uploads/images/';
 
         if (!$film) {
@@ -48,7 +52,6 @@ class MenuController extends AbstractController
 
         $form = $this->createForm(FilmType::class, $film);
         //$imageAbsolutePath = $this->getParameter('kernel.project_dir') .$imagePath.$film->getIdImage();
-
         //$imageFile = new File($imageAbsolutePath);
         //$form->get('affichage')->setData($imageFile);
 
@@ -60,6 +63,9 @@ class MenuController extends AbstractController
             //statique que la variable $file est de type UploadedFile.
             /** @var UploadedFile $file */
             $file = $form->get('affichage')->getData();
+            $cinema = $form->get('cinema')->getData();
+
+
             if ($file) {
                 //récupère le nom de fichier original sans l'extension.
                 $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.'.$file->guessExtension();
@@ -85,6 +91,9 @@ class MenuController extends AbstractController
             }
             $manager->persist($film);
             $manager->flush();
+
+            $diffusion = new Diffusion();
+
             return $this->redirectToRoute('film_validation', ['id' => $film->getId()]);
         }
 
@@ -111,6 +120,14 @@ class MenuController extends AbstractController
     {
         return $this->render('home/validationCreationFilm.html.twig', [
             'film' => $film
+        ]);
+    }
+
+    #[Route('/cinema/{id}', name: 'cinema_show')]
+    public function cinemaShow(Cinema $cinema)
+    {
+        return $this->render('cinema/cinemashow.html.twig', [
+            'cinema' => $cinema
         ]);
     }
 
