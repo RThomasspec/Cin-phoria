@@ -89,7 +89,7 @@ class FilmType extends AbstractType
             ])
             ->add('cinema', EntityType::class, [
                 'class' => Cinema::class,
-                'choice_label' => 'name',
+                'choice_label' => 'nom',
                 'mapped' => false // Important pour indiquer que ce champ ne fait pas partie de l'entité Film
             ]);
         ;

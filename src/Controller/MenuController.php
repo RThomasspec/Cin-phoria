@@ -93,6 +93,12 @@ class MenuController extends AbstractController
             $manager->flush();
 
             $diffusion = new Diffusion();
+            $diffusion->setCinemas($cinema);
+            $diffusion->setFilms($film);
+
+            $manager->persist($diffusion);
+            $manager->flush();
+
 
             return $this->redirectToRoute('film_validation', ['id' => $film->getId()]);
         }
@@ -106,28 +112,20 @@ class MenuController extends AbstractController
         ]);
     }
 
-
-    #[Route('/film/{id}', name: 'film_validation')]
-    public function validationCreationFilm(Film $film)
-    {
-        return $this->render('home/validationCreationFilm.html.twig', [
-            'film' => $film
-        ]);
-    }
-
     #[Route('/film/{id}', name: 'film_show')]
     public function filmShow(Film $film)
-    {
+    {   
         return $this->render('home/validationCreationFilm.html.twig', [
             'film' => $film
         ]);
     }
 
     #[Route('/cinema/{id}', name: 'cinema_show')]
-    public function cinemaShow(Cinema $cinema)
+    public function cinemaShow(Cinema $cinema,FilmRepository $filmRepository)
     {
+        $films = $filmRepository->findFilmsByCinema($cinema->getId());
         return $this->render('cinema/cinemashow.html.twig', [
-            'cinema' => $cinema
+            'films' => $films
         ]);
     }
 

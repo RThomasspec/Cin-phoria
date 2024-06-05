@@ -5,38 +5,40 @@
 		<legend>Enregistrement d'un film</legend>
 
 		{{ form_start(formFilm) }}
-		<div class="form-group">
-			{{ form_label(formFilm.titre, 'Titre du film', {'label_attr': {'class': 'form-label mt-4'}}) }}
-			{{ form_widget(formFilm.titre, {'attr': {'class': 'form-control'}}) }}
-			{{ form_errors(formFilm.titre) }}
-		</div>
-		<div class="form-group">
-			{{ form_label(formFilm.description, 'Description', {'label_attr': {'class': 'form-label mt-4'}}) }}
-			{{ form_widget(formFilm.description, {'attr': {'class': 'form-control'}}) }}
-			{{ form_errors(formFilm.description) }}
-		</div>
-		<div class="form-group">
-			{{ form_label(formFilm.AgeMinimum, 'Âge minimum', {'label_attr': {'class': 'form-label mt-4'}}) }}
-			{{ form_widget(formFilm.AgeMinimum, {'attr': {'class': 'form-control'}}) }}
-			{{ form_errors(formFilm.AgeMinimum) }}
-		</div>
-		<div class="form-group">
-			{{ form_label(formFilm.note, 'Note', {'label_attr': {'class': 'form-label mt-4'}}) }}
-			{{ form_widget(formFilm.note, {'attr': {'class': 'form-select'}}) }}
-			{{ form_errors(formFilm.note) }}
-		</div>
+
 		<span>
 			<div class="form-check">
-				{{ form_label(formFilm.coupDeCoeur, 'Coup de coeur', {'label_attr': {'class': 'form-check-label'}}) }}
-				{{ form_widget(formFilm.coupDeCoeur, {'attr': {'class': 'form-check-input'}}) }}
-				{{ form_errors(formFilm.coupDeCoeur) }}
+				{{ form_label(formFilm.cinema)}}
+				{{ form_widget(formFilm.cinema) }}
+				{{ form_errors(formFilm.cinema) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(formFilm.titre, 'Titre du film', {'label_attr': {'class': 'form-label mt-4'}}) }}
+				{{ form_widget(formFilm.titre, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(formFilm.titre) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(formFilm.description, 'Description', {'label_attr': {'class': 'form-label mt-4'}}) }}
+				{{ form_widget(formFilm.description, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(formFilm.description) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(formFilm.AgeMinimum, 'Âge minimum', {'label_attr': {'class': 'form-label mt-4'}}) }}
+				{{ form_widget(formFilm.AgeMinimum, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(formFilm.AgeMinimum) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(formFilm.note, 'Note', {'label_attr': {'class': 'form-label mt-4'}}) }}
+				{{ form_widget(formFilm.note, {'attr': {'class': 'form-select'}}) }}
+				{{ form_errors(formFilm.note) }}
 			</div>
 			<span>
 				<div class="form-check">
-					{{ form_label(formFilm.cinema)}}
-					{{ form_widget(formFilm.cinema) }}
-					{{ form_errors(formFilm.cinema) }}
+					{{ form_label(formFilm.coupDeCoeur, 'Coup de coeur', {'label_attr': {'class': 'form-check-label'}}) }}
+					{{ form_widget(formFilm.coupDeCoeur, {'attr': {'class': 'form-check-input'}}) }}
+					{{ form_errors(formFilm.coupDeCoeur) }}
 				</div>
+
 				<span>
 					<div class="form-group">
 						{{ form_label(formFilm.affichage, 'Affiche (Image file)', {'label_attr': {'class': 'form-label mt-4'}}) }}

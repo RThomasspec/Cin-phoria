@@ -16,6 +16,20 @@ class FilmRepository extends ServiceEntityRepository
         parent::__construct($registry, Film::class);
     }
 
+    public function findFilmsByCinema(int $cinemaId) :array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT f
+            FROM App\Entity\Film f
+            JOIN f.diffusions d
+            WHERE d.cinemas = :cinema'
+        )->setParameter('cinema', $cinemaId);
+
+        return $query->getResult();
+    } 
+
     //    /**
     //     * @return Film[] Returns an array of Film objects
     //     */
