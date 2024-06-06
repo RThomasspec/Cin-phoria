@@ -112,10 +112,18 @@ class MenuController extends AbstractController
         ]);
     }
 
-    #[Route('/film/{id}', name: 'film_show')]
-    public function filmShow(Film $film)
+    #[Route('/filmCreation/{id}', name: 'film_validation')]
+    public function filmValidation(Film $film)
     {   
         return $this->render('home/validationCreationFilm.html.twig', [
+            'film' => $film
+        ]);
+    }
+
+    #[Route('/filmshow/{id}', name: 'film_show')]
+    public function filmShow(Film $film)
+    {   
+        return $this->render('home/showFilm.html.twig', [
             'film' => $film
         ]);
     }
@@ -125,7 +133,7 @@ class MenuController extends AbstractController
     {
         $films = $filmRepository->findFilmsByCinema($cinema->getId());
         return $this->render('cinema/cinemashow.html.twig', [
-            'films' => $films
+            'films' => $cinema
         ]);
     }
 
