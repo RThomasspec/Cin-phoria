@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Film;
+use App\Entity\Salle;
 use App\Entity\Cinema;
 use Doctrine\DBAL\Types\BooleanType;
 use Doctrine\DBAL\Types\StringType;
@@ -90,6 +91,11 @@ class FilmType extends AbstractType
             ->add('cinema', EntityType::class, [
                 'class' => Cinema::class,
                 'choice_label' => 'nom',
+                'mapped' => false // Important pour indiquer que ce champ ne fait pas partie de l'entité Film
+            ])
+            ->add('salle', EntityType::class, [
+                'class' => Salle::class,
+                'choice_label' => 'salle',
                 'mapped' => false // Important pour indiquer que ce champ ne fait pas partie de l'entité Film
             ]);
         ;
