@@ -1,5 +1,146 @@
 {% extends "base.html.twig" %}
 
+{% block javascripts %}
+	 <script>
+								document.addEventListener('DOMContentLoaded', function () {
+							    const cinemaSelect = document.getElementById('film_cinema');
+							    const sallesSelect = document.getElementById('film_salles');
+								const horaireSeanceSelect = document.getElementById('film_horaires');
+								const submitButton = document.getElementById('submit-button');
+
+								submitButton.disabled = true;
+							
+							    cinemaSelect.addEventListener('change', async function () {
+							        const cinemaId = this.value;
+									horaireSeanceSelect.disabled = true;
+									submitButton.disabled = true;
+									if(cinemaId >= 1){
+							        try {
+							            const responseSalle = await fetch("{{ path('ajax_get_salles') }}", {
+							                method: 'POST',
+							                headers: {
+							                    'Content-Type': 'application/json',
+							                    'X-Requested-With': 'XMLHttpRequest'
+							                },
+							                body: JSON.stringify({ cinema_id: cinemaId })
+							             
+							            });
+							
+							            if (responseSalle.ok) {
+							                const datasalle = await responseSalle.json();
+											
+											
+											const salles = datasalle.sallesAray;
+							                sallesSelect.innerHTML = '';
+											const option = document.createElement('option');
+											option.value = 0;
+							                    option.textContent = "Veuillez sélectionner une salle" ;
+							                    sallesSelect.appendChild(option);
+				
+												salles.forEach(salle => {
+													const option = document.createElement('option');
+													option.value = salle.id;
+													option.textContent = salle.nom + " diffusion ( " + salle.Qualite + " )" + " Places : " + salle.places;
+													sallesSelect.appendChild(option);
+													sallesSelect.disabled = false;
+												})
+							            } else {
+							                console.error('Erreur lors du chargement des salles:', responseSalle.statusText);
+							            }
+										
+							        } catch (error) {
+							            console.error('Erreur lors de la requête:', error);
+							        }
+								}else{
+									sallesSelect.disabled = true;
+								}
+							    });
+		
+									sallesSelect.addEventListener('change', async function () {
+							        const salleId = this.value;
+								
+									if(salleId >= 1){
+									try{
+									const responseSeance = await fetch("{{ path('ajax_get_seances') }}", {
+							                method: 'POST',
+							                headers: {
+							                    'Content-Type': 'application/json',
+							                    'X-Requested-With': 'XMLHttpRequest'
+							                },
+							                body: JSON.stringify({ salle_id: salleId })
+							             
+							            });
+
+										
+
+										if(responseSeance.ok){
+											const dataseance = await responseSeance.json();
+											const horaires = dataseance.horairesArray;
+											const horairesUtilise = dataseance.horairesUtilise;
+											
+											
+	
+											horaireSeanceSelect.innerHTML = '';
+											const option = document.createElement('option');
+											option.value = 0;
+							                option.textContent = "Veuillez sélectionner une horaire" ;
+											horaireSeanceSelect.appendChild(option);
+	
+											/////
+											if(horairesUtilise.length > 0){
+											horaires.forEach(horaire => {
+												let isReserved = false;
+												horairesUtilise.forEach( horairesUtilse => {
+													if(horairesUtilse.id == horaire.id){
+														let option = document.createElement('option');
+							                    option.value = horaire.id;
+							                    option.textContent =  horaire.jour + " séance de " + horaire.debut +"h à " + horaire.fin+"h" ;						                    
+												horaireSeanceSelect.appendChild(option);
+												horaireSeanceSelect.disabled = true;
+			                					
+												isReserved = true;
+													}})
+											if (!isReserved){
+											let option = document.createElement('option');
+							                    option.value = horaire.id;
+							                    option.textContent = horaire.jour + " séance de " + horaire.debut +"h à " + horaire.fin+"h" ;
+							                    horaireSeanceSelect.appendChild(option);
+											}
+							                });
+											horaireSeanceSelect.disabled = false;
+		
+											}else{
+												horaires.forEach(horaire => {
+												let option = document.createElement('option');
+							                    option.value = horaire.id;
+							                    option.textContent = horaire.jour + " séance de " + horaire.debut +"h à " + horaire.fin+"h"  ;
+							                    horaireSeanceSelect.appendChild(option);
+												horaireSeanceSelect.disabled = false;
+												})}
+												
+											
+	
+										}
+									} catch (error) {
+							            console.error('Erreur lors de la requête:', error);
+							        }
+									}else{
+										horaireSeanceSelect.disabled = true;
+									}
+									
+							});
+horaireSeanceSelect.addEventListener('change', async function () {
+
+	submitButton.disabled = true;
+	if(horaireSeanceSelect.value >= 1){
+		submitButton.disabled = false;
+	}
+});
+							
+								});
+							</script>
+{% endblock %}
+
 {% block body %}
 	<fieldset>
 		<legend>Enregistrement d'un film</legend>
@@ -12,54 +153,67 @@
 				{{ form_widget(formFilm.cinema) }}
 				{{ form_errors(formFilm.cinema) }}
 			</div>
+
 			<div class="form-group">
-				{{ form_label(formFilm.titre, 'Titre du film', {'label_attr': {'class': 'form-label mt-4'}}) }}
+				{{ form_label(formFilm.titre, 'Titre du film : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
 				{{ form_widget(formFilm.titre, {'attr': {'class': 'form-control'}}) }}
 				{{ form_errors(formFilm.titre) }}
 			</div>
 			<div class="form-group">
-				{{ form_label(formFilm.description, 'Description', {'label_attr': {'class': 'form-label mt-4'}}) }}
+				{{ form_label(formFilm.description, 'Description : ', {'label_ attr': {'class': 'form-label mt-4'}}) }}
 				{{ form_widget(formFilm.description, {'attr': {'class': 'form-control'}}) }}
 				{{ form_errors(formFilm.description) }}
 			</div>
 			<div class="form-group">
-				{{ form_label(formFilm.AgeMinimum, 'Âge minimum', {'label_attr': {'class': 'form-label mt-4'}}) }}
+				{{ form_label(formFilm.AgeMinimum, 'Âge minimum : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
 				{{ form_widget(formFilm.AgeMinimum, {'attr': {'class': 'form-control'}}) }}
 				{{ form_errors(formFilm.AgeMinimum) }}
 			</div>
-			<div class="form-group">
-				{{ form_label(formFilm.note, 'Note', {'label_attr': {'class': 'form-label mt-4'}}) }}
-				{{ form_widget(formFilm.note, {'attr': {'class': 'form-select'}}) }}
-				{{ form_errors(formFilm.note) }}
+			<div class="form-check">
+				{{ form_label(formFilm.coupDeCoeur, 'Coup de coeur : ', {'label_attr': {'class': 'form-check-label'}}) }}
+				{{ form_widget(formFilm.coupDeCoeur, {'attr': {'class': 'form-check-input'}}) }}
+				{{ form_errors(formFilm.coupDeCoeur) }}
 			</div>
+
 			<span>
-				<div class="form-check">
-					{{ form_label(formFilm.coupDeCoeur, 'Coup de coeur', {'label_attr': {'class': 'form-check-label'}}) }}
-					{{ form_widget(formFilm.coupDeCoeur, {'attr': {'class': 'form-check-input'}}) }}
-					{{ form_errors(formFilm.coupDeCoeur) }}
+				<div class="form-group">
+					{{ form_label(formFilm.affichage, 'Affiche (Image file) : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
+					{{ form_widget(formFilm.affichage, {'attr': {'class': 'form-control'}}) }}
+					{{ form_errors(formFilm.affichage) }}
 				</div>
 
 				<span>
 					<div class="form-group">
-						{{ form_label(formFilm.affichage, 'Affiche (Image file)', {'label_attr': {'class': 'form-label mt-4'}}) }}
-						{{ form_widget(formFilm.affichage, {'attr': {'class': 'form-control'}}) }}
-						{{ form_errors(formFilm.affichage) }}
+						{{ form_label(formFilm.salles, 'Sélection de la salle : ', {'label_attr': {'class': 'form-check-label'}}) }}
+						{{ form_widget(formFilm.salles, {'attr': {'disabled': true}}) }}
+						{{ form_errors(formFilm.salles) }}
+
 					</div>
 
-					<button type="submit" class="btn btn-primary">
-						{% if editMode %}
-							Modifier
-						{% else %}
-							Créer
-						</button>
-					{% endif %}
+					<span>
+						<div class="form-group">
+							{{ form_label(formFilm.horaires, 'Sélectionnez les horaire de seance : ', {'label_attr': {'class': 'form-check-label'}}) }}
+							{{ form_widget(formFilm.horaires, {'attr': {'disabled': true}}) }}
+							{{ form_errors(formFilm.horaires) }}
+
+						</div>
+
+
+						<button type="submit" class="btn btn-primary" id="submit-button">
+							{% if editMode %}
+								Modifier
+							{% else %}
+								Créer
+							</button>
+						{% endif %}
+						{{ form_end(formFilm) }}
+					</div>
+
+					<div>
+						<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
+					</div>
+
+
 					{{ form_end(formFilm) }}
-				</div>
 
-				<div>
-					<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
-				</div>
-
-
-				{{ form_end(formFilm) }}
-			{% endblock %}
+				{% endblock %}

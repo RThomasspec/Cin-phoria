@@ -27,6 +27,10 @@ class Horaire
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $fin = null;
 
+    #[ORM\OneToOne(mappedBy: 'horaire', cascade: ['persist', 'remove'])]
+    private ?Seance $seance = null;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -79,4 +83,22 @@ class Horaire
 
         return $this;
     }
+
+    public function getSeance(): ?Seance
+    {
+        return $this->seance;
+    }
+
+    public function setSeance(Seance $seance): static
+    {
+        // set the owning side of the relation if necessary
+        if ($seance->getHoraire() !== $this) {
+            $seance->setHoraire($this);
+        }
+
+        $this->seance = $seance;
+
+        return $this;
+    }
+
 }

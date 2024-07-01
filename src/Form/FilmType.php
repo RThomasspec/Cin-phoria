@@ -5,6 +5,11 @@ namespace App\Form;
 use App\Entity\Film;
 use App\Entity\Salle;
 use App\Entity\Cinema;
+use App\Entity\Horaire;
+use App\Entity\Seance;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Doctrine\DBAL\Types\BooleanType;
 use Doctrine\DBAL\Types\StringType;
 use Symfony\Component\Form\AbstractType;
@@ -47,22 +52,6 @@ class FilmType extends AbstractType
                 'label' => 'Coup de coeur',
                 'required' => false
             ])
-            ->add('note', ChoiceType::class, [
-                'choices' => [
-                    '1' => 1,
-                    '2' => 2,
-                    '3' => 3,
-                    '4' => 4,
-                    '5' => 5,
-                    '6' => 6,
-                    '7' => 7,
-                    '8' => 8,
-                    '9' => 9,
-                    '10' => 10
-                ],
-                'attr' => ['class' => 'form-select'],
-                'label' => 'Note'
-            ])
             ->add('affichage', FileType::class, [
                 'label' => 'Affiche (Image file)',
                 'required' => true,
@@ -77,29 +66,41 @@ class FilmType extends AbstractType
                             'image/gif',
                         ],
                         'mimeTypesMessage' => 'Please upload a valid image file (JPEG, PNG, GIF)',
-                       // 'minWidth' => 100,
-                       // 'maxWidth' => 2000,
+                        // 'minWidth' => 100,
+                        // 'maxWidth' => 2000,
                         //'minHeight' => 100,
                         //'maxHeight' => 2000,
                         //'minWidthMessage' => 'The image width is too small (minimum width is {{ min_width }}px)',
                         //'maxWidthMessage' => 'The image width is too large (maximum width is {{ max_width }}px)',
                         //'minHeightMessage' => 'The image height is too small (minimum height is {{ min_height }}px)',
-                       // 'maxHeightMessage' => 'The image height is too large (maximum height is {{ max_height }}px)',
+                        // 'maxHeightMessage' => 'The image height is too large (maximum height is {{ max_height }}px)',
                     ]),
                 ],
             ])
             ->add('cinema', EntityType::class, [
                 'class' => Cinema::class,
                 'choice_label' => 'nom',
-                'mapped' => false // Important pour indiquer que ce champ ne fait pas partie de l'entité Film
+                'placeholder' => 'Choisissez un cinéma',
+                "mapped" => false
+                
             ])
-            ->add('salle', EntityType::class, [
+            ->add('salles', EntityType::class, [
                 'class' => Salle::class,
-                'choice_label' => 'salle',
-                'mapped' => false // Important pour indiquer que ce champ ne fait pas partie de l'entité Film
+                'choice_label' => 'nom',
+                'placeholder' => 'Sélectionnez une salle',
+                "mapped" => false
+            ])
+
+            ->add('horaires', EntityType::class, [
+                'class' => Horaire::class,
+                'choice_label' => 'jour',
+                'placeholder' => 'Sélectionnez les horaires',
+                
+               
+                "mapped" => false
             ]);
-        ;
     }
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {

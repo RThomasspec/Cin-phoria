@@ -14,18 +14,24 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use App\Entity\Film;
+use App\Entity\Seance;
 use App\Form\FilmType;
+use App\Repository\CinemaRepository;
 use App\Repository\FilmRepository;
+use App\Repository\HoraireRepository;
+use App\Repository\SalleRepository;
 
 class MenuController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function home(FilmRepository $repo)
+    public function home(FilmRepository $repo, CinemaRepository $cinemaRepository)
     {   
         $films = $repo->findAll();
+        $cinemas = $cinemaRepository->findAll();
 
         return $this->render('base.html.twig', [
-            'films' => $films
+            'films' => $films,
+            'cinemas' => $cinemas
         ]);
     }
 
@@ -39,7 +45,7 @@ class MenuController extends AbstractController
     // dans mon cas j'ai deux route alors pour la route sans id, il ne pourra pas me récupérer mon film et ce n'est pas ce que je veux
     // il va donc falloir que je dise en paramtre que le Film peut etre null et si il est null on viens l'intancier pour qu'il soit vide
     // mais si je n'ai pas de Film via son id je veux une véritable instance de mon film d'ou la condition
-    public function formFilm(Film $film = null, Request $request, ObjectManager $manager)
+    public function formFilm(Film $film = null, Request $request, ObjectManager $manager , HoraireRepository $horaireRepository, SalleRepository $salleRepository)
     {   
        // #[IsGranted('ROLE_ADMIN', message: 'You are not allowed to access the admin dashboard.')]
 
@@ -48,9 +54,11 @@ class MenuController extends AbstractController
         if (!$film) {
             $film = new Film();
         }
-
-
         $form = $this->createForm(FilmType::class, $film);
+            // A REPRENDRE
+       // $form = $this->createForm(FilmType::class, $film, [
+       //     'horaire_choices' =>$this->getHoraireChoices($horaireRepository, $film),
+       // ]);
         //$imageAbsolutePath = $this->getParameter('kernel.project_dir') .$imagePath.$film->getIdImage();
         //$imageFile = new File($imageAbsolutePath);
         //$form->get('affichage')->setData($imageFile);
@@ -99,6 +107,21 @@ class MenuController extends AbstractController
             $manager->persist($diffusion);
             $manager->flush();
 
+            $salle = $form->get('salles')->getData();
+            $horaire = $form->get('horaires')->getData();
+
+            $seance = new Seance();
+            $seance = $seance->setFilm(($film));
+            $seance = $seance->setQualite($salle->getQualite());
+            $seance = $seance->setCinema($cinema);
+            $seance = $seance->setHeureDebut($horaire->getDebut());
+            $seance = $seance->setHeureFin(($horaire->getFin()));
+            $seance = $seance->setHoraire($horaireRepository->find($horaire->getId()));
+            $seance = $seance->setSalle($salleRepository->find($salle->getId()));
+
+            $manager->persist($seance);
+            $manager->flush();
+
 
             return $this->redirectToRoute('film_validation', ['id' => $film->getId()]);
         }
@@ -133,7 +156,7 @@ class MenuController extends AbstractController
     {
         $films = $filmRepository->findFilmsByCinema($cinema->getId());
         return $this->render('cinema/cinemashow.html.twig', [
-            'films' => $cinema
+            'films' => $films
         ]);
     }
 

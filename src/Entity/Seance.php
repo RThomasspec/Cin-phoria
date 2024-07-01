@@ -16,10 +16,10 @@ class Seance
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $heureDebut = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTimeInterface $heureFin = null;
     #[ORM\ManyToOne(inversedBy: 'seances')]
     #[ORM\JoinColumn(nullable: false)]
@@ -41,6 +41,11 @@ class Seance
     #[ORM\ManyToOne(inversedBy: 'seances')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Salle $salle = null;
+
+    #[ORM\OneToOne(inversedBy: 'seance', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Horaire $horaire = null;
+
 
     public function __construct()
     {
@@ -153,4 +158,19 @@ class Seance
 
         return $this;
     }
+
+    public function getHoraire(): ?Horaire
+    {
+        return $this->horaire;
+    }
+
+    public function setHoraire(Horaire $horaire): static
+    {
+        $this->horaire = $horaire;
+
+        return $this;
+    }
+
+
+
 }

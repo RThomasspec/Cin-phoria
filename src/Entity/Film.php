@@ -29,9 +29,6 @@ class Film
     #[ORM\Column]
     private ?bool $coupDeCoeur = null;
 
-    #[ORM\Column]
-    private ?int $note = null;
-
     /**
      * @var Collection<int, Seance>
      */
@@ -55,6 +52,9 @@ class Film
 
     #[ORM\Column(length: 255)]
     private ?string $affichage = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $note = null;
 
     public function __construct()
     {
@@ -113,18 +113,6 @@ class Film
     public function setCoupDeCoeur(bool $coupDeCoeur): static
     {
         $this->coupDeCoeur = $coupDeCoeur;
-
-        return $this;
-    }
-
-    public function getNote(): ?int
-    {
-        return $this->note;
-    }
-
-    public function setNote(int $note): static
-    {
-        $this->note = $note;
 
         return $this;
     }
@@ -239,6 +227,18 @@ class Film
     public function setAffichage(string $affichage): static
     {
         $this->affichage = $affichage;
+
+        return $this;
+    }
+
+    public function getNote(): ?int
+    {
+        return $this->note;
+    }
+
+    public function setNote(?int $note): static
+    {
+        $this->note = $note;
 
         return $this;
     }

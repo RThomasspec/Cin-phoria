@@ -8,6 +8,7 @@
 		</title>
 		<link rel="stylesheet" href="../css/custom.css">
 		<link rel="stylesheet" href="https://bootswatch.com/5/flatly/bootstrap.min.css"> {% block stylesheets %}{% endblock %}
+		  {% block javascripts %}{% endblock %}
 		</head>
 		<body>
 			<nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -48,10 +49,10 @@
 									<a class="nav-link" href="{{ path('film_create')}}">Enregistrement d'un film</a>
 								</li>
 							{% endif %}
-							<li class="nav-item">
+							{% if not app.user %}
+                            <li class="nav-item">
 								<a class="nav-link" href="{{ path('security_registration')}}">Inscription</a>
 							</li>
-							{% if not app.user %}
 								<li class="nav-item">
 									<a class="nav-link" href="{{ path('app_login')}}">Connexion</a>
 								</li>
@@ -92,21 +93,83 @@
 
 
 					{% endfor %}
+{% block footer %}
 
+<section class="">
+  <!-- Footer -->
+  <footer class="bg-body-tertiary text-center">
+    <!-- Grid container -->
+    <div class="container p-4">
+      <!--Grid row-->
+      <div class="row">
+        <!--Grid column-->
+         <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+          <h5 class="text-uppercase">Adresse</h5>
+          <ul class="list-unstyled mb-0">
+		  		{% for cinema in cinemas %}
+            <li>
+              <a href="#!" class="text-body">{{cinema.adresse}}</a>
+            </li>
+					{% endfor %}
+          </ul>
+        </div>
+        <!--Grid column-->
 
-					<footer>
-						<ul class="nav nav-pills flex-column">
-							<li class="nav-item">
-								<a class="nav-link" href="#">Adresse du cinéma</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="#">Numéro de GSM</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="#">Horaires</a>
-							</li>
-						</ul>
-					</footer>
+        <!--Grid column-->
+        <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+          <h5 class="text-uppercase">Contact</h5>
+          <ul class="list-unstyled mb-0">
+		  		{% for cinema in cinemas %}
+            <li>
+              <p  class="text-body">{{cinema.GSM }}</p>
+            </li>
+					{% endfor %}
+          </ul>
+        </div>
+
+        <!--Grid column-->
+
+        <!--Grid column-->
+        <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+          <h5 class="text-uppercase mb-0">Horaires</h5>
+
+          <ul class="list-unstyled mb-0">
+            <li>
+              <p class="text-body">09 h 00 - 18 h 00</p>
+            </li>
+            <li>
+              <p class="text-body">09 h 00 - 18 h 00</p>
+            </li>
+            <li>
+              <p class="text-body">09 h 00 - 18 h 00</p>
+            </li>
+            <li>
+              <p class="text-body">09 h 00 - 18 h 00</p>
+            </li>
+			<li>
+              <p class="text-body">09 h 00 - 18 h 00</p>
+            </li>
+          </ul>
+        </div>
+        <!--Grid column-->
+      </div>
+      <!--Grid row-->
+    </div>
+    <!-- Grid container -->
+
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+      © 2020 Copyright:
+      <a class="text-body" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+    </div>
+    <!-- Copyright -->
+  </footer>
+  <!-- Footer -->
+</section>
+					
+            {% endblock %}
+
+					
 				{% endblock %}
 			</div>
 		</body>
