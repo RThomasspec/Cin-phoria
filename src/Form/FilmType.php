@@ -20,7 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 use Symfony\Component\Validator\Constraints\Image;
 
@@ -32,6 +32,17 @@ class FilmType extends AbstractType
             ->add('titre', TextareaType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label' => 'Titre du film'
+            ])
+            ->add('prix', ChoiceType::class, [
+                'attr' => ['class' => 'form-control'],
+                'label' => 'Prix de la séance',
+                'choices' => [
+                    'Prix de la séance 20 euro' => 20,
+                    'Prix de la séance  15 euro' => 15,
+                    'Prix de la séance  12 euro' => 12,
+                    'Prix de la séance  10 euro' => 10
+                ],
+                'mapped' => false
             ])
             ->add('description', TextareaType::class, [
                 'attr' => ['class' => 'form-control'],

@@ -47,7 +47,9 @@ class Seance
     private ?Horaire $horaire = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $prix = null;
+    private ?int $Prix = null;
+
+ 
 
 
     public function __construct()
@@ -176,12 +178,12 @@ class Seance
 
     public function getPrix(): ?int
     {
-        return $this->prix;
+        return $this->Prix;
     }
 
-    public function setPrix(?int $prix): static
+    public function setPrix(?int $Prix): static
     {
-        $this->prix = $prix;
+        $this->Prix = $Prix;
 
         return $this;
     }

@@ -109,6 +109,8 @@ class MenuController extends AbstractController
 
             $salle = $form->get('salles')->getData();
             $horaire = $form->get('horaires')->getData();
+            $prix =  $form->get('prix')->getData();
+
 
             $seance = new Seance();
             $seance = $seance->setFilm(($film));
@@ -118,6 +120,7 @@ class MenuController extends AbstractController
             $seance = $seance->setHeureFin(($horaire->getFin()));
             $seance = $seance->setHoraire($horaireRepository->find($horaire->getId()));
             $seance = $seance->setSalle($salleRepository->find($salle->getId()));
+            $seance = $seance->setPrix($prix);
 
             $manager->persist($seance);
             $manager->flush();
