@@ -46,6 +46,9 @@ class Seance
     #[ORM\JoinColumn(nullable: false)]
     private ?Horaire $horaire = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $prix = null;
+
 
     public function __construct()
     {
@@ -167,6 +170,18 @@ class Seance
     public function setHoraire(Horaire $horaire): static
     {
         $this->horaire = $horaire;
+
+        return $this;
+    }
+
+    public function getPrix(): ?int
+    {
+        return $this->prix;
+    }
+
+    public function setPrix(?int $prix): static
+    {
+        $this->prix = $prix;
 
         return $this;
     }

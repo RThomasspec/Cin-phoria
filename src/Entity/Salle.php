@@ -40,6 +40,12 @@ class Salle
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $NbPlacesDispo = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $NbPlacesDispoPMR = null;
+
     public function __construct()
     {
         $this->seances = new ArrayCollection();
@@ -155,6 +161,30 @@ class Salle
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getNbPlacesDispo(): ?int
+    {
+        return $this->NbPlacesDispo;
+    }
+
+    public function setNbPlacesDispo(?int $NbPlacesDispo): static
+    {
+        $this->NbPlacesDispo = $NbPlacesDispo;
+
+        return $this;
+    }
+
+    public function getNbPlacesDispoPMR(): ?int
+    {
+        return $this->NbPlacesDispoPMR;
+    }
+
+    public function setNbPlacesDispoPMR(int $NbPlacesDispoPMR): static
+    {
+        $this->NbPlacesDispoPMR = $NbPlacesDispoPMR;
 
         return $this;
     }

@@ -95,8 +95,6 @@ class FilmType extends AbstractType
                 'class' => Horaire::class,
                 'choice_label' => 'jour',
                 'placeholder' => 'Sélectionnez les horaires',
-                
-               
                 "mapped" => false
             ]);
     }
