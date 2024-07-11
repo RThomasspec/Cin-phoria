@@ -102,11 +102,13 @@ class FilmType extends AbstractType
                 "mapped" => false
             ])
 
-            ->add('horaires', EntityType::class, [
-                'class' => Horaire::class,
-                'choice_label' => 'jour',
-                'placeholder' => 'Sélectionnez les horaires',
-                "mapped" => false
+            ->add('horaires', ChoiceType::class, [
+               'choices' => [], // Empty choices, will be populated with JavaScript
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'Séances',
+                "mapped" => false,
+                'required' => true,
             ]);
     }
 

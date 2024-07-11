@@ -1,0 +1,42 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+<h4>FILMS</h4>
+<br>
+<div class="form-group">
+{# la création d'un ce fait obligatoirement avec au moins une séance #}
+<a href="{{ path('film_create')}}" class="btn btn-outline-success">Créer un film</a>
+{# le film peut être modifié ( affichage d'un formulaire avec toutes les données du film ) #}
+<a href="/autre-page" class="btn btn-outline-primary">Modifier un film</a>
+{# afficahge des films avec une case supprimé pour la suppression #}
+<a href="/autre-page" class="btn btn-outline-danger">Supprimer un film</a>
+</div>
+<br>
+<h4>SALLES</h4>
+<br>
+<div class="form-group">
+<a href="/autre-page" class="btn btn-outline-success">Créer une salles</a>
+<a href="/autre-page" class="btn btn-outline-primary">Modifier une salles</a>
+<a href="/autre-page" class="btn btn-outline-danger">Supprimer une salles</a>
+</div>
+<br>
+<h4>SEANCES</h4>
+<br>
+<div class="form-group">
+<a href="/autre-page" class="btn btn-outline-success">Créer une séance</a>
+<a href="/autre-page" class="btn btn-outline-primary">Modifier une séance</a>
+<a href="/autre-page" class="btn btn-outline-danger">Supprimer une séance</a>
+</div>
+<br>
+<h4>AVIS</h4>
+<br>
+<div class="form-group">
+<a href="/autre-page" class="btn btn-outline-primary">Valider un avis</a>
+<a href="/autre-page" class="btn btn-outline-danger">Supprimer un avis</a>
+</div>
+
+
+
+
+{% endblock %}

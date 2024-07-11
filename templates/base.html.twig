@@ -41,15 +41,24 @@
 									<a class="nav-link" href="#">Réservation</a>
 								</li>
 							{% endif %}
+
+							{% if is_granted('ROLE_CLIENT') %}
+								<li class="nav-item">
+									<a class="nav-link" href="#">Mon espace</a>
+								</li>
+							{% endif %}
+
 							<li class="nav-item">
 								<a class="nav-link" href="#">Contact</a>
 							</li>
 							{% if is_granted('ROLE_EMPLOYE') %}
 								<li class="nav-item">
-									<a class="nav-link" href="{{ path('film_create')}}">Enregistrement d'un film</a>
+									<a class="nav-link" href="{{ path('intranet')}}">Intranet</a>
 								</li>
 							{% endif %}
+							
 							{% if not app.user %}
+							
                             <li class="nav-item">
 								<a class="nav-link" href="{{ path('security_registration')}}">Inscription</a>
 							</li>
@@ -73,20 +82,13 @@
 							<h2>
 								{{ film.titre}}
 							</h2>
-							<div class="content">
-								<p>
-									{{film.description}}
-								</p>
-								<p>
-									{{film.AgeMinimum}}
-								</p>
+							<div class="content">	
 								<p>
 									{{film.note}}
 								</p>
 
-
-								<a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-primary">
-									<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}"></a>
+									<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
+									<a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-outline-success"> Sélectionenr le film</a>
 
 							</div>
 						</article>

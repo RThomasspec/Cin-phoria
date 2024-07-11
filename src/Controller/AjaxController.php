@@ -52,9 +52,6 @@ class AjaxController extends AbstractController
         $horairesArayDisponible = [];
         $horairesUtilise = [];
 
-        ////
-        // prb je ne recois pas d'horaire pour une salle, et de seance pour une horaire
-
         foreach($salle->getHoraires() as $horaire){
             
             if($horaire->getSeance() != null){
@@ -83,6 +80,34 @@ class AjaxController extends AbstractController
         ]);
 
 
+    }
+
+    #[Route('/ajax/get-seances-by-film', name: 'ajax_get_seances_by_film', methods: ['POST'])]
+
+    public function getSeancesByFilm(Request $request, CinemaRepository $cinemaRepository, HoraireRepository $horaireRepository)
+    {
+        $data = json_decode($request->getContent(), true); 
+
+        $filmId = $data['film_Id'];
+        $horaires = $horaireRepository->findHoraireBySeance($filmId);
+
+   
+        $horaireArraySeance = [];
+        foreach ($horaires as $horaire) {
+                $horaireArraySeance[] = [
+                    'id' => $horaire->getId(),
+                    'jour' => $horaire->getJour(),
+                    'debut' => $horaire->getDebut()->format('H:i'),
+                    'fin' => $horaire->getFin()->format('H:i'),
+                    
+                ];
+    
+        }
+
+        return new JsonResponse([
+        
+            'horaireArraySeance' => $horaireArraySeance
+        ]);
     }
 
 }

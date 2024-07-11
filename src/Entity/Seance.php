@@ -49,6 +49,12 @@ class Seance
     #[ORM\Column(nullable: true)]
     private ?int $Prix = null;
 
+    #[ORM\Column]
+    private ?int $placeDispoPMR = null;
+
+    #[ORM\Column]
+    private ?int $placeDispo = null;
+
  
 
 
@@ -184,6 +190,30 @@ class Seance
     public function setPrix(?int $Prix): static
     {
         $this->Prix = $Prix;
+
+        return $this;
+    }
+
+    public function getPlaceDispoPMR(): ?int
+    {
+        return $this->placeDispoPMR;
+    }
+
+    public function setPlaceDispoPMR(int $placeDispoPMR): static
+    {
+        $this->placeDispoPMR = $placeDispoPMR;
+
+        return $this;
+    }
+
+    public function getPlaceDispo(): ?int
+    {
+        return $this->placeDispo;
+    }
+
+    public function setPlaceDispo(int $placeDispo): static
+    {
+        $this->placeDispo = $placeDispo;
 
         return $this;
     }

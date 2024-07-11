@@ -14,12 +14,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use App\Entity\Film;
+use App\Entity\Reservation;
+use App\Entity\Salle;
 use App\Entity\Seance;
 use App\Form\FilmType;
+use App\Form\ReservationType;
 use App\Repository\CinemaRepository;
 use App\Repository\FilmRepository;
 use App\Repository\HoraireRepository;
 use App\Repository\SalleRepository;
+use App\Repository\SeanceRepository;
 
 class MenuController extends AbstractController
 {
@@ -107,23 +111,42 @@ class MenuController extends AbstractController
             $manager->persist($diffusion);
             $manager->flush();
 
-            $salle = $form->get('salles')->getData();
-            $horaire = $form->get('horaires')->getData();
-            $prix =  $form->get('prix')->getData();
+
+            $data = $form->getData();
+            $formData = $request->request->all(); 
+            $horairesSelectionnes = $formData['form']['horaires'];
+            $PlaceDispoPMR = 5;
+
+         //éder directement aux horaires sélectionnés
+
+            // Vérifier les données reçues
+   
+
+            // $seances est un tableau contenant les IDs des séances sélectionnées
+            foreach ($horairesSelectionnes as $horaireId) {
+                $salle = $form->get('salles')->getData();
+            
+                $prix =  $form->get('prix')->getData();
+                $seance = new Seance();
+                $seance = $seance->setFilm(($film));
+                $seance = $seance->setQualite($salle->getQualite());
+                $seance = $seance->setCinema($cinema);
+                $seance = $seance->setHeureDebut($horaireRepository->find($horaireId)->getFin());
+                $seance = $seance->setHeureFin($horaireRepository->find($horaireId)->getDebut());
+                $seance = $seance->setHoraire($horaireRepository->find($horaireId));
+                $seance = $seance->setSalle($salleRepository->find($salle->getId()));
+                $seance = $seance->setPrix($prix);
+                $seance = $seance->setPlaceDispoPMR($PlaceDispoPMR);
+                $seance = $seance->setPlaceDispo($salle->getNbPlaces());
 
 
-            $seance = new Seance();
-            $seance = $seance->setFilm(($film));
-            $seance = $seance->setQualite($salle->getQualite());
-            $seance = $seance->setCinema($cinema);
-            $seance = $seance->setHeureDebut($horaire->getDebut());
-            $seance = $seance->setHeureFin(($horaire->getFin()));
-            $seance = $seance->setHoraire($horaireRepository->find($horaire->getId()));
-            $seance = $seance->setSalle($salleRepository->find($salle->getId()));
-            $seance = $seance->setPrix($prix);
+                $manager->persist($seance);
+                $manager->flush();
+            }
 
-            $manager->persist($seance);
-            $manager->flush();
+         
+
+           
 
 
             return $this->redirectToRoute('film_validation', ['id' => $film->getId()]);
@@ -154,6 +177,27 @@ class MenuController extends AbstractController
         ]);
     }
 
+    #[Route('/filmshow/reservation/{id}', name: 'film_reservation')]
+    public function reservation(Request $request, Film $film, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
+    {   
+        $reservation = new Reservation();
+
+        $form = $this->createForm(ReservationType::class, $reservation);
+        
+
+        $form->handleRequest($request);
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+        }
+
+        return $this->render('reservation/reservation.html.twig', [
+            'formReservation' => $form->createView(),
+            'film' => $film
+        ]);
+    }
+
     #[Route('/cinema/{id}', name: 'cinema_show')]
     public function cinemaShow(Cinema $cinema,FilmRepository $filmRepository)
     {
@@ -163,6 +207,14 @@ class MenuController extends AbstractController
         ]);
     }
 
+    #[Route('/intranet', name: 'intranet')]
+    public function intranet (FilmRepository $filmRepository)
+    {
+    
+        return $this->render('home/intranet.html.twig', [
+            
+        ]);
+    }
 
 
 

@@ -16,6 +16,21 @@ class HoraireRepository extends ServiceEntityRepository
         parent::__construct($registry, Horaire::class);
     }
 
+    public function findHoraireBySeance(int $filmId):array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+          'SELECT h,s
+         FROM App\Entity\Horaire h
+         JOIN h.seance s
+         WHERE s.film = :film'
+        )
+        ->setParameter('film', $filmId);
+
+        return $query->getResult();
+    }
+
     //    /**
     //     * @return Horaire[] Returns an array of Horaire objects
     //     */
