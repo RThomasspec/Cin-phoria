@@ -47,7 +47,7 @@
 	          
 	                          horaires.forEach(horaire => {
 
-								if(){
+								if(!isSeanceTimePassed(horaire.jour , horaire.debut)){
 	                            const option = document.createElement('option');
 	                            option.value = horaire.id;
 	                            option.textContent = horaire.jour +" " + horaire.debut +"h à "+ horaire.fin  + "h diffusion " + horaire.qualite;
@@ -193,6 +193,36 @@
 
 	NbPlacesSelect.addEventListener('change', calculatePrice);
     NbPlacesPMRSelect.addEventListener('change', calculatePrice);
+
+
+ function isSeanceTimePassed(jourAComparer, heureAComparer){
+
+	const joursSemaine = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+
+    // Obtenez la date et l'heure actuelles
+    const maintenant = new Date();
+    // Ajuster le jour actuel pour que lundi soit 0, on viens ajouter + 6 à l'index du jour pour ensuite faire modulo 7 sur ce dernier,
+	//ce qui change l'ordre pour que dimanche soit placer à la fin de la liste. Si je ne fait pas cela il sera mis à l'index 0.
+    const jourActuelIndex = (maintenant.getDay() + 6) % 7; 
+    const jourActuel = joursSemaine[jourActuelIndex];
+    const heureActuelle = maintenant.toTimeString().split(' ')[0].substring(0, 5); // Récupère l'heure actuelle au format HH:MM
+
+	const jourAComparerIndex = joursSemaine.indexOf(jourAComparer);
+
+	if (jourAComparerIndex > jourActuelIndex){
+		return false ; // la seance n'est pas passé
+	}else if ( jourAComparerIndex < jourActuelIndex){
+		return true ;
+	}else{
+		// Si le jour est le même on viens vérifier l'heure
+		if(heureAComparer > heureActuelle){
+			return false ; // la séance n'est pas passé
+		}else{
+			return true ; // la séance est passé
+		}
+	}
+ }
+
 
 	async function calculatePrice(){
 	
