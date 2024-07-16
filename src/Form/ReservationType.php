@@ -59,19 +59,17 @@ class ReservationType extends AbstractType
 
             ->add('NbPlacesPMR', ChoiceType::class, [
                 'choices' => [],
-                'expanded' => true,
-                 'multiple' => true,
-                'label' => 'Nombre de places PMR',
+                'expanded' => false,
+                'multiple' => false,
+                'label' => 'seance',
                 "mapped" => false,
-                'required' => true,
             ])
             ->add('NbPlaces', ChoiceType::class, [
                 'choices' => [],
-                'expanded' => true,
-                'multiple' => true,
-                'label' => 'Nombre de places',
+                'expanded' => false,
+                'multiple' => false,
+                'label' => 'seance',
                 "mapped" => false,
-                'required' => true,
             ])
         ;
     }

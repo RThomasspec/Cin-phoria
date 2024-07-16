@@ -11,6 +11,8 @@
 									const NbPlacesPMRSelect = document.getElementById('reservation_NbPlacesPMR');
 									const NbPlacesSelect = document.getElementById('reservation_NbPlaces');
 									const submitButton = document.getElementById('submit-button');
+									const PrixReservation = document.getElementById('reservation_Prix');
+									
 	                const filmId = {{ film.id}};
 	                
 	    
@@ -33,21 +35,25 @@
 												
 												
 	                        const horaires = dataHoraire.horaireArraySeance;
-	                        console.log(horaires);
+	                   
 	                       
 	
 	                        //
 	                    
 	                        const option = document.createElement('option');
 	                        option.value = 0;
-	                                    option.textContent = "Veuillez sélectionner une seance" ;
+	                                    option.textContent = "Sélectionner une seance" ;
 	                                    SeanceSelect.appendChild(option);
 	          
 	                          horaires.forEach(horaire => {
+
+								if(){
 	                            const option = document.createElement('option');
 	                            option.value = horaire.id;
-	                            option.textContent = horaire.jour + " \n" + horaire.debut + " (Fin de seance pour : " + horaire.fin + " )";
-	                            SeanceSelect.appendChild(option);
+	                            option.textContent = horaire.jour +" " + horaire.debut +"h à "+ horaire.fin  + "h diffusion " + horaire.qualite;
+	                            
+								SeanceSelect.appendChild(option);
+								}
 	                            
 	                          })
 	                          
@@ -60,10 +66,214 @@
 	                        }
 	}
 	loadData();
-	                       
+	           SeanceSelect.addEventListener('change', async function () {
+		
+				if(this.value >= 1){
+					checkBoxPMR.disabled = false
+					NbPlacesSelect.disabled = false
+					const horaireId = SeanceSelect.value;
+ try {
+								            const responseSeance = await fetch("{{ path('ajax_get_seances_by_horaire') }}", {
+								                method: 'POST',
+								                headers: {
+								                    'Content-Type': 'application/json',
+								                    'X-Requested-With': 'XMLHttpRequest'
+								                },
+								                body: JSON.stringify({ Horaire_Id: horaireId })
+								             
+								            });
+	                          
+								
+								            if (responseSeance.ok) {
+								                const dataSeance = await responseSeance.json();
+												
+												const nbPlaceSeance = dataSeance.seanceArray;
+												
+												const placedispoSeance = nbPlaceSeance[0];
+											
+						
+	                          const option = document.createElement('option');
+	                        option.value = 0;
+	                                    option.textContent = "Nombre de place(s) :" ;
+	                                    NbPlacesSelect.appendChild(option);
+	          
+	                  
+
+								for (let a = 1; a <= placedispoSeance.placesDispo ; a++) {
+								const option = document.createElement('option');
+								option.value = placedispoSeance.id;
+	                            option.textContent =  a;
+								option.setAttribute('data-price', placedispoSeance.prix);
+	                            NbPlacesSelect.appendChild(option);
+											}			
+	                            
+	                           if(NbPlacesSelect.value >= 1){
+								submitButton.disabled = false;
+							
+							   }
+	                            
+	                     
+	                          
+											}
+	                        } catch (error) {
+	                            console.error('Erreur lors de la requête:', error);
+	                        }
+		
+
+				}else{
+
+										
+												NbPlacesSelect.disabled = true;
+										
+					console.error('Erreur lors de la sélection de la séance :', error);
+				}
+	
+});            
+	
+	 checkBoxPMR.addEventListener('change', async function () {
+
+			if(checkBoxPMR.checked){
+				NbPlacesPMRSelect.disabled = false;
+				const horaireId = SeanceSelect.value;
+				 try {
+								            const responseSeance = await fetch("{{ path('ajax_get_seances_by_horaire') }}", {
+								                method: 'POST',
+								                headers: {
+								                    'Content-Type': 'application/json',
+								                    'X-Requested-With': 'XMLHttpRequest'
+								                },
+								                body: JSON.stringify({ Horaire_Id: horaireId })
+								             
+								            });
+	                          
+								
+								            if (responseSeance.ok) {
+								                const dataSeance = await responseSeance.json();
+												
+												const nbPlaceSeance = dataSeance.seanceArray;
+												
+												const placedispoSeancePMR = nbPlaceSeance[0];
+
+										
+											
+						
+	                          const option = document.createElement('option');
+	                        option.value = 0;
+	                                    option.textContent = "Nombre de place(s)" ;
+	                                    NbPlacesPMRSelect.appendChild(option);
+	          
+	                  
+
+								for (let a = 1; a <= placedispoSeancePMR.placeDispoPMR ; a++) {
+								const option = document.createElement('option');
+								option.value = placedispoSeancePMR.id;
+	                            option.textContent =  a;
+								option.setAttribute('data-price-pmr', placedispoSeancePMR.prix);
+	                            NbPlacesPMRSelect.appendChild(option);
+											}			
+	                            
+	                           if(NbPlacesPMRSelect.value >= 1){
+								submitButton.disabled = false;
+							
+							   }
+	                            
+	                     
+	                          
+											}
+	                        } catch (error) {
+	                            console.error('Erreur lors de la requête:', error);
+	                        }
+
+			}else{
+				NbPlacesPMRSelect.disabled = true;
+			}
+
+
+			});
+
+	NbPlacesSelect.addEventListener('change', calculatePrice);
+    NbPlacesPMRSelect.addEventListener('change', calculatePrice);
+
+	async function calculatePrice(){
 	
 	
+let totalPrice =0;
+           
+			
+			if(NbPlacesPMRSelect.value >= 1 && NbPlacesSelect.value == 0){
+
+			const selectedPMROption = NbPlacesPMRSelect.selectedOptions[0];
+       
+
+
+	
+			const selectedIndexPMR = NbPlacesPMRSelect.selectedIndex;  // Get the index of the selected option
+
+			const selectedOptionPMR = NbPlacesPMRSelect.options[selectedIndexPMR];
+			
+            const pmr = parseInt(selectedPMROption.textContent, 10);
+
+            const pricePlacePMR = parseInt(selectedOptionPMR.getAttribute('data-price-pmr'));
+
+       		 totalPrice = pmr * pricePlacePMR;
+			 submitButton.disabled = false;
+
+			
+
+			}else if(NbPlacesSelect.value >= 1 && NbPlacesPMRSelect.value == 0){
+
+		
+            const selectedPlaceOption = NbPlacesSelect.selectedOptions[0];
+
+        
+            const places = parseInt(selectedPlaceOption.textContent, 10);
+
+
+			const selectedIndex = NbPlacesSelect.selectedIndex;  // Get the index of the selected option
+            const selectedOption = NbPlacesSelect.options[selectedIndex];
+
+	
+            const pricePlace = parseInt(selectedOption.getAttribute('data-price'));
+
+			totalPrice = (places * pricePlace) ;
+			submitButton.disabled = false;
+
+
+			}else if (NbPlacesPMRSelect.value >= 1 && NbPlacesSelect.value >= 1){
+
+        	const selectedPMROption = NbPlacesPMRSelect.selectedOptions[0];
+            const selectedPlaceOption = NbPlacesSelect.selectedOptions[0];
+
+            const pmr = parseInt(selectedPMROption.textContent, 10);
+            const places = parseInt(selectedPlaceOption.textContent, 10);
+
+			const selectedIndex = NbPlacesSelect.selectedIndex;  // Get the index of the selected option
+            const selectedOption = NbPlacesSelect.options[selectedIndex];
+
+	
+            const pricePlace = parseInt(selectedOption.getAttribute('data-price'));
+
+
+			const selectedIndexPMR = NbPlacesPMRSelect.selectedIndex;  // Get the index of the selected option
+
+			const selectedOptionPMR = NbPlacesPMRSelect.options[selectedIndexPMR];
+
+            const pricePlacePMR = parseInt(selectedOptionPMR.getAttribute('data-price-pmr'));
+
+
+       		 totalPrice = (places * pricePlace) + (pmr * pricePlacePMR);
+			 submitButton.disabled = false;
+
+			}
+			else if (NbPlacesPMRSelect.value == 0 && NbPlacesSelect.value == 0){
+				submitButton.disabled = true;
+
+			}
+
+		PrixReservation.value = totalPrice;
+	}
 	});
+
 	
 	</script>
 
@@ -85,7 +295,7 @@
 		{# Selection de la SEANCE proposé par le cinéma #}
 		<div class="form-group">
 			
-				{{ form_label(formReservation.seance, 'Sélectionnez la séance : ', {'label_attr': {'class': 'form-check-label'}}) }}
+				{{ form_label(formReservation.seance, 'Séances de la semaine : ', {'label_attr': {'class': 'form-check-label'}}) }}
 				{{ form_widget(formReservation.seance, {'attr': {'class': 'form-control'}}) }}
 				{{ form_errors(formReservation.seance) }}
 			
@@ -101,7 +311,7 @@
 
 		{# Une fois sélectionner on donne le NB PLACEPMR ( si case à chocher == True ) pour l'utilisatuer  #}
 		<div class="form-group">
-			{{ form_label(formReservation.NbPlacesPMR, 'Sélectionnez le nombre de place(s) que vous souhaitez réserver <br> pour une personne à mobilité réduite : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
+			{{ form_label(formReservation.NbPlacesPMR, 'Sélectionnez le nombre de place(s) (PMR) : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
 			{{ form_widget(formReservation.NbPlacesPMR, {'attr': {'disabled': true}})  }}
 			{{ form_errors(formReservation.NbPlacesPMR) }}
 		</div>

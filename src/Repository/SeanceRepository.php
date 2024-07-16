@@ -32,6 +32,24 @@ class SeanceRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+
+    public function findSeanceByHoraire(int $horaireId):array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+           'SELECT seance
+         FROM App\Entity\Seance seance
+         JOIN seance.horaire horaire
+         WHERE horaire.id = :horaireId'
+        )
+        ->setParameter('horaireId', $horaireId);
+
+        return $query->getResult();
+    }
+
+
+    
     //    /**
     //     * @return Seance[] Returns an array of Seance objects
     //     */
