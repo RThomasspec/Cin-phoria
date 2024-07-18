@@ -8,6 +8,7 @@
 								const horaireSeanceSelect = document.getElementById('film_horaires');
 								const prix = document.getElementById('film_prix');
 								const submitButton = document.getElementById('submit-button');
+								const inputsHoraires = document.querySelectorAll(`input[name="form[horaires][]"]`);
 
 								submitButton.disabled = true;
 							
@@ -173,8 +174,14 @@ horaireSeanceSelect.addEventListener('change', async function () {
 		submitButton.disabled = false;
 	}
 });
-							
-});
+
+		cinemaSelect.addEventListener('change', function(){
+	inputsHoraires.forEach(input => {
+        input.disabled = true;
+    });
+})					
+
+
 
 
 	function checkCheckboxes() {
@@ -189,6 +196,8 @@ horaireSeanceSelect.addEventListener('change', async function () {
         }
     });
 								}
+
+								});
 							</script>
 {% endblock %}
 

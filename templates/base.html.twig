@@ -21,19 +21,18 @@
 						<ul class="navbar-nav me-auto">
 
 							<li class="nav-item">
-								<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Cinémas</a>
-								<div class="dropdown-menu">
-									<a class="dropdown-item" href="{{ path('cinema_show', {'id': 1}) }}">Cinéphoria de Nantes</a>
-									<a class="dropdown-item" href="{{ path('cinema_show', {'id': 2}) }}">Cinéphoria de Bordeaux</a>
-									<a class="dropdown-item" href="{{ path('cinema_show', {'id': 3}) }}">Cinéphoria de Paris</a>
-									<a class="dropdown-item" href="{{ path('cinema_show', {'id': 4}) }}">Cinéphoria de Toulouse</a>
-									<a class="dropdown-item" href="{{ path('cinema_show', {'id': 5}) }}">Cinéphoria de Lille</a>
+							
+									<a href="{{ path('cinema_show', {'id': 1}) }}">Cinéphoria de Nantes</a>
+									<a href="{{ path('cinema_show', {'id': 2}) }}">Cinéphoria de Bordeaux</a>
+									<a href="{{ path('cinema_show', {'id': 3}) }}">Cinéphoria de Paris</a>
+									<a href="{{ path('cinema_show', {'id': 4}) }}">Cinéphoria de Toulouse</a>
+									<a href="{{ path('cinema_show', {'id': 5}) }}">Cinéphoria de Lille</a>
 
 									<div class="dropdown-divider"></div>
 									<div class="dropdown-header">Belgique</div>
-									<a class="dropdown-item" href="#">Cinéphoria de Charleroi</a>
-									<a class="dropdown-item" href="#">Cinéphoria de Liège</a>
-								</div>
+									<a href="{{ path('cinema_show', {'id': 6}) }}">Cinéphoria de Charleroi</a>
+									<a href="{{ path('cinema_show', {'id': 7}) }}">Cinéphoria de Liège</a>
+								
 							</li>
 							{# Devoir creer le IsGranted pou cette route  !!#}
 							{% if is_granted('ROLE_CLIENT') %}
@@ -88,7 +87,7 @@
 								</p>
 
 									<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
-									<a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-outline-success"> Sélectionenr le film</a>
+									<a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-outline-success"> Sélectionner le film</a>
 
 							</div>
 						</article>

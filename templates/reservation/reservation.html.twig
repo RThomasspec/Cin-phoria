@@ -11,13 +11,15 @@
 									const NbPlacesPMRSelect = document.getElementById('reservation_NbPlacesPMR');
 									const NbPlacesSelect = document.getElementById('reservation_NbPlaces');
 									const submitButton = document.getElementById('submit-button');
+									const redirectButton = document.getElementById('redirect-button');
 									const PrixReservation = document.getElementById('reservation_Prix');
 									
 	                const filmId = {{ film.id}};
 	                
 	    
 	                async function loadData() {
-	                submitButton.disabled = true;
+isDisabled(submitButton,redirectButton)
+	            
 	                try {
 								            const responseSeance = await fetch("{{ path('ajax_get_seances_by_film') }}", {
 								                method: 'POST',
@@ -108,7 +110,8 @@
 											}			
 	                            
 	                           if(NbPlacesSelect.value >= 1){
-								submitButton.disabled = false;
+								
+								notDisabled(submitButton,redirectButton );
 							
 							   }
 	                            
@@ -173,7 +176,7 @@
 											}			
 	                            
 	                           if(NbPlacesPMRSelect.value >= 1){
-								submitButton.disabled = false;
+								notDisabled(submitButton,redirectButton );
 							
 							   }
 	                            
@@ -193,6 +196,22 @@
 
 	NbPlacesSelect.addEventListener('change', calculatePrice);
     NbPlacesPMRSelect.addEventListener('change', calculatePrice);
+function isDisabled(submitButton ,redirectButton){
+	if(submitButton != null){
+submitButton.disabled =true;
+	}else if (redirectButton != null){
+		redirectButton.disabled = true;
+	}
+}
+
+
+function notDisabled(submitButton ,redirectButton){
+	if(submitButton != null){
+submitButton.disabled =false;
+	}else if (redirectButton != null){
+		redirectButton.disabled = false;
+	}
+}
 
 
  function isSeanceTimePassed(jourAComparer, heureAComparer){
@@ -222,6 +241,44 @@
 		}
 	}
  }
+function saveFormDataAndRedirect(event) {
+
+	event.preventDefault();
+
+	 // Récupérer les données du formulaire
+            const formData = {
+                Seance :  document.getElementById("reservation_seance").value,
+				Pmr : document.getElementById("reservation_PersonneAMobiliteReduite").checked,
+				NbPlacesPMR : document.getElementById("reservation_NbPlacesPMR").value,
+				NbPlaces : document.getElementById("reservation_NbPlaces").value,
+				Prix : document.getElementById("reservation_Prix").value
+            };
+
+	localStorage.setItem('formData', JSON.stringify(formData));
+
+	window.location.href = '{{ path("app_login") }}';
+
+
+}
+
+function restoreFormData() {
+	 const savedFormData = localStorage.getItem('formData');
+	 
+    if (savedFormData) {
+        const formData = JSON.parse(savedFormData);
+        
+        document.getElementById('reservation_seance').value = formData.Seance || '';
+        document.getElementById('reservation_PersonneAMobiliteReduite').checked = formData.Pmr || false;
+		document.getElementById("reservation_NbPlacesPMR").value = formData.NbPlacesPMR || '';
+		document.getElementById("reservation_NbPlaces").value = formData.NbPlaces || '';
+		document.getElementById("reservation_Prix").value = formData.Prix || '';
+        
+    
+             // Supprimer les données du localStorage
+                localStorage.removeItem('formData');
+    }
+	
+}
 
 
 	async function calculatePrice(){
@@ -246,7 +303,7 @@ let totalPrice =0;
             const pricePlacePMR = parseInt(selectedOptionPMR.getAttribute('data-price-pmr'));
 
        		 totalPrice = pmr * pricePlacePMR;
-			 submitButton.disabled = false;
+			 notDisabled(submitButton,redirectButton );
 
 			
 
@@ -266,7 +323,7 @@ let totalPrice =0;
             const pricePlace = parseInt(selectedOption.getAttribute('data-price'));
 
 			totalPrice = (places * pricePlace) ;
-			submitButton.disabled = false;
+			notDisabled(submitButton,redirectButton );
 
 
 			}else if (NbPlacesPMRSelect.value >= 1 && NbPlacesSelect.value >= 1){
@@ -292,16 +349,18 @@ let totalPrice =0;
 
 
        		 totalPrice = (places * pricePlace) + (pmr * pricePlacePMR);
-			 submitButton.disabled = false;
+			 notDisabled(submitButton,redirectButton );
 
 			}
 			else if (NbPlacesPMRSelect.value == 0 && NbPlacesSelect.value == 0){
-				submitButton.disabled = true;
+				notDisabled(submitButton,redirectButton );
 
 			}
 
 		PrixReservation.value = totalPrice;
 	}
+
+
 	});
 
 	
@@ -370,11 +429,11 @@ let totalPrice =0;
 
 		{% if not app.user %}
 
-			<a class="btn btn-primary" href="{{ path('security_registration')}}">Valider</a>
+			<button onclick="saveFormDataAndRedirect(event)" class="btn btn-primary" id="redirect-button" >va paspapspa</a>
 
 		{% else %}
 			<button type="submit" class="btn btn-primary" id="submit-button">
-				Valider
+				Réserver
 			</button>
 
 		{% endif %}
