@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Imagine\Gd\Imagine;
@@ -26,7 +29,12 @@ use App\Repository\SalleRepository;
 use App\Repository\SeanceRepository;
 
 class MenuController extends AbstractController
+
 {
+
+
+
+
     #[Route('/', name: 'home')]
     public function home(FilmRepository $repo, CinemaRepository $cinemaRepository)
     {   
@@ -180,6 +188,8 @@ class MenuController extends AbstractController
     #[Route('/filmshow/reservation/{id}', name: 'film_reservation')]
     public function reservation(Request $request, Film $film, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
     {   
+        
+
         $reservation = new Reservation();
 
         $form = $this->createForm(ReservationType::class, $reservation);
@@ -195,6 +205,20 @@ class MenuController extends AbstractController
         return $this->render('reservation/reservation.html.twig', [
             'formReservation' => $form->createView(),
             'film' => $film
+        ]);
+    }
+
+
+
+    #[Route('/redirectionRservation', name: 'redirection_reservation')]
+    public function redirectionRservation(Request $request, Film $film, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
+    {   
+        if (!$this->getUser()) {
+            return new RedirectResponse($this->generateUrl('app_login')); // Remplacez 'login_route' par la route réelle de votre page de connexion
+        }
+
+        return $this->render('reservation/reservation.html.twig', [
+        
         ]);
     }
 

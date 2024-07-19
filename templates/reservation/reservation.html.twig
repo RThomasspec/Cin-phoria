@@ -4,6 +4,8 @@
 {% block javascripts %}
 	 <script>
 	document.addEventListener('DOMContentLoaded', function () {
+	
+
 	               
 					 const SeanceSelect = document.querySelector('[name="reservation\\[seance\\]"]');
             
@@ -18,6 +20,7 @@
 	                
 	    
 	                async function loadData() {
+						  restoreFormData() ;
 isDisabled(submitButton,redirectButton)
 	            
 	                try {
@@ -196,6 +199,12 @@ isDisabled(submitButton,redirectButton)
 
 	NbPlacesSelect.addEventListener('change', calculatePrice);
     NbPlacesPMRSelect.addEventListener('change', calculatePrice);
+	document.getElementById('redirect-button').addEventListener('click', function(event) {
+    saveFormDataAndRedirect(event);
+});
+
+
+
 function isDisabled(submitButton ,redirectButton){
 	if(submitButton != null){
 submitButton.disabled =true;
@@ -255,16 +264,19 @@ function saveFormDataAndRedirect(event) {
             };
 
 	localStorage.setItem('formData', JSON.stringify(formData));
-
+	console.log("test");
 	window.location.href = '{{ path("app_login") }}';
-
+			  
 
 }
 
 function restoreFormData() {
+
+	
 	 const savedFormData = localStorage.getItem('formData');
 	 
     if (savedFormData) {
+		notDisabled(submitButton ,redirectButton);
         const formData = JSON.parse(savedFormData);
         
         document.getElementById('reservation_seance').value = formData.Seance || '';
@@ -429,7 +441,7 @@ let totalPrice =0;
 
 		{% if not app.user %}
 
-			<button onclick="saveFormDataAndRedirect(event)" class="btn btn-primary" id="redirect-button" >va paspapspa</a>
+			<button class="btn btn-primary" id="redirect-button" >Réserver</a>
 
 		{% else %}
 			<button type="submit" class="btn btn-primary" id="submit-button">

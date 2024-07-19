@@ -10,7 +10,8 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use App\Entity\Utilisateur;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
@@ -23,16 +24,50 @@ use App\Repository\FilmRepository;
 class SecurityController extends AbstractController
 {
     #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, Request $request, RouterInterface $router): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+        if ($this->getUser()) {
+            $refererUrl = $request->headers->get('referer');
+
+            // Analyser l'URL pour obtenir le chemin
+            $pathInfo = parse_url($refererUrl, PHP_URL_PATH);
+        
+            // Faire correspondre le chemin à une route
+            $routeInfo = $router->match($pathInfo);
+        
+            // Obtenir le nom de la route
+            $refererRoute = $routeInfo['_route'];
+        
+            // Obtenir les paramètres de la route
+            $routeParams = $routeInfo;
+            if(isset($routeParams['id'])){
+            $id = $routeParams['id'];
+            }
+            unset($routeParams['_route']);
+
+        if($routeParams){
+           var_dump(("connecté et contient le routeparam"));
+            if ($refererRoute == "film_reservation") {
+                // Supprimer la clé de session une fois utilisée
+                var_dump(("connecté et contient efererRoute == film_reservation"));
+                // Rediriger l'utilisateur vers l'URL enregistrée après la connexion['id' => $film->getId()]
+               return $this->redirectToRoute('film_reservation', ['id' => $id ]);
+            }
+        }else{
+             
+                // Rediriger l'utilisateur vers une autre page s'il est déjà connecté
+                return $this->redirectToRoute('home'); // Remplacez 'dashboard' par la route souhaitée
+            
+        }
+        }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
+
+
+
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }

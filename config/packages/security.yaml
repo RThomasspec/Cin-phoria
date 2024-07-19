@@ -28,7 +28,7 @@ security:
                 login_path: security_login
                # Symfony utilise la meme route pour chercher le formulaire et vérifier les données du formulaire
                 check_path: security_login
-                default_target_path: security_login
+                default_target_path: app_login
                 #username_parameter: username
                 #password_parameter: password
             custom_authenticator: App\Security\LoginFormAuthenticator
