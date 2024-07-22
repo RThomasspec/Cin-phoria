@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Cinema;
 use App\Entity\Diffusion;
+use App\Entity\Utilisateur;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -22,11 +23,14 @@ use App\Entity\Salle;
 use App\Entity\Seance;
 use App\Form\FilmType;
 use App\Form\ReservationType;
+use App\Form\SalleType;
 use App\Repository\CinemaRepository;
 use App\Repository\FilmRepository;
 use App\Repository\HoraireRepository;
 use App\Repository\SalleRepository;
 use App\Repository\SeanceRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Commande;
 
 class MenuController extends AbstractController
 
@@ -46,6 +50,31 @@ class MenuController extends AbstractController
             'cinemas' => $cinemas
         ]);
     }
+
+    #[Route('/intranet/ModifyOrDelteFilm', name: 'ModifyOrDelteFilm')]
+    public function ModifyOrDelteFilm(FilmRepository $repo, CinemaRepository $cinemaRepository)
+    {   
+        $films = $repo->findAll();
+        $cinemas = $cinemaRepository->findAll();
+
+        return $this->render('home/modifyOrDeleteFilm.html.twig', [
+            'films' => $films,
+
+        ]);
+    }
+
+    #[Route('/intranet/modifyOrDeleteSalle', name: 'ModifyOrDeleteSalle')]
+    public function ModifyOrDelteSalle(SalleRepository $salleRepository)
+    {   
+        $salles = $salleRepository->findAll();
+   
+
+        return $this->render('home/modifyOrDeleteSalle.html.twig', [
+            'salles' => $salles,
+        
+        ]);
+    }
+
 
 // le isgranted est unique on ne peux mettre qu'un role mais grace à la hiérarchisation dans le security.yaml ROLE_ADMION sera
 // au-dessus de ROLE_EMPLOYE ce qui permet sont accés également à ce controlleur 
@@ -177,6 +206,49 @@ class MenuController extends AbstractController
         ]);
     }
 
+    #[Route('/filmDelete/{id}', name: 'film_delete')]
+    public function filmDelete(Film $film,  FilmRepository $repo, ObjectManager $manager)
+    {   
+
+            // Vérifier si l'entité existe
+            if (!$film) {
+                throw $this->createNotFoundException(
+                    'No film found'
+                );
+            }
+    
+            // Supprimer l'entité
+            $manager->remove($film);
+            $manager->flush();
+    
+            // Rediriger ou retourner une réponse appropriée
+            return $this->redirectToRoute('intranet'); // Remplacez 'success_page' par la route de votre choix
+        
+  
+    }
+
+
+    #[Route('/salleDelete/{id}', name: 'salle_delete')]
+    public function salleDelete(Salle $salle,  SalleRepository $repo, ObjectManager $manager)
+    {   
+
+            // Vérifier si l'entité existe
+            if (!$salle) {
+                throw $this->createNotFoundException(
+                    'No salle found'
+                );
+            }
+    
+            // Supprimer l'entité
+            $manager->remove($salle);
+            $manager->flush();
+    
+            // Rediriger ou retourner une réponse appropriée
+            return $this->redirectToRoute('intranet'); // Remplacez 'success_page' par la route de votre choix
+        
+  
+    }
+
     #[Route('/filmshow/{id}', name: 'film_show')]
     public function filmShow(Film $film)
     {   
@@ -186,20 +258,30 @@ class MenuController extends AbstractController
     }
 
     #[Route('/filmshow/reservation/{id}', name: 'film_reservation')]
-    public function reservation(Request $request, Film $film, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
+    public function reservation(Request $request, Film $film,ObjectManager $manager, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
     {   
         
 
         $reservation = new Reservation();
+        $commande = new Commande();
+        
 
         $form = $this->createForm(ReservationType::class, $reservation);
-        
+      
+        $user = $this->getUser();
 
         $form->handleRequest($request);
 
-
         if ($form->isSubmitted() && $form->isValid()) {
 
+    
+            $commande = $commande->setUtilisateur($user);
+            $commande = $commande->setStatut("Confirmé");
+            $manager->persist($commande);
+            $manager->flush();
+       
+
+            return $this->redirectToRoute('home');
         }
 
         return $this->render('reservation/reservation.html.twig', [
@@ -210,7 +292,7 @@ class MenuController extends AbstractController
 
 
 
-    #[Route('/redirectionRservation', name: 'redirection_reservation')]
+    #[Route('/redirectionReservation', name: 'redirection_reservation')]
     public function redirectionRservation(Request $request, Film $film, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
     {   
         if (!$this->getUser()) {
@@ -236,6 +318,34 @@ class MenuController extends AbstractController
     {
     
         return $this->render('home/intranet.html.twig', [
+            
+        ]);
+    }
+
+
+
+    #[Route('/salle/new', name: 'form_salle')]
+    #[Route('/salle/{id}/new', name: 'salle_edit')]
+    public function formClasse (Request $request, Salle $salle = null, SalleRepository $salleRepository, ObjectManager $manager)
+    {
+        if(!$salle){
+        $salle = new Salle();
+        }
+
+        $form = $this->createForm(SalleType::class,$salle);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $manager->persist($salle);
+            $manager->flush();
+
+            return $this->redirectToRoute('intranet');
+        }
+        return $this->render('home/createSalle.html.twig', [
+            'editMode' => $salle->getId() !== null,
+            'formSalle' => $form->createView()
             
         ]);
     }

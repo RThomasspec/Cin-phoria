@@ -33,14 +33,15 @@ class ReservationType extends AbstractType
     {
         $builder
 
-            ->add('seance', ChoiceType::class, [
-                'choices' => [], // Empty choices, will be populated with JavaScript
-                 'expanded' => false,
-                 'multiple' => false,
-                 'label' => 'seance',
-                 "mapped" => false,
-              
-             ])
+                ->add('seance', ChoiceType::class, [
+                    'choices' => [], // Empty choices, will be populated with JavaScript
+                    'expanded' => false,
+                    'multiple' => false,
+                    'label' => 'Seance',
+                    "mapped" => false,
+                    'required' => true,
+                
+                ])
            
             ->add('Prix', TextType::class, [
                 'label' => 'Prix',
@@ -53,7 +54,7 @@ class ReservationType extends AbstractType
              ->add('PersonneAMobiliteReduite', CheckboxType::class, [
                 'attr' => ['class' => 'form-check-input'],
                 'label' => 'Personne à mobilité réduite',
-                'required' => true,
+                'required' => false,
                 "mapped" => false,
             ])
 
@@ -61,17 +62,19 @@ class ReservationType extends AbstractType
                 'choices' => [],
                 'expanded' => false,
                 'multiple' => false,
-                'label' => 'seance',
+                'label' => 'Nombre de place PMR',
                 "mapped" => false,
             ])
             ->add('NbPlaces', ChoiceType::class, [
                 'choices' => [],
                 'expanded' => false,
                 'multiple' => false,
-                'label' => 'seance',
+                'label' => 'Nombre de place',
                 "mapped" => false,
+                'required' => true,
             ])
         ;
+    
     }
 
     public function configureOptions(OptionsResolver $resolver): void

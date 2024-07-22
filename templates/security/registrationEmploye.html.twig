@@ -1,0 +1,29 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+	<h1>
+		Inscription d'un employé
+	</h1>
+
+	{{ form_start(form) }}
+
+	<div class="form-group">
+		{{ form_label(form.mail, 'Adresse mail de l \'employé', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(form.mail, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(form.mail) }}
+	</div>
+
+	<div class="form-group">
+		{{ form_widget(form.password)}}
+		{{ form_errors(form.password) }}
+	</div>
+
+	<button type="submit" class="btn btn-primary">
+		Inscription !
+	</button>
+
+
+	{{form_end(form)}}
+
+{% endblock %}

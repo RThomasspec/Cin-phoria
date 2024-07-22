@@ -20,7 +20,7 @@
 	                
 	    
 	                async function loadData() {
-						  restoreFormData() ;
+						  //restoreFormData() ;
 isDisabled(submitButton,redirectButton)
 	            
 	                try {
@@ -167,7 +167,7 @@ isDisabled(submitButton,redirectButton)
 	                        option.value = 0;
 	                                    option.textContent = "Nombre de place(s)" ;
 	                                    NbPlacesPMRSelect.appendChild(option);
-	          
+	        
 	                  
 
 								for (let a = 1; a <= placedispoSeancePMR.placeDispoPMR ; a++) {
@@ -199,9 +199,12 @@ isDisabled(submitButton,redirectButton)
 
 	NbPlacesSelect.addEventListener('change', calculatePrice);
     NbPlacesPMRSelect.addEventListener('change', calculatePrice);
+	{% if not app.user %}
 	document.getElementById('redirect-button').addEventListener('click', function(event) {
-    saveFormDataAndRedirect(event);
+    //saveFormDataAndRedirect(event);
 });
+	{% endif %}
+	
 
 
 
@@ -271,7 +274,6 @@ function saveFormDataAndRedirect(event) {
 }
 
 function restoreFormData() {
-
 	
 	 const savedFormData = localStorage.getItem('formData');
 	 
@@ -433,11 +435,11 @@ let totalPrice =0;
 
 			{# Si plus de place == 0 dans ce cas Message "Il n'y a plus de place pour la séance selectionné "  #}
 
-			{{ form_end(formReservation) }}
+	
 
 
 		</fieldset>
-
+<br> 
 
 		{% if not app.user %}
 
@@ -448,6 +450,9 @@ let totalPrice =0;
 				Réserver
 			</button>
 
+			
+
 		{% endif %}
+				{{ form_end(formReservation) }}
 
 	{% endblock %}

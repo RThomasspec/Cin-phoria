@@ -1,0 +1,28 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+<h1> Veuillez selectionner une Salle </h1>
+
+	{% for salle in salles %}
+						<article>
+							<h2>
+								{{ salle.nom}}
+                                {{ salle.cinema.nom}}
+							</h2>
+							<div class="content">	
+								<p>
+									{{salle.Qualite}}
+								</p>
+
+									<a href="{{ path('salle_delete', {'id': salle.id}) }}" class="btn btn-primary"> Supprimer la salle</a>
+                                    <a href="{{ path('salle_edit', {'id': salle.id}) }}" class="btn btn-primary"> Modifier la salle</a>
+
+							</div>
+						</article>
+						
+{% endfor %}
+
+{% endblock %}
+
+
+  

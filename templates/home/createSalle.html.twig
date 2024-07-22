@@ -1,0 +1,46 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+	<h1>
+		Création d'une salle d'un employé
+	</h1>
+     
+	{{ form_start(formSalle) }}
+
+	<div class="form-group">
+		{{ form_label(formSalle.cinema, 'Sélectionnez le cinéma Cinphoria pour cette salle :', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(formSalle.cinema, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(formSalle.cinema) }}
+	</div>
+
+    <div class="form-group">
+		{{ form_label(formSalle.nom, 'Saisissez le nom de la salle', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(formSalle.nom, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(formSalle.nom) }}
+	</div>
+
+    <div class="form-group">
+		{{ form_label(formSalle.Qualite, 'Choisissez la qualité de diffusion', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(formSalle.Qualite, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(formSalle.Qualite) }}
+	</div>
+
+    <div class="form-group">
+		{{ form_label(formSalle.nbPlaces, 'Saisissez le nombres de places', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(formSalle.nbPlaces, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(formSalle.nbPlaces) }}
+	</div>
+	<button type="submit" class="btn btn-primary">
+{% if editMode %}
+								Modifier
+							{% else %}
+								Créer
+							</button>
+						{% endif %}
+
+
+
+	{{form_end(formSalle)}}
+
+{% endblock %}

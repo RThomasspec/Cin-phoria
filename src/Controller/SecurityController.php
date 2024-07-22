@@ -18,7 +18,7 @@ use Imagine\Image\Box;
 use App\Form\RegistrationType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Film;
-use App\Form\FilmType;
+use App\Form\RegistrationEmployeType;
 use App\Repository\FilmRepository;
 
 class SecurityController extends AbstractController
@@ -79,6 +79,40 @@ class SecurityController extends AbstractController
     }
 
 
+    #[Route('/inscription/employe', name: 'security_registration_employe')]
+    public function registrationEmploye(Request $request, ObjectManager $manager, UserPasswordHasherInterface $encoder ): Response
+    {
+
+        $user = new Utilisateur();
+
+        $form = $this->createForm(RegistrationEmployeType::class,$user);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            // mon form sera remplis lors de la request
+            // Liste des statut : 
+            // ROLE_USER : Le rôle de base pour tous les utilisateurs.
+            // ROLE_ADMIN : Le rôle pour les administrateurs.
+            // ROLE_EMPLOYE : Le rôle pour les employés.
+            // ROLE_CLIENT : Le rôle pour les clients.
+            $user->setRoles(["ROLE_EMPLOYE"]);
+            $user->setPrenom("EMPLOYE");
+            $user->setNom("EMPLOYE");
+            $hash = $encoder->hashPassword($user, $user->getpassword());
+            $user->setpassword($hash);
+            $manager->persist($user);
+            $manager->flush();
+
+            return $this->redirectToRoute('intranet');
+        }
+
+        return $this->render('security/registrationEmploye.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+
     #[Route('/inscription', name: 'security_registration')]
     public function registration(Request $request, ObjectManager $manager, UserPasswordHasherInterface $encoder ): Response
     {
@@ -96,7 +130,7 @@ class SecurityController extends AbstractController
             // ROLE_ADMIN : Le rôle pour les administrateurs.
             // ROLE_EMPLOYEE : Le rôle pour les employés.
             // ROLE_CLIENT : Le rôle pour les clients.
-            $user->setRoles(["ROLE_ADMIN"]);
+            $user->setRoles(["ROLE_USER"]);
             $hash = $encoder->hashPassword($user, $user->getpassword());
             $user->setpassword($hash);
             $manager->persist($user);
