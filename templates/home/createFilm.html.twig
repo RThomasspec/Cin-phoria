@@ -200,6 +200,11 @@ horaireSeanceSelect.addEventListener('change', async function () {
 					{{ form_errors(formFilm.affichage) }}
 				</div>
 
+				<div class="form-group">
+					{{ form_label(formFilm.genre, 'Genre du film : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
+					{{ form_widget(formFilm.genre, {'attr': {'class': 'form-control'}}) }}
+					{{ form_errors(formFilm.genre) }}
+				</div>
 				<span>
 					<div class="form-group">
 						{{ form_label(formFilm.salles, 'Sélection de la salle : ', {'label_attr': {'class': 'form-check-label'}}) }}

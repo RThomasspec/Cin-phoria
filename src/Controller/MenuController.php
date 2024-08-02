@@ -362,15 +362,18 @@ class MenuController extends AbstractController
     }
 
     #[IsGranted('ROLE_EMPLOYE', message: 'You are not allowed to access the admin dashboard.')]
-    #[Route('/dashboard', name: 'redirection_reservation')]
-    public function dashboard(Request $request, Film $film, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
+    #[Route('/dashboard', name: 'dashboard')]
+    public function dashboard(FilmRepository $filmRepository, ReservationRepository $reservationRepository)
     {   
-        if (!$this->getUser()) {
-            return new RedirectResponse($this->generateUrl('app_login'));
+        $films = $filmRepository->findAll();
+        $reservationByFilm = [];
+        foreach ($films as $film){
+            $reservationByFilm[$film->getId()] = $reservationRepository->findReservationsByFilmId($film->getId());
         }
 
-        return $this->render('reservation/reservation.html.twig', [
-        
+        return $this->render('home/dashboard.html.twig', [
+            'reservationByFilm' => $reservationByFilm,
+            'films' => $films
         ]);
     }
 

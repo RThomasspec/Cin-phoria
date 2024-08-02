@@ -29,6 +29,25 @@ class ReservationRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+
+        /**
+     * @param int $filmId
+     * @return Reservation[]
+     */
+    public function findReservationsByFilmId(int $filmId): int
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT COUNT (r.id)
+            FROM App\Entity\Reservation r
+            INNER JOIN r.seance s
+            INNER JOIN s.film f
+            WHERE f.id = :filmId'
+        )->setParameter('filmId', $filmId);
+
+        return (int) $query->getSingleScalarResult();
+    }
     //    /**
     //     * @return Reservation[] Returns an array of Reservation objects
     //     */

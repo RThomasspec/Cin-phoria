@@ -56,6 +56,11 @@ class Film
     #[ORM\Column(nullable: true)]
     private ?int $note = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $genre = null;
+
+
+
     public function __construct()
     {
         $this->seances = new ArrayCollection();
@@ -242,6 +247,19 @@ class Film
 
         return $this;
     }
+
+    public function getGenre(): ?string
+    {
+        return $this->genre;
+    }
+
+    public function setGenre(?string $genre): static
+    {
+        $this->genre = $genre;
+
+        return $this;
+    }
+
 
 
 }

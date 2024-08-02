@@ -58,6 +58,31 @@ class FilmType extends AbstractType
                 'attr' => ['class' => 'form-select'],
                 'label' => 'Note'
             ])
+
+            ->add('genre', ChoiceType::class, [
+                'choices' => [
+                    'Comédie' => "Comédie",
+                    'Horreur' => "Horreur",
+                    'Drame' => "Drame",
+                    'Fantastique' => "Fantastique",
+                    'Animation' => "Animation",
+                    'Musical' => "Musical",
+                    'Documentaire' => "Documentaire",
+                    'Guerre' => "Guerre",
+                    'Western' => "Western",
+                    'Biopic' => "Biopic",
+                    'Comédie romantique' => "Comédie romantique",
+                    'Historique' => "Historique",
+                    'Retransmission' => "Retransmission",
+                    'Court métrage' => "Court métrage",
+                    'Thriller' => "Thriller",
+                    'Action / Aventure' => "Action / Aventure",
+                    'Science-fiction' => "Science-fiction",
+                    'Comédie dramatique' => "Comédie dramatique",
+                ],
+                'attr' => ['class' => 'form-select'],
+                'label' => 'Note'
+            ])
             ->add('coupDeCoeur', CheckboxType::class, [
                 'attr' => ['class' => 'form-check-input'],
                 'label' => 'Coup de coeur',

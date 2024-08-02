@@ -54,6 +54,11 @@
                             <a class="nav-link" href="{{ path('intranet') }}">Intranet</a>
                         </li>
                     {% endif %}
+                    {% if is_granted('ROLE_EMPLOYE')%}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('dashboard') }}">Dashboard</a>
+                        </li>
+                    {% endif %}
                     {% if is_granted('ROLE_ADMIN') %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('intranet') }}">Administration</a>
