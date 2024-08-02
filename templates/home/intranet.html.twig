@@ -5,10 +5,15 @@
 <h4>FILMS</h4>
 <br>
 <div class="form-group">
+{% if is_granted('ROLE_EMPLOYE') and not is_granted('ROLE_ADMIN') %}
+      <a href="{{ path('film_create')}}" class="btn btn-outline-success">Créer un film</a>                  
+                    {% endif %}
+        <a href="{{ path('film_create_employe')}}" class="btn btn-outline-success">Créer un film</a>
 {# la création d'un ce fait obligatoirement avec au moins une séance #}
-<a href="{{ path('film_create')}}" class="btn btn-outline-success">Créer un film</a>
+
 <br>
 <br>
+</div>
 {# le film peut être modifié ( affichage d'un formulaire avec toutes les données du film ) #}
 <a href="{{ path('ModifyOrDelteFilm')}}" class="btn btn-outline-primary"> Modifier/Supprimer un film</a>
 <br>

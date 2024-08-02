@@ -30,7 +30,7 @@
 							
 							            if (responseSalle.ok) {
 							                const datasalle = await responseSalle.json();
-											
+											sallesSelect.disabled = false;
 											
 											const salles = datasalle.sallesAray;
 							                sallesSelect.innerHTML = '';
@@ -44,7 +44,7 @@
 													option.value = salle.id;
 													option.textContent = salle.nom + " diffusion ( " + salle.Qualite + " )" + " Places : " + salle.places;
 													sallesSelect.appendChild(option);
-													sallesSelect.disabled = false;
+													
 												})
 							            } else {
 							                console.error('Erreur lors du chargement des salles:', responseSalle.statusText);
@@ -89,31 +89,9 @@
 											horaireSeanceSelect.appendChild(option);
 	
 											/////
-											if(horairesUtilise.length > 0){
+											if(horaires.length > 0){
 											horaires.forEach(horaire => {
-												let isReserved = false;
-												horairesUtilise.forEach( horairesUtilse => {
-													if(horairesUtilse.id == horaire.id){
-														let checkbox = document.createElement('input');
-														 checkbox.type = 'checkbox';
-														checkbox.name = 'form[horaires][]';
-														checkbox.value = horaire.id;
-														checkbox.id = 'horaire_' + horaire.id;
 
-														const label = document.createElement('label');
-														label.htmlFor = 'horaire_' + horaire.id;
-														label.textContent =  horaire.jour + " séance de " + horaire.debut +"h à " + horaire.fin+"h"  ;;
-
-														const div = document.createElement('div');
-														div.appendChild(checkbox);
-														div.appendChild(label);
-
-
-							                    horaireSeanceSelect.appendChild(div);
-													
-														isReserved = true;
-													}})
-											if (!isReserved){
 											let checkbox = document.createElement('input');
 														 checkbox.type = 'checkbox';
 														checkbox.name = 'form[horaires][]';
@@ -130,31 +108,11 @@
 
 
 							                    horaireSeanceSelect.appendChild(div);
-											}
+											
 							                });
 											horaireSeanceSelect.disabled = false;
 		
-											}else{
-												horaires.forEach(horaire => {
-												let checkbox = document.createElement('input');
-														 checkbox.type = 'checkbox';
-														checkbox.name = 'form[horaires][]';
-														checkbox.value = horaire.id;
-														checkbox.id = 'horaire_' + horaire.id;
-
-														const label = document.createElement('label');
-														label.htmlFor = 'horaire_' + horaire.id;
-														label.textContent =  horaire.jour + " séance de " + horaire.debut +"h à " + horaire.fin+"h"  ;;
-
-														const div = document.createElement('div');
-														div.appendChild(checkbox);
-														div.appendChild(label);
-
-
-							                    horaireSeanceSelect.appendChild(div);
-												
-												
-												})}
+											}
 												
 											
 	

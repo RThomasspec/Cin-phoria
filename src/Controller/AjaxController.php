@@ -97,19 +97,18 @@ class AjaxController extends AbstractController
 
         foreach ($horaires as $horaire) {
             $seances = $seanceRepository->findSeanceByHoraire($horaire->getId());
-        
-        // Supposons qu'il n'y a qu'une seule séance par horaire
-        $seance = $seances[0];
-            $horaireArraySeance[] = [
-                    'id' => $horaire->getId(),
-                    'jour' => $horaire->getJour(),
-                    'debut' => $horaire->getDebut()->format('H:i'),
-                    'qualite' => $seance->getQualite(),
-                    'fin' => $horaire->getFin()->format('H:i'),
-                    
-                ];
     
-        }
+            $seance = $seances[0];
+                $horaireArraySeance[] = [
+                        'id' => $horaire->getId(),
+                        'jour' => $horaire->getJour(),
+                        'debut' => $horaire->getDebut()->format('H:i'),
+                        'qualite' => $seance->getQualite(),
+                        'fin' => $horaire->getFin()->format('H:i'),
+                        
+                    ];
+        
+            }
 
         return new JsonResponse([
         

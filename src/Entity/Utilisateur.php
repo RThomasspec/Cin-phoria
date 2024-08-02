@@ -57,6 +57,9 @@ class Utilisateur implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'utilisateur')]
     private Collection $avis;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $token = null;
+
 
     public function __construct()
     {
@@ -226,6 +229,10 @@ class Utilisateur implements PasswordAuthenticatedUserInterface, UserInterface
         return (string) $this->mail;
     }
 
+    public function getUtilisateurId(): ?int
+    {
+        return $this->id;
+    }
     /**
      * @see UserInterface
      */
@@ -252,6 +259,18 @@ class Utilisateur implements PasswordAuthenticatedUserInterface, UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): static
+    {
+        $this->token = $token;
+
+        return $this;
     }
 
 

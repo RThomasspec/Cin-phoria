@@ -33,13 +33,11 @@ class ReservationType extends AbstractType
     {
         $builder
 
-                ->add('seance', ChoiceType::class, [
-                    'choices' => [], // Empty choices, will be populated with JavaScript
-                    'expanded' => false,
-                    'multiple' => false,
-                    'label' => 'Seance',
-                    "mapped" => false,
-                    'required' => true,
+                ->add('horaire', EntityType::class, [
+               'class' => Horaire::class,
+                'choice_label' => 'jour',
+                'placeholder' => 'Sélectionnez une salle',
+                "mapped" => false
                 
                 ])
            
@@ -59,14 +57,17 @@ class ReservationType extends AbstractType
             ])
 
             ->add('NbPlacesPMR', ChoiceType::class, [
-                'choices' => [],
+                'placeholder' => 'Sélectionnez un nombre',
+                'choices' => $this->getNumberChoices(),
                 'expanded' => false,
                 'multiple' => false,
-                'label' => 'Nombre de place PMR',
+                'label' => 'Nombre de place',
                 "mapped" => false,
+                'required' => true,
             ])
             ->add('NbPlaces', ChoiceType::class, [
-                'choices' => [],
+                'placeholder' => 'Sélectionnez un nombre',
+               'choices' => $this->getNumberChoices(),
                 'expanded' => false,
                 'multiple' => false,
                 'label' => 'Nombre de place',
@@ -75,6 +76,16 @@ class ReservationType extends AbstractType
             ])
         ;
     
+    }
+
+    private function getNumberChoices()
+    {
+        $choices = [];
+        
+        for ($i = 1; $i <= 100; $i++) {
+            $choices[$i] = $i;
+        }
+        return $choices;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

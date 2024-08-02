@@ -47,8 +47,22 @@ class SeanceRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+   
 
 
+    public function findSeanceByUtilisateur(int $userId):array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT s
+            FROM App\Entity\Seance s
+            INNER JOIN s.reservations r
+            WHERE r.utilisateur = :userId'
+        )->setParameter('userId', $userId);
+
+        return $query->getResult();
+    }
     
     //    /**
     //     * @return Seance[] Returns an array of Seance objects

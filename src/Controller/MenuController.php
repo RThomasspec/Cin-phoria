@@ -4,6 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Cinema;
 use App\Entity\Diffusion;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Security;
+
 use App\Entity\Utilisateur;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,7 +14,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -31,6 +35,8 @@ use App\Repository\SalleRepository;
 use App\Repository\SeanceRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Commande;
+use App\Form\ContactType;
+use App\Repository\ReservationRepository;
 
 class MenuController extends AbstractController
 
@@ -86,7 +92,7 @@ class MenuController extends AbstractController
     // dans mon cas j'ai deux route alors pour la route sans id, il ne pourra pas me récupérer mon film et ce n'est pas ce que je veux
     // il va donc falloir que je dise en paramtre que le Film peut etre null et si il est null on viens l'intancier pour qu'il soit vide
     // mais si je n'ai pas de Film via son id je veux une véritable instance de mon film d'ou la condition
-    public function formFilm(Film $film = null, Request $request, ObjectManager $manager , HoraireRepository $horaireRepository, SalleRepository $salleRepository)
+    public function formFilm(Film $film = null, Request $request,Security $security, ObjectManager $manager , HoraireRepository $horaireRepository, SalleRepository $salleRepository)
     {   
        // #[IsGranted('ROLE_ADMIN', message: 'You are not allowed to access the admin dashboard.')]
 
@@ -165,11 +171,11 @@ class MenuController extends AbstractController
             
                 $prix =  $form->get('prix')->getData();
                 $seance = new Seance();
-                $seance = $seance->setFilm(($film));
+                $seance = $seance->setFilm($film);
                 $seance = $seance->setQualite($salle->getQualite());
                 $seance = $seance->setCinema($cinema);
-                $seance = $seance->setHeureDebut($horaireRepository->find($horaireId)->getFin());
-                $seance = $seance->setHeureFin($horaireRepository->find($horaireId)->getDebut());
+                $seance = $seance->setHeureDebut($horaireRepository->find($horaireId)->getDebut());
+                $seance = $seance->setHeureFin($horaireRepository->find($horaireId)->getFin());
                 $seance = $seance->setHoraire($horaireRepository->find($horaireId));
                 $seance = $seance->setSalle($salleRepository->find($salle->getId()));
                 $seance = $seance->setPrix($prix);
@@ -205,6 +211,7 @@ class MenuController extends AbstractController
             'film' => $film
         ]);
     }
+
 
     #[Route('/filmDelete/{id}', name: 'film_delete')]
     public function filmDelete(Film $film,  FilmRepository $repo, ObjectManager $manager)
@@ -258,7 +265,7 @@ class MenuController extends AbstractController
     }
 
     #[Route('/filmshow/reservation/{id}', name: 'film_reservation')]
-    public function reservation(Request $request, Film $film,ObjectManager $manager, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
+    public function reservation(Request $request, TokenStorageInterface $tokenStorage,Film $film,ObjectManager $manager, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
     {   
         
 
@@ -279,14 +286,64 @@ class MenuController extends AbstractController
             $commande = $commande->setStatut("Confirmé");
             $manager->persist($commande);
             $manager->flush();
-       
+           
+
+            $data = $form->getData();
+            $formData = $request->request->all(); 
+
+            $nbPlacesPMR = $formData['dataContentPMR'] ?? null; 
+            $nbPlaces = $formData['dataContentPlace'] ?? null; 
+
+            $prix = $formData['dataContentPrix'] ?? null; 
+
+            $nbSieges = 0;
+            if($nbPlacesPMR >= 1 && $nbPlaces == 0){
+                $seanceIdPMR = $form->get('NbPlacesPMR')->getData();
+                $seance = $seanceRepository->find($seanceIdPMR);
+                $nbSieges = $nbPlacesPMR;
+                $nbPlacesDispoPMR = $seance->getPlaceDispoPMR() - $nbPlacesPMR;
+                
+                $seance = $seance->setPlaceDispoPMR($nbPlacesDispoPMR);
+            }else if($nbPlaces >= 1 && $nbPlacesPMR == 0){
+                $seanceId = $form->get('NbPlaces')->getData();
+                $nbSieges = $nbPlaces ;
+                $seance = $seanceRepository->find($seanceId);
+                
+                $nbPlacesDispo = $seance->getPlaceDispo() - $nbPlaces;
+
+                $seance = $seance->setPlaceDispo($nbPlacesDispo);
+            }else{
+                $nbSieges = $nbPlaces + $nbPlacesPMR;
+                $seanceId = $formData['reservation']['NbPlaces'];
+                $seance = $seanceRepository->find($seanceId);
+
+
+                $nbPlacesDispoPMR = $seance->getPlaceDispoPMR() - $nbPlacesPMR;
+                $seance = $seance->setPlaceDispoPMR($nbPlacesDispoPMR);
+
+                $nbPlacesDispo = $seance->getPlaceDispo() - $nbPlaces;
+                $seance = $seance->setPlaceDispo($nbPlacesDispo);
+            }
+
+            $reservation = $reservation->setCommande($commande);
+            $reservation = $reservation->setUtilisateur($user);
+            $reservation = $reservation->setSeance($seance);    
+            $reservation = $reservation->setNbSieges($nbSieges);
+            $reservation = $reservation->setPrix($prix);
+            $reservation = $reservation->setStatut("Confirmée");
+
+            $manager->persist($reservation);
+            $manager->flush();
+
+            $manager->persist($seance);
+            $manager->flush();
 
             return $this->redirectToRoute('home');
         }
 
         return $this->render('reservation/reservation.html.twig', [
             'formReservation' => $form->createView(),
-            'film' => $film
+            'film' => $film,
         ]);
     }
 
@@ -296,10 +353,70 @@ class MenuController extends AbstractController
     public function redirectionRservation(Request $request, Film $film, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
     {   
         if (!$this->getUser()) {
-            return new RedirectResponse($this->generateUrl('app_login')); // Remplacez 'login_route' par la route réelle de votre page de connexion
+            return new RedirectResponse($this->generateUrl('app_login'));
         }
 
         return $this->render('reservation/reservation.html.twig', [
+        
+        ]);
+    }
+
+    #[IsGranted('ROLE_CLIENT', message: 'You are not allowed to access.')]
+    #[Route('/monCompte/commande', name: 'commande')]
+    public function commande(SeanceRepository $seanceRepository, TokenStorageInterface $tokenStorage, ReservationRepository $reservationRepository)
+    {   
+        $token = $tokenStorage->getToken();
+        $user = $token->getUser();
+// Impossible d'obtenir l'id de l'utilisateur via son accesseur, autre moyen pour l'obtenir
+        if ($user instanceof Utilisateur) {
+            $reflectionClass = new \ReflectionClass($user);
+            $property = $reflectionClass->getProperty('id');
+            $property->setAccessible(true);
+            $userId = $property->getValue($user);
+            
+        } 
+        // film, date heure, nbplace, prix, staut
+     
+        
+        $reservations = $reservationRepository->findReservationByUtilisateur($userId);
+     
+       
+
+   
+        $seanceReservations = [];
+
+        for ($i = 0; $i < count($reservations); $i++) {
+
+            $reservation = $reservations[$i];
+            $seance = $seanceRepository->find($reservation->getSeance()->getId());
+
+                $seanceReservations[] = [
+                        'nbSieges' => $reservation->getNbSieges(),
+                        'prix' => $reservation->getPrix(),
+                        'statut' => $reservation->getStatut(),
+                        'titre' => $seance->getFilm()->getTitre(),
+                        'debut' => $seance->getHeureDebut()->format('H:i'),
+                        'fin' => $seance->getHeureFin()->format('H:i'),
+                        
+                    ];
+        
+            }
+        
+
+        return $this->render('home/commande.html.twig', [
+            'seanceReservations' => $seanceReservations,
+        ]);
+    }
+
+    #[IsGranted('ROLE_CLIENT', message: 'You are not allowed to access.')]
+    #[Route('/monCompte', name: 'monCompte')]
+    public function Compte()
+    {   
+        $user = $this->getUser();
+
+        
+        return $this->render('home/monCompte.html.twig', [
+            'user' => $user
         
         ]);
     }
@@ -321,7 +438,6 @@ class MenuController extends AbstractController
             
         ]);
     }
-
 
 
     #[Route('/salle/new', name: 'form_salle')]
@@ -349,6 +465,8 @@ class MenuController extends AbstractController
             
         ]);
     }
+
+
 
 
 

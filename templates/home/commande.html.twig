@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    <table>
+ <thead>
+    <tr>
+      <th scope="col">Film</th>
+      <th scope="col">Date et horaire</th>
+      <th scope="col">Nombre de place(s) réservée </th>
+      <th scope="col">Prix</th>
+      <th scope="col">Statut</th>
+    </tr>
+  </thead>
+    {% for seanceReservation in seanceReservations %}
+  <tr>
+  <td> {{ seanceReservation.titre }}</td>
+  <td> {{ seanceReservation.debut|date('H:i:s') }} {{ seanceReservation.fin |date('H:i:s') }}</td>
+  <td> {{ seanceReservation.nbSieges }}</td>
+  <td> {{ seanceReservation.prix }}</td>
+  <td> {{ seanceReservation.statut }}</td>
+ 
+ 
+
+
+    </tr>
+   
+    {% endfor %}
+
+
+
+     </table>
+
+
+
+{% endblock %}

@@ -113,13 +113,10 @@ class FilmType extends AbstractType
     
 
            // Ajouter un écouteur d'événements pour les données dynamiques
-           $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $form = $event->getForm();
-            $data = $event->getData();
-            var_dump($data);
+        
             // Ajouter des options dynamiques si les données sont disponibles
        
-        });
+        
     }
 
     public function configureOptions(OptionsResolver $resolver): void

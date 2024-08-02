@@ -6,8 +6,8 @@
 	document.addEventListener('DOMContentLoaded', function () {
 	
 
-	               
-					 const SeanceSelect = document.querySelector('[name="reservation\\[seance\\]"]');
+	               const form = document.querySelector('form'); // Sélectionner le formulaire
+					 const SeanceSelect = document.getElementById('reservation_horaire');
             
 								  const checkBoxPMR = document.getElementById('reservation_PersonneAMobiliteReduite');
 									const NbPlacesPMRSelect = document.getElementById('reservation_NbPlacesPMR');
@@ -15,13 +15,15 @@
 									const submitButton = document.getElementById('submit-button');
 									const redirectButton = document.getElementById('redirect-button');
 									const PrixReservation = document.getElementById('reservation_Prix');
+									const notValuePmr = document.getElementById('notValuePmr');
+									
 									
 	                const filmId = {{ film.id}};
 	                
 	    
 	                async function loadData() {
 						  //restoreFormData() ;
-isDisabled(submitButton,redirectButton)
+					isDisabled(submitButton,redirectButton)
 	            
 	                try {
 								            const responseSeance = await fetch("{{ path('ajax_get_seances_by_film') }}", {
@@ -39,13 +41,14 @@ isDisabled(submitButton,redirectButton)
 								                const dataHoraire = await responseSeance.json();
 												
 												
-	                        const horaires = dataHoraire.horaireArraySeance;
+	                        					const horaires = dataHoraire.horaireArraySeance;
 	                   
 	                       
 	
 	                        //
-	                    
+	                    	SeanceSelect.innerHTML = '';
 	                        const option = document.createElement('option');
+							
 	                        option.value = 0;
 	                                    option.textContent = "Sélectionner une seance" ;
 	                                    SeanceSelect.appendChild(option);
@@ -95,8 +98,13 @@ isDisabled(submitButton,redirectButton)
 												const nbPlaceSeance = dataSeance.seanceArray;
 												
 												const placedispoSeance = nbPlaceSeance[0];
+
+												if(placedispoSeance.placesDispo == 0){
+							  NbPlacesSelect.innerHTML = '';
+							  NbPlacesSelect.disabled =true;
+												}else{
 											
-						
+						NbPlacesSelect.innerHTML = '';
 	                          const option = document.createElement('option');
 	                        option.value = 0;
 	                                    option.textContent = "Nombre de place(s) :" ;
@@ -108,6 +116,7 @@ isDisabled(submitButton,redirectButton)
 								const option = document.createElement('option');
 								option.value = placedispoSeance.id;
 	                            option.textContent =  a;
+								option.setAttribute('data-content-place', a);
 								option.setAttribute('data-price', placedispoSeance.prix);
 	                            NbPlacesSelect.appendChild(option);
 											}			
@@ -117,7 +126,7 @@ isDisabled(submitButton,redirectButton)
 								notDisabled(submitButton,redirectButton );
 							
 							   }
-	                            
+												}	
 	                     
 	                          
 											}
@@ -161,12 +170,17 @@ isDisabled(submitButton,redirectButton)
 												const placedispoSeancePMR = nbPlaceSeance[0];
 
 										
-											
-						
+							if(placedispoSeancePMR.placeDispoPMR == 0){
+							  NbPlacesPMRSelect.innerHTML = '';
+							  NbPlacesPMRSelect.disabled =true;
+							  
+
+							}else{
+							  NbPlacesPMRSelect.innerHTML = '';
 	                          const option = document.createElement('option');
-	                        option.value = 0;
-	                                    option.textContent = "Nombre de place(s)" ;
-	                                    NbPlacesPMRSelect.appendChild(option);
+	                          option.value = 0;
+	                          option.textContent = "Nombre de place(s)" ;
+	                          NbPlacesPMRSelect.appendChild(option);
 	        
 	                  
 
@@ -175,6 +189,7 @@ isDisabled(submitButton,redirectButton)
 								option.value = placedispoSeancePMR.id;
 	                            option.textContent =  a;
 								option.setAttribute('data-price-pmr', placedispoSeancePMR.prix);
+								option.setAttribute('data-content-PMR', a);
 	                            NbPlacesPMRSelect.appendChild(option);
 											}			
 	                            
@@ -182,7 +197,7 @@ isDisabled(submitButton,redirectButton)
 								notDisabled(submitButton,redirectButton );
 							
 							   }
-	                            
+							}
 	                     
 	                          
 											}
@@ -196,6 +211,7 @@ isDisabled(submitButton,redirectButton)
 
 
 			});
+			
 
 	NbPlacesSelect.addEventListener('change', calculatePrice);
     NbPlacesPMRSelect.addEventListener('change', calculatePrice);
@@ -322,12 +338,14 @@ let totalPrice =0;
 			
 
 			}else if(NbPlacesSelect.value >= 1 && NbPlacesPMRSelect.value == 0){
-
+			
 		
             const selectedPlaceOption = NbPlacesSelect.selectedOptions[0];
+			console.log(selectedPlaceOption);
 
         
             const places = parseInt(selectedPlaceOption.textContent, 10);
+			
 
 
 			const selectedIndex = NbPlacesSelect.selectedIndex;  // Get the index of the selected option
@@ -344,6 +362,8 @@ let totalPrice =0;
 
         	const selectedPMROption = NbPlacesPMRSelect.selectedOptions[0];
             const selectedPlaceOption = NbPlacesSelect.selectedOptions[0];
+
+			console.log(selectedPlaceOption);
 
             const pmr = parseInt(selectedPMROption.textContent, 10);
             const places = parseInt(selectedPlaceOption.textContent, 10);
@@ -373,8 +393,76 @@ let totalPrice =0;
 
 		PrixReservation.value = totalPrice;
 	}
+NbPlacesSelect.addEventListener('change', function() {
+        let hiddenInputContent = document.querySelector('input[name="dataContentPlace"]');
+        
+        // Si le champ caché n'existe pas, créez-le
+        if (!hiddenInputContent) {
+            hiddenInputContent = document.createElement('input');
+            hiddenInputContent.type = 'hidden';
+            hiddenInputContent.name = 'dataContentPlace'; // Nom du champ caché
+            form.appendChild(hiddenInputContent);
+        }
+        
+        // Récupérer l'option sélectionnée
+        const selectedOption = NbPlacesSelect.options[NbPlacesSelect.selectedIndex];
+        
+        // Récupérer l'attribut data-content-PMR de l'option sélectionnée
+        const dataContent = selectedOption.getAttribute('data-content-place');
+        
+        // Mettre à jour la valeur du champ caché
+        if (dataContent) {
+            hiddenInputContent.value = dataContent; // Valeur du champ caché
+        }
+    });
 
+    NbPlacesPMRSelect.addEventListener('change', function() {
+        let hiddenInputContent = document.querySelector('input[name="dataContentPMR"]');
+        
+        // Si le champ caché n'existe pas, créez-le
+        if (!hiddenInputContent) {
+            hiddenInputContent = document.createElement('input');
+            hiddenInputContent.type = 'hidden';
+            hiddenInputContent.name = 'dataContentPMR'; // Nom du champ caché
+            form.appendChild(hiddenInputContent);
+        }
+        
+        // Récupérer l'option sélectionnée
+        const selectedOption = NbPlacesPMRSelect.options[NbPlacesPMRSelect.selectedIndex];
+        
+        // Récupérer l'attribut data-content-PMR de l'option sélectionnée
+        const dataContentPMR = selectedOption.getAttribute('data-content-PMR');
+        
+        // Mettre à jour la valeur du champ caché
+        if (dataContentPMR) {
+            hiddenInputContent.value = dataContentPMR; // Valeur du champ caché
+        }
+    });
 
+	function handlePrice(event){
+        let hiddenInputContent = document.querySelector('input[name="dataContentPrix"]');
+        
+        // Si le champ caché n'existe pas, créez-le
+        if (!hiddenInputContent) {
+            hiddenInputContent = document.createElement('input');
+            hiddenInputContent.type = 'hidden';
+            hiddenInputContent.name = 'dataContentPrix'; // Nom du champ caché
+            form.appendChild(hiddenInputContent);
+        }
+        
+        // Mettre à jour la valeur du champ caché
+        if (PrixReservation.value) {
+            hiddenInputContent.value = PrixReservation.value; // Valeur du champ caché
+        }
+   
+	}
+
+	 if (form) {
+        form.addEventListener('submit', function(event) {
+            // Appeler votre méthode avant la soumission du formulaire
+            handlePrice(event);
+        });
+    }
 	});
 
 	
@@ -398,9 +486,9 @@ let totalPrice =0;
 		{# Selection de la SEANCE proposé par le cinéma #}
 		<div class="form-group">
 			
-				{{ form_label(formReservation.seance, 'Séances de la semaine : ', {'label_attr': {'class': 'form-check-label'}}) }}
-				{{ form_widget(formReservation.seance, {'attr': {'class': 'form-control'}}) }}
-				{{ form_errors(formReservation.seance) }}
+				{{ form_label(formReservation.horaire, 'Séances de la semaine : ', {'label_attr': {'class': 'form-check-label'}}) }}
+				{{ form_widget(formReservation.horaire, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(formReservation.horaire) }}
 			
 		</div>
 
@@ -417,6 +505,9 @@ let totalPrice =0;
 			{{ form_label(formReservation.NbPlacesPMR, 'Sélectionnez le nombre de place(s) (PMR) : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
 			{{ form_widget(formReservation.NbPlacesPMR, {'attr': {'disabled': true}})  }}
 			{{ form_errors(formReservation.NbPlacesPMR) }}
+			<div class = "notValuePmr">
+			
+			</div>
 		</div>
 		{# Une fois sélectionner on donne le NB PLACE pour l'utilisatuer  #}
 		<div class="form-group">
@@ -449,7 +540,6 @@ let totalPrice =0;
 			<button type="submit" class="btn btn-primary" id="submit-button">
 				Réserver
 			</button>
-
 			
 
 		{% endif %}
