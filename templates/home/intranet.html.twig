@@ -5,15 +5,23 @@
 <h4>FILMS</h4>
 <br>
 <div class="form-group">
-{% if is_granted('ROLE_EMPLOYE') and not is_granted('ROLE_ADMIN') %}
+{% if is_granted('ROLE_ADMIN') %}
       <a href="{{ path('film_create')}}" class="btn btn-outline-success">Créer un film</a>                  
-                    {% endif %}
-        <a href="{{ path('film_create_employe')}}" class="btn btn-outline-success">Créer un film</a>
+{% endif %}
+</div>
+
+<div class="form-group">
+{% if IsCreatable %}
+<a href="{{ path('film_create')}}" class="btn btn-outline-success">Créer un film</a>  
+{% endif %}
+</div>
+     {#    <a href="{{ path('film_create_employe')}}" class="btn btn-outline-success">Créer un film</a>
 {# la création d'un ce fait obligatoirement avec au moins une séance #}
 
 <br>
 <br>
-</div>
+
+<div class="form-group">
 {# le film peut être modifié ( affichage d'un formulaire avec toutes les données du film ) #}
 <a href="{{ path('ModifyOrDelteFilm')}}" class="btn btn-outline-primary"> Modifier/Supprimer un film</a>
 <br>
@@ -25,6 +33,8 @@
 <a href="{{ path('form_salle')}}" class="btn btn-outline-success">Créer une salles</a>
 <br>
 <br>
+</div>
+<div class="form-group">
 <a href="{{ path('ModifyOrDeleteSalle')}}" class="btn btn-outline-primary">Modifier/Supprimer une salles</a><br>
 <br>
 </div>
@@ -37,18 +47,22 @@
 <a href="/autre-page" class="btn btn-outline-primary">Valider un avis</a>
 <br>
 <br>
-<a href="/autre-page" class="btn btn-outline-danger">Supprimer un avis</a>
 </div>
-<br>
-<br>
+<div class="form-group">
+<a href="/autre-page" class="btn btn-outline-danger">Supprimer un avis</a>
 
+<br>
+<br>
+</div>
+
+<div class="form-group">
 {% if is_granted('ROLE_ADMIN') %}
 <h4>CREATION DE COMPTE</h4>
 <br>
 <div class="form-group">
 <a href="{{ path('security_registration_employe')}}" class="btn btn-outline-success">Créer un compte pour un employé</a>
 {% endif %}
-
+</div>
 						
 
 

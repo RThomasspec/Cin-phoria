@@ -37,6 +37,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Commande;
 use App\Form\ContactType;
 use App\Repository\ReservationRepository;
+use App\Repository\UtilisateurRepository;
 
 class MenuController extends AbstractController
 
@@ -92,10 +93,9 @@ class MenuController extends AbstractController
     // dans mon cas j'ai deux route alors pour la route sans id, il ne pourra pas me récupérer mon film et ce n'est pas ce que je veux
     // il va donc falloir que je dise en paramtre que le Film peut etre null et si il est null on viens l'intancier pour qu'il soit vide
     // mais si je n'ai pas de Film via son id je veux une véritable instance de mon film d'ou la condition
-    public function formFilm(Film $film = null, Request $request,Security $security, ObjectManager $manager , HoraireRepository $horaireRepository, SalleRepository $salleRepository)
+    public function formFilm(Film $film = null, Request $request, ObjectManager $manager , HoraireRepository $horaireRepository, SalleRepository $salleRepository)
     {   
-       // #[IsGranted('ROLE_ADMIN', message: 'You are not allowed to access the admin dashboard.')]
-
+     
         $imagePath = '/public/uploads/images/';
 
         if (!$film) {
@@ -350,7 +350,20 @@ class MenuController extends AbstractController
 
 
     #[Route('/redirectionReservation', name: 'redirection_reservation')]
-    public function redirectionRservation(Request $request, Film $film, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
+    public function redirectionReservation()
+    {   
+        if (!$this->getUser()) {
+            return new RedirectResponse($this->generateUrl('app_login'));
+        }
+
+        return $this->render('reservation/reservation.html.twig', [
+        
+        ]);
+    }
+
+    #[IsGranted('ROLE_EMPLOYE', message: 'You are not allowed to access the admin dashboard.')]
+    #[Route('/dashboard', name: 'redirection_reservation')]
+    public function dashboard(Request $request, Film $film, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
     {   
         if (!$this->getUser()) {
             return new RedirectResponse($this->generateUrl('app_login'));
@@ -431,12 +444,23 @@ class MenuController extends AbstractController
     }
 
     #[Route('/intranet', name: 'intranet')]
-    public function intranet (FilmRepository $filmRepository)
+    public function intranet ( UtilisateurRepository $utilisateurRepository)
     {
+        $userId = $this->getUser(); 
+        $user = $utilisateurRepository->find($userId);
+        $today = new \DateTime();
+        if ($user) {
+            if ($user->getRoles('ROLE_EMPLOYE') && $today->format('l') != 'Wednesday') {
+                $IsCreatable = false;
+            }else{
+                $IsCreatable = true;
+            }
     
         return $this->render('home/intranet.html.twig', [
+            'IsCreatable' => $IsCreatable,
             
         ]);
+    }
     }
 
 
