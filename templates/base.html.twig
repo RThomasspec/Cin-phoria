@@ -83,6 +83,28 @@
 			<div class="container">
 				{% block body %}
 
+           <h1>Filter Films</h1>
+            {{ form_start(formFilter) }}
+            {{ form_widget(formFilter) }}
+            {{ form_end(formFilter) }}
+
+          {% for filmfilter in filmsFilter %}
+          <article>
+							<h2>
+								{{ filmfilter.titre}}
+							</h2>
+							<div class="content">	
+								<p>
+									{{filmfilter.note}}
+								</p>
+
+									<img src="{{ asset('uploads/images/' ~ filmfilter.idImage) }}" alt="{{ filmfilter.titre }}">
+									<a href="{{ path('film_show', {'id': filmfilter.id}) }}" class="btn btn-primary"> Sélectionner le film</a>
+
+							</div>
+						</article>
+          {% endfor %}
+
 					{% for film in films %}
 						<article>
 							<h2>

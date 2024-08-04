@@ -38,6 +38,7 @@ use App\Entity\Commande;
 use App\Form\ContactType;
 use App\Repository\ReservationRepository;
 use App\Repository\UtilisateurRepository;
+use App\Form\FilmFilterType;
 
 class MenuController extends AbstractController
 
@@ -47,13 +48,40 @@ class MenuController extends AbstractController
 
 
     #[Route('/', name: 'home')]
-    public function home(FilmRepository $repo, CinemaRepository $cinemaRepository)
+    public function home(FilmRepository $filmRepository, CinemaRepository $cinemaRepository, Request $request)
     {   
-        $films = $repo->findAll();
+        $cinema = new Cinema();
+        $films = $filmRepository->findAll();
         $cinemas = $cinemaRepository->findAll();
+
+        $formFilter = $this->createForm(FilmFilterType::class);
+        $formFilter->handleRequest($request);
+        $filmsFilter = [];
+        
+        if ($formFilter->isSubmitted() && $formFilter->isValid()) {
+
+
+  $cinema = $formFilter->get('cinema')->getData();
+  if($cinema){
+    $cinemaId = $cinema->getId();
+  }else{
+    $cinemaId = null;
+  }
+
+
+
+            $films = $filmRepository->findByFilters(
+                $cinemaId,
+                $formFilter->get('genre')->getData(),
+                $formFilter->get('jour')->getData()
+            );
+        }
+
 
         return $this->render('base.html.twig', [
             'films' => $films,
+            'filmsFilter' => $filmsFilter,
+            'formFilter' => $formFilter->createView(),
             'cinemas' => $cinemas
         ]);
     }
@@ -286,9 +314,7 @@ class MenuController extends AbstractController
             $commande = $commande->setStatut("Confirmé");
             $manager->persist($commande);
             $manager->flush();
-           
 
-            $data = $form->getData();
             $formData = $request->request->all(); 
 
             $nbPlacesPMR = $formData['dataContentPMR'] ?? null; 

@@ -30,6 +30,56 @@ class FilmRepository extends ServiceEntityRepository
         return $query->getResult();
     } 
 
+public function findByFilters(?int $cinemaId = null, ?string $genre= null, ?string $jour = null)
+{
+    $entityManager = $this->getEntityManager();
+
+    // Création de la requête de base
+    $dql = $this->createQueryBuilder('f')
+    ->innerJoin('App\Entity\Diffusion', 'd', 'WITH', 'f.id = d.films')
+    ->innerJoin('App\Entity\Cinema', 'c', 'WITH', 'd.cinemas = c.id')
+    ->innerJoin('App\Entity\Seance', 's', 'WITH', 'f.id = s.film')
+    ->innerJoin('App\Entity\Horaire', 'h', 'WITH', 's.horaire = h.id');
+
+
+    $criteria = [];
+
+    // Ajout de conditions basées sur les paramètres
+    if ($cinemaId !== null) {
+        $criteria[] = 'c.id = :cinemaId';
+    }
+    if ($genre !== null) {
+        $criteria[] = 'f.genre = :genre';
+    }
+    if ($jour !== null) {
+        $criteria[] = 'h.jour = :jour';
+    }
+
+    // Ajout des conditions à la requête si elles existent
+    if (count($criteria) > 0) {
+        $dql .= ' WHERE ' . implode(' AND ', $criteria);
+    }
+
+    // Création de la requête
+    $query = $entityManager->createQuery($dql);
+
+    // Définition des paramètres
+    if ($cinemaId !== null) {
+        $query->setParameter('cinemaId', $cinemaId);
+    }
+    if ($genre !== null) {
+        $query->setParameter('genre', $genre);
+    }
+    if ($jour !== null) {
+        $query->setParameter('jour', $jour);
+    }
+
+
+    return $query->getResult();
+}
+
+
+
     //    /**
     //     * @return Film[] Returns an array of Film objects
     //     */
