@@ -405,7 +405,7 @@ class MenuController extends AbstractController
 
     #[IsGranted('ROLE_CLIENT', message: 'You are not allowed to access.')]
     #[Route('/monCompte/commande', name: 'commande')]
-    public function commande(SeanceRepository $seanceRepository, TokenStorageInterface $tokenStorage, ReservationRepository $reservationRepository)
+    public function commande(HoraireRepository $horaireRepository, SeanceRepository $seanceRepository, TokenStorageInterface $tokenStorage, ReservationRepository $reservationRepository)
     {   
         $token = $tokenStorage->getToken();
         $user = $token->getUser();
@@ -431,12 +431,13 @@ class MenuController extends AbstractController
 
             $reservation = $reservations[$i];
             $seance = $seanceRepository->find($reservation->getSeance()->getId());
-
+            $horaire     = $horaireRepository->findHoraireBySeance($seance->getId());
                 $seanceReservations[] = [
                         'nbSieges' => $reservation->getNbSieges(),
                         'prix' => $reservation->getPrix(),
                         'statut' => $reservation->getStatut(),
                         'titre' => $seance->getFilm()->getTitre(),
+                        'jour' => $horaire->getJour(),
                         'debut' => $seance->getHeureDebut()->format('H:i'),
                         'fin' => $seance->getHeureFin()->format('H:i'),
                         

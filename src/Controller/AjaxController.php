@@ -90,7 +90,7 @@ class AjaxController extends AbstractController
         $data = json_decode($request->getContent(), true); 
 
         $filmId = $data['film_Id'];
-        $horaires = $horaireRepository->findHoraireBySeance($filmId);
+        $horaires = $horaireRepository->findHoraireByFilm($filmId);
 
    
         $horaireArraySeance = [];

@@ -16,7 +16,7 @@ class HoraireRepository extends ServiceEntityRepository
         parent::__construct($registry, Horaire::class);
     }
 
-    public function findHoraireBySeance(int $filmId):array
+    public function findHoraireByFilm(int $filmId):array
     {
         $entityManager = $this->getEntityManager();
 
@@ -27,6 +27,21 @@ class HoraireRepository extends ServiceEntityRepository
          WHERE s.film = :film'
         )
         ->setParameter('film', $filmId);
+
+        return $query->getResult();
+    }
+
+    public function findHoraireBySeance(int $seanceId)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+          'SELECT h
+        FROM App\Entity\Horaire h
+        INNER JOIN App\Entity\Seance s WITH h.id = s.horaire
+        WHERE s.id = :seanceId'
+        )
+        ->setParameter('seanceId', $seanceId);
 
         return $query->getResult();
     }
