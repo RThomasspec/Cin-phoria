@@ -1,32 +1,77 @@
 {% extends "base.html.twig" %}
+{% block javascripts %}
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+ function isSeanceTimePassed(jourAComparer, heureAComparer){
+
+	const joursSemaine = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+
+    // Obtenez la date et l'heure actuelles
+    const maintenant = new Date();
+    // Ajuster le jour actuel pour que lundi soit 0, on viens ajouter + 6 à l'index du jour pour ensuite faire modulo 7 sur ce dernier,
+	//ce qui change l'ordre pour que dimanche soit placer à la fin de la liste. Si je ne fait pas cela il sera mis à l'index 0.
+    const jourActuelIndex = (maintenant.getDay() + 6) % 7; 
+    const jourActuel = joursSemaine[jourActuelIndex];
+    const heureActuelle = maintenant.toTimeString().split(' ')[0].substring(0, 5); // Récupère l'heure actuelle au format HH:MM
+
+	const jourAComparerIndex = joursSemaine.indexOf(jourAComparer);
+
+	if (jourAComparerIndex > jourActuelIndex){
+		return false ; // la seance n'est pas passé
+	}else if ( jourAComparerIndex < jourActuelIndex){
+		return true ;
+	}else{
+		// Si le jour est le même on viens vérifier l'heure
+		if(heureAComparer > heureActuelle){
+			return false ; // la séance n'est pas passé
+		}else{
+			return true ; // la séance est passé
+		}
+	}
+ }
+
+ document.querySelectorAll('tr').forEach(row => {
+                const jour = row.getAttribute('data-jour');
+                const heure = row.getAttribute('data-heure');
+                const button = row.querySelector('.button-avis');
+                console.log(`Jour: ${jour}, Heure: ${heure}, Bouton: ${button}`);
+console.log(`Séance passée: ${isSeanceTimePassed(jour, heure)}`);
+
+                if (isSeanceTimePassed(jour, heure)) {
+                    // affiche le button
+                  button.disabled = false;
+                } else {
+                    // Sinon, ne pas afficher le bouton
+                    button.disabled = true;
+         
+                }
+            });
+	});
+</script>
+{% endblock %}
 
 {% block body %}
 
     <table>
  <thead>
-    <tr>
-      <th scope="col">Film</th>
-      <th scope="col">Date</th>
-      <th scope="col">Horaire</th>
-      <th scope="col">Nombre de place(s) réservée </th>
-      <th scope="col">Prix</th>
-      <th scope="col">Statut</th>
-    </tr>
+
   </thead>
     {% for seanceReservation in seanceReservations %}
-  <tr>
+    <tr 
+    data-jour="{{ seanceReservation.jour }}"
+    data-heure="{{ seanceReservation.debut|date('H:i') }}"
+  >
   <td> {{ seanceReservation.titre }}</td>
-    <td> {{ seanceReservation.jour }}</td>
+  <td> {{ seanceReservation.jour }}</td>
   <td> {{ seanceReservation.debut|date('H:i:s') }} {{ seanceReservation.fin |date('H:i:s') }}</td>
   <td> {{ seanceReservation.nbSieges }}</td>
   <td> {{ seanceReservation.prix }}</td>
   <td> {{ seanceReservation.statut }}</td>
- 
- 
-
-
-    </tr>
-   
+  <td>
+ <a href="{{ path('avis', {'id': seanceReservation.filmId, 'utilisateurId': seanceReservation.utilisateurId}) }}" class="btn btn-outline-success button-avis" disabled>Donner son avis</a>
+ </td>
+ </tr>
+ </tr>
     {% endfor %}
 
 

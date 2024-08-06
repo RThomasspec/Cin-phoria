@@ -1,0 +1,30 @@
+{% extends "base.html.twig" %}
+
+
+{% block body %}
+
+	<h1>
+		Donnez vôtre avis
+	</h1>
+
+	{{ form_start(formAvis) }}
+
+	<div class="form-group">
+		{{ form_label(formAvis.note, 'Donner une note /5 : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(formAvis.note, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(formAvis.note) }}
+	</div>
+	<div class="form-group">
+		{{ form_label(formAvis.description, 'Descriptif : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(formAvis.description, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(formAvis.description) }}
+	</div>
+
+	<button type="submit" class="btn btn-primary">
+		Valider
+	</button>
+
+
+	{{form_end(formAvis)}}
+
+{% endblock %}

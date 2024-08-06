@@ -31,7 +31,7 @@ class HoraireRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function findHoraireBySeance(int $seanceId)
+    public function findHoraireBySeance(int $seanceId):array
     {
         $entityManager = $this->getEntityManager();
 

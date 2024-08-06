@@ -18,11 +18,11 @@ class MailController extends AbstractController
     public function contact (Request $request, MailerInterface $mailer)
     {   
 
-        $form = $this->createForm(ContactType::class);
-        $form->handleRequest($request);
+        $formContact = $this->createForm(ContactType::class);
+        $formContact->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()){
-            $data = $form->getData();
+        if ($formContact->isSubmitted() && $formContact->isValid()){
+            $data = $formContact->getData();
             
 
             $email = (new Email())
@@ -40,7 +40,7 @@ class MailController extends AbstractController
 
     
         return $this->render('home/contact.html.twig', [
-            'form' => $form->createView()
+            'formContact' => $formContact->createView()
         ]);
     }
 }

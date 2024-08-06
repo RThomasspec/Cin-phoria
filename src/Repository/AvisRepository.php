@@ -16,6 +16,20 @@ class AvisRepository extends ServiceEntityRepository
         parent::__construct($registry, Avis::class);
     }
 
+
+    public function findAvisByFilm(int $filmId):array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+          'SELECT a
+         FROM App\Entity\Avis a
+         WHERE a.film = :film'
+        )
+        ->setParameter('film', $filmId);
+
+        return $query->getResult();
+    }
     //    /**
     //     * @return Avis[] Returns an array of Avis objects
     //     */

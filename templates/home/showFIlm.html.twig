@@ -25,7 +25,24 @@
 		#}	
 		
 			<a href="{{ path('film_reservation', {'id': film.id}) }}" class="btn btn-outline-success"> Réserver maintenant</a>
-	
+				<section id="commentaires">
+				{% for avi in avis %}
+				<div class="comment">
+				<div class="row">
+				<div class="col-3">
+{{avi.utilisateur.prenom}} {{avi.utilisateur.nom}} 
+<br>
+ Note donnée : {{avi.note}} / 5
+				</div>
+				<div class="col">
+{{avi.description | raw }}
+				</div
+				</div>
+				</div>
+				{% endfor %}
+				</section
+				
+				
 		</article>
 
 	{% endblock %}

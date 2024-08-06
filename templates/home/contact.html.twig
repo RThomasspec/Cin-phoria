@@ -7,27 +7,28 @@
 		Contactez nous
 	</h1>
 
-	{{ form_start(form) }}
+	{{ form_start(formContact) }}
+
 	<div class="form-group">
-		{{ form_label(form.mail, 'Adresse mail : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
-		{{ form_widget(form.mail, {'attr': {'class': 'form-control'}}) }}
-		{{ form_errors(form.mail) }}
+		{{ form_label(formContact.mail, 'Adresse mail : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(formContact.mail, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(formContact.mail) }}
 	</div>
 	<div class="form-group">
-		{{ form_label(form.objet, 'Objet : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
-		{{ form_widget(form.objet, {'attr': {'class': 'form-control'}}) }}
-		{{ form_errors(form.objet) }}
+		{{ form_label(formContact.objet, 'Objet : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(formContact.objet, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(formContact.objet) }}
 	</div>
 	<div class="form-group">
-		{{ form_label(form.description, 'Description : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
-		{{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
-		{{ form_errors(form.description) }}
+		{{ form_label(formContact.description, 'Description : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
+		{{ form_widget(formContact.description, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(formContact.description) }}
 	</div>
 	<button type="submit" class="btn btn-primary">
 		Envoyer
 	</button>
 
 
-	{{form_end(form)}}
+	{{form_end(formContact)}}
 
 {% endblock %}

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Avis;
 use App\Entity\Cinema;
 use App\Entity\Diffusion;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -35,10 +36,13 @@ use App\Repository\SalleRepository;
 use App\Repository\SeanceRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Commande;
+use App\Form\AvisType;
 use App\Form\ContactType;
 use App\Repository\ReservationRepository;
 use App\Repository\UtilisateurRepository;
 use App\Form\FilmFilterType;
+use App\Repository\AvisRepository;
+use PhpParser\Node\Expr\Instanceof_;
 
 class MenuController extends AbstractController
 
@@ -61,12 +65,12 @@ class MenuController extends AbstractController
         if ($formFilter->isSubmitted() && $formFilter->isValid()) {
 
 
-  $cinema = $formFilter->get('cinema')->getData();
-  if($cinema){
-    $cinemaId = $cinema->getId();
-  }else{
-    $cinemaId = null;
-  }
+            $cinema = $formFilter->get('cinema')->getData();
+            if($cinema){
+                $cinemaId = $cinema->getId();
+            }else{
+                $cinemaId = null;
+            }
 
 
 
@@ -129,7 +133,7 @@ class MenuController extends AbstractController
         if (!$film) {
             $film = new Film();
         }
-        $form = $this->createForm(FilmType::class, $film);
+        $formFilm = $this->createForm(FilmType::class, $film);
             // A REPRENDRE
        // $form = $this->createForm(FilmType::class, $film, [
        //     'horaire_choices' =>$this->getHoraireChoices($horaireRepository, $film),
@@ -138,15 +142,15 @@ class MenuController extends AbstractController
         //$imageFile = new File($imageAbsolutePath);
         //$form->get('affichage')->setData($imageFile);
 
-        $form->handleRequest($request);
+        $formFilm->handleRequest($request);
 
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($formFilm->isSubmitted() && $formFilm->isValid()) {
             // La docblock @var UploadedFile $file informe l'éditeur et les outils d'analyse 
             //statique que la variable $file est de type UploadedFile.
             /** @var UploadedFile $file */
-            $file = $form->get('affichage')->getData();
-            $cinema = $form->get('cinema')->getData();
+            $file = $formFilm->get('affichage')->getData();
+            $cinema = $formFilm->get('cinema')->getData();
 
 
             if ($file) {
@@ -157,6 +161,7 @@ class MenuController extends AbstractController
                 $newFilename = uniqid().'.'.$file->guessExtension();
 
                 try {
+                    
                     //déplace le fichier vers ce répertoire avec le nouveau nom de fichier.
                     $file->move(
                         // récupère le chemin du répertoire de stockage des images à partir des paramètres de configuration.
@@ -183,7 +188,6 @@ class MenuController extends AbstractController
             $manager->flush();
 
 
-            $data = $form->getData();
             $formData = $request->request->all(); 
             $horairesSelectionnes = $formData['form']['horaires'];
             $PlaceDispoPMR = 5;
@@ -195,9 +199,9 @@ class MenuController extends AbstractController
 
             // $seances est un tableau contenant les IDs des séances sélectionnées
             foreach ($horairesSelectionnes as $horaireId) {
-                $salle = $form->get('salles')->getData();
+                $salle = $formFilm->get('salles')->getData();
             
-                $prix =  $form->get('prix')->getData();
+                $prix =  $formFilm->get('prix')->getData();
                 $seance = new Seance();
                 $seance = $seance->setFilm($film);
                 $seance = $seance->setQualite($salle->getQualite());
@@ -227,7 +231,7 @@ class MenuController extends AbstractController
 
         return $this->render('home/createFilm.html.twig', [
             'editMode' => $film->getId() !== null,
-            'formFilm' => $form->createView(),
+            'formFilm' => $formFilm->createView(),
             'film' => $film
         ]);
     }
@@ -285,15 +289,18 @@ class MenuController extends AbstractController
     }
 
     #[Route('/filmshow/{id}', name: 'film_show')]
-    public function filmShow(Film $film)
+    public function filmShow(Film $film, AvisRepository $avisRepository)
     {   
+        $avis = $avisRepository->findAvisByFilm($film->getId());
+        
         return $this->render('home/showFilm.html.twig', [
-            'film' => $film
+            'film' => $film,
+            'avis' => $avis
         ]);
     }
 
     #[Route('/filmshow/reservation/{id}', name: 'film_reservation')]
-    public function reservation(Request $request, TokenStorageInterface $tokenStorage,Film $film,ObjectManager $manager, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
+    public function reservation(Request $request, TokenStorageInterface $tokenStorage, Film $film,ObjectManager $manager, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
     {   
         
 
@@ -431,12 +438,16 @@ class MenuController extends AbstractController
 
             $reservation = $reservations[$i];
             $seance = $seanceRepository->find($reservation->getSeance()->getId());
-            $horaire     = $horaireRepository->findHoraireBySeance($seance->getId());
+            $horaires = $horaireRepository->findHoraireBySeance($seance->getId());
+            $horaire = $horaireRepository->find($horaires[0]->getId());
+
                 $seanceReservations[] = [
                         'nbSieges' => $reservation->getNbSieges(),
                         'prix' => $reservation->getPrix(),
                         'statut' => $reservation->getStatut(),
                         'titre' => $seance->getFilm()->getTitre(),
+                        'filmId' => $seance->getFilm()->getId(),
+                        'utilisateurId' => $reservation->getUtilisateur()->getId(),
                         'jour' => $horaire->getJour(),
                         'debut' => $seance->getHeureDebut()->format('H:i'),
                         'fin' => $seance->getHeureFin()->format('H:i'),
@@ -460,6 +471,36 @@ class MenuController extends AbstractController
         
         return $this->render('home/monCompte.html.twig', [
             'user' => $user
+        
+        ]);
+    }
+
+    #[IsGranted('ROLE_CLIENT', message: 'You are not allowed to access.')]
+    #[Route('/monCompte/commande/avis/{id}/{utilisateurId}', name: 'avis')]
+    public function Avis(Film $film, int $utilisateurId, ObjectManager $manager, Avis $avis = null, Request $request, UtilisateurRepository $utilisateurRepository)
+    {   
+        $utilisateur = $utilisateurRepository->find($utilisateurId);
+        if (!$avis) {
+            $avis = new Avis();
+        }
+
+        $formAvis = $this->createForm(AvisType::class, $avis);
+
+        $formAvis->handleRequest($request);
+
+        if($formAvis->isSubmitted() && $formAvis->isValid()){
+            
+            $avis = $avis->setUtilisateur($utilisateur);
+            $avis = $avis->setFilm($film);
+            $manager->persist($avis);
+            $manager->flush();
+
+            return $this->redirectToRoute('commande');
+        }
+
+        
+        return $this->render('home/avis.html.twig', [
+            'formAvis' => $formAvis
         
         ]);
     }
