@@ -51,16 +51,18 @@ class AvisRepository extends ServiceEntityRepository
     } 
 
 
-    public function FilmGetAvis(int $filmId): int
+    public function FilmGetAvis(int $filmId, int $utilisateurId): int
     {
         $entityManager = $this->getEntityManager();
     
         $query = $entityManager->createQuery(
             'SELECT COUNT(a.id) 
              FROM App\Entity\Avis a 
-             WHERE a.film = :filmId'
+             WHERE a.film = :filmId 
+             AND a.utilisateur = :utilisateurId'
         )
-        ->setParameter('filmId', $filmId);
+        ->setParameter('filmId', $filmId)
+        ->setParameter('utilisateurId', $utilisateurId);
     
         return $query->getSingleScalarResult();
     }

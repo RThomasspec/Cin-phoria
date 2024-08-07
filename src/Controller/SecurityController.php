@@ -59,10 +59,8 @@ class SecurityController extends AbstractController
             unset($routeParams['_route']);
 
         if($routeParams){
-           var_dump(("connecté et contient le routeparam"));
             if ($refererRoute == "film_reservation") {
                 // Supprimer la clé de session une fois utilisée
-                var_dump(("connecté et contient efererRoute == film_reservation"));
                 // Rediriger l'utilisateur vers l'URL enregistrée après la connexion['id' => $film->getId()]
                return $this->redirectToRoute('film_reservation', ['id' => $id ]);
             }

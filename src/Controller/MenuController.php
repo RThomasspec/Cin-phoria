@@ -334,10 +334,24 @@ class MenuController extends AbstractController
     public function filmShow(Film $film, AvisRepository $avisRepository)
     {   
         $avis = $avisRepository->findAvisValidebyFilm($film->getId());
+        $totalNote = 0;
+        $countAvis = count($avis);
+
+        if ($countAvis > 0) {
+            foreach ($avis as $noteAvis) {
+                $totalNote += $noteAvis->getNote();
+                $note = round($totalNote / $countAvis);
+    }
+}else {
+
+    $note = 0;
+}
+
         
         return $this->render('home/showFilm.html.twig', [
             'film' => $film,
-            'avis' => $avis
+            'avis' => $avis, 
+            'note' => $note
         ]);
     }
 
@@ -496,8 +510,7 @@ class MenuController extends AbstractController
             $horaires = $horaireRepository->findHoraireBySeance($seance->getId());
             $horaire = $horaireRepository->find($horaires[0]->getId());
 
-            $avis = $avisRepository->FilmGetAvis($seance->getFilm()->getId());
-            var_dump($i);
+            $avis = $avisRepository->FilmGetAvis($seance->getFilm()->getId(),$reservation->getUtilisateur()->getId() );
 
             if($avis > 0){
                 $avis = false;
@@ -576,6 +589,7 @@ class MenuController extends AbstractController
     public function cinemaShow(Cinema $cinema,FilmRepository $filmRepository)
     {
         $films = $filmRepository->findFilmsByCinema($cinema->getId());
+        
         return $this->render('cinema/cinemashow.html.twig', [
             'films' => $films
         ]);
