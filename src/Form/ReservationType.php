@@ -82,8 +82,8 @@ class ReservationType extends AbstractType
     {
         $choices = [];
         
-        for ($i = 1; $i <= 100; $i++) {
-            $choices[$i] = $i;
+        for ($i = 1; $i <= 2000; $i++) {
+            $choices[(string)$i] = $i;
         }
         return $choices;
     }

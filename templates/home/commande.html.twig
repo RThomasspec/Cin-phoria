@@ -38,10 +38,10 @@
 console.log(`Séance passée: ${isSeanceTimePassed(jour, heure)}`);
 
                 if (isSeanceTimePassed(jour, heure)) {
-                    // affiche le button
+                    // Si la séance est passée, masquez le bouton
                   button.disabled = false;
                 } else {
-                    // Sinon, ne pas afficher le bouton
+                    // Sinon, affichez le bouton
                     button.disabled = true;
          
                 }
@@ -54,7 +54,14 @@ console.log(`Séance passée: ${isSeanceTimePassed(jour, heure)}`);
 
     <table>
  <thead>
-
+    <tr>
+      <th scope="col">Film</th>
+      <th scope="col">Date</th>
+      <th scope="col">Horaire</th>
+      <th scope="col">Nombre de place(s) réservée </th>
+      <th scope="col">Prix</th>
+      <th scope="col">Statut</th>
+    </tr>
   </thead>
     {% for seanceReservation in seanceReservations %}
     <tr 
@@ -68,7 +75,9 @@ console.log(`Séance passée: ${isSeanceTimePassed(jour, heure)}`);
   <td> {{ seanceReservation.prix }}</td>
   <td> {{ seanceReservation.statut }}</td>
   <td>
- <a href="{{ path('avis', {'id': seanceReservation.filmId, 'utilisateurId': seanceReservation.utilisateurId}) }}" class="btn btn-outline-success button-avis" disabled>Donner son avis</a>
+  {% if seanceReservation.avisAlreadyGive %}
+ <a href="{{ path('avis', {'id': seanceReservation.filmId, 'utilisateurId': seanceReservation.utilisateurId}) }}" class="btn btn-outline-success" disabled>Donner son avis</a>
+ {% endif %}
  </td>
  </tr>
  </tr>

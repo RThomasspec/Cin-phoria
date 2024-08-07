@@ -44,7 +44,7 @@ class Film
     /**
      * @var Collection<int, Avis>
      */
-    #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'film')]
+    #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'film',  orphanRemoval: true)]
     private Collection $avis;
 
     #[ORM\Column(length: 255)]

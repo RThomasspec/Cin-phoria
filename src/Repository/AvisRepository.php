@@ -30,6 +30,40 @@ class AvisRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+
+    public function findAvisValidebyFilm(int $filmId) :array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT a
+             FROM App\Entity\Avis a
+             WHERE a.film = :filmId
+               AND a.Valide = :Valide'
+        )
+        ->setParameter('filmId', $filmId)
+        ->setParameter('Valide', 1);
+
+        $avis = $query->getResult();
+       
+
+        return $query->getResult();
+    } 
+
+
+    public function FilmGetAvis(int $filmId): int
+    {
+        $entityManager = $this->getEntityManager();
+    
+        $query = $entityManager->createQuery(
+            'SELECT COUNT(a.id) 
+             FROM App\Entity\Avis a 
+             WHERE a.film = :filmId'
+        )
+        ->setParameter('filmId', $filmId);
+    
+        return $query->getSingleScalarResult();
+    }
     //    /**
     //     * @return Avis[] Returns an array of Avis objects
     //     */

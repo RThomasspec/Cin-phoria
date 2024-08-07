@@ -1,0 +1,38 @@
+{% extends "base.html.twig" %}
+
+
+{% block body %}
+
+{% for film in filmsAvis %}
+						<article>
+							<h2>
+								{{ film.titre}}
+							</h2>
+							<div class="content">
+
+					<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
+
+                    {% for avis in film.avis %}
+                    <div class="comment">
+				<div class="row">
+				<div class="col-3">
+					{{avis.utilisateur.prenom}} {{avis.utilisateur.nom}} 
+					<br>
+					Note donnée : {{avis.note}} / 5
+				</div>
+				<div class="col">
+				{{avis.description | raw }}
+				</div
+				</div>
+				</div>
+
+					<a href="{{ path('avis_valide', {'id': avis.id}) }}" class="btn btn-primary"> Valider cet avis</a>
+                        <a href="{{ path('avis_delete', {'id': avis.id}) }}" class="btn btn-primary"> Supprimer cet avis</a>
+{% endfor %}
+							</div>
+						</article>
+
+
+{% endfor %}
+
+{% endblock %}

@@ -43,6 +43,7 @@ use App\Repository\UtilisateurRepository;
 use App\Form\FilmFilterType;
 use App\Repository\AvisRepository;
 use PhpParser\Node\Expr\Instanceof_;
+use Symfony\Component\Validator\Constraints\IsTrue;
 
 class MenuController extends AbstractController
 
@@ -154,25 +155,28 @@ class MenuController extends AbstractController
 
 
             if ($file) {
-                //récupère le nom de fichier original sans l'extension.
-                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.'.$file->guessExtension();
-                //génère un nouveau nom de fichier unique en utilisant la fonction uniqid() et en ajoutant
-                // l'extension du fichier original. Ceci évite les conflits de noms de fichiers dans le dossier de stockage.
-                $newFilename = uniqid().'.'.$file->guessExtension();
+
+                    // Redimensionner l'image
+                $imagine = new Imagine();
+                $image = $imagine->open($file);
+                $size = new Box(150, 200); // Taille cible
+                $image->resize($size);
+                $newFilename = uniqid() . '.' . $file->guessExtension();
 
                 try {
                     
                     //déplace le fichier vers ce répertoire avec le nouveau nom de fichier.
-                    $file->move(
-                        // récupère le chemin du répertoire de stockage des images à partir des paramètres de configuration.
-                        $this->getParameter('images_directory'),
-                        $newFilename
-                    );
+                      // Sauvegarder l'image redimensionnée dans le répertoire de destination
+            $image->save($this->getParameter('images_directory') . '/' . $newFilename, [
+                'format' => $file->guessExtension(),
+                $file->guessExtension() . '_quality' => 90 // Ajustez la qualité si nécessaire
+            ]);
+
 
                     //Si le déplacement est réussi, setIdImage($newFilename) met à jour 
                     //l'entité Film avec le nouveau nom de fichier (chemin relatif), permettant ainsi de référencer l'image stockée.
                     $film->setIdImage($newFilename);
-                    $film->setAffichage(($originalFilename));
+                    $film->setAffichage(($file));
                 } catch (FileException $e) {
                     // Handle exception if something happens during file upload
                 }
@@ -245,7 +249,7 @@ class MenuController extends AbstractController
     }
 
 
-    #[Route('/filmDelete/{id}', name: 'film_delete')]
+    #[Route('/intranet/ModifyOrDelteFilm/filmDelete/{id}', name: 'film_delete')]
     public function filmDelete(Film $film,  FilmRepository $repo, ObjectManager $manager)
     {   
 
@@ -261,14 +265,14 @@ class MenuController extends AbstractController
             $manager->flush();
     
             // Rediriger ou retourner une réponse appropriée
-            return $this->redirectToRoute('intranet'); // Remplacez 'success_page' par la route de votre choix
+            return $this->redirectToRoute('ModifyOrDelteFilm'); // Remplacez 'success_page' par la route de votre choix
         
   
     }
 
 
-    #[Route('/salleDelete/{id}', name: 'salle_delete')]
-    public function salleDelete(Salle $salle,  SalleRepository $repo, ObjectManager $manager)
+    #[Route('intranet/modifyOrDeleteSalle/salleDelete/{id}', name: 'salle_delete')]
+    public function salleDelete(Salle $salle, ObjectManager $manager)
     {   
 
             // Vérifier si l'entité existe
@@ -288,10 +292,48 @@ class MenuController extends AbstractController
   
     }
 
+    #[Route('intranet/valideAvis/delete/{id}', name: 'avis_delete')]
+    public function avisDelete(Avis $avis, ObjectManager $manager)
+    {   
+
+            // Vérifier si l'entité existe
+            if (!$avis) {
+                throw $this->createNotFoundException(
+                    'No avis found'
+                );
+            }
+    
+            // Supprimer l'entité
+            $manager->remove($avis);
+            $manager->flush();
+    
+            // Rediriger ou retourner une réponse appropriée
+            return $this->redirectToRoute('valideAvis'); // Remplacez 'success_page' par la route de votre choix
+        
+  
+    }
+
+    #[Route('intranet/valideAvis/valide/{id}', name: 'avis_valide')]
+    public function avisValide(Avis $avis, ObjectManager $manager)
+    {   
+            
+
+            $avis = $avis->setValide(true);
+    
+            // Supprimer l'entité
+            $manager->persist($avis);
+            $manager->flush();
+    
+            // Rediriger ou retourner une réponse appropriée
+            return $this->redirectToRoute('valideAvis'); // Remplacez 'success_page' par la route de votre choix
+        
+  
+    }
+
     #[Route('/filmshow/{id}', name: 'film_show')]
     public function filmShow(Film $film, AvisRepository $avisRepository)
     {   
-        $avis = $avisRepository->findAvisByFilm($film->getId());
+        $avis = $avisRepository->findAvisValidebyFilm($film->getId());
         
         return $this->render('home/showFilm.html.twig', [
             'film' => $film,
@@ -410,9 +452,22 @@ class MenuController extends AbstractController
         ]);
     }
 
+
+    #[IsGranted('ROLE_EMPLOYE', message: 'You are not allowed to access the admin dashboard.')]
+    #[Route('/intranet/valideAvis', name: 'valideAvis')]
+    public function valideAvis(FilmRepository $filmRepository, ReservationRepository $reservationRepository)
+    {   
+      $filmsAvis = $filmRepository->findFilmsAvis();
+
+        return $this->render('home/valideAvis.html.twig', [
+            'filmsAvis' => $filmsAvis
+            
+        ]);
+    }
+
     #[IsGranted('ROLE_CLIENT', message: 'You are not allowed to access.')]
     #[Route('/monCompte/commande', name: 'commande')]
-    public function commande(HoraireRepository $horaireRepository, SeanceRepository $seanceRepository, TokenStorageInterface $tokenStorage, ReservationRepository $reservationRepository)
+    public function commande(AvisRepository $avisRepository,HoraireRepository $horaireRepository, SeanceRepository $seanceRepository, TokenStorageInterface $tokenStorage, ReservationRepository $reservationRepository)
     {   
         $token = $tokenStorage->getToken();
         $user = $token->getUser();
@@ -441,6 +496,16 @@ class MenuController extends AbstractController
             $horaires = $horaireRepository->findHoraireBySeance($seance->getId());
             $horaire = $horaireRepository->find($horaires[0]->getId());
 
+            $avis = $avisRepository->FilmGetAvis($seance->getFilm()->getId());
+            var_dump($i);
+
+            if($avis > 0){
+                $avis = false;
+            }else{
+                $avis = true;
+            }
+            
+
                 $seanceReservations[] = [
                         'nbSieges' => $reservation->getNbSieges(),
                         'prix' => $reservation->getPrix(),
@@ -449,6 +514,7 @@ class MenuController extends AbstractController
                         'filmId' => $seance->getFilm()->getId(),
                         'utilisateurId' => $reservation->getUtilisateur()->getId(),
                         'jour' => $horaire->getJour(),
+                        'avisAlreadyGive' => $avis,
                         'debut' => $seance->getHeureDebut()->format('H:i'),
                         'fin' => $seance->getHeureFin()->format('H:i'),
                         
@@ -492,6 +558,7 @@ class MenuController extends AbstractController
             
             $avis = $avis->setUtilisateur($utilisateur);
             $avis = $avis->setFilm($film);
+            $avis = $avis->setValide(false);
             $manager->persist($avis);
             $manager->flush();
 

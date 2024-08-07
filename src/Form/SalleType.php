@@ -32,14 +32,17 @@ class SalleType extends AbstractType
                     '3D' => "3D",
                     '4K' => "4K"
                 ],
+                
                 'attr' => ['class' => 'form-select'],
                 'label' => 'Qualité'])
+                
             ->add('nom' ,TextareaType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label' => 'Nomde la salle'
             ])
             ->add('cinema', EntityType::class, [
                 'class' => Cinema::class,
+                'placeholder' => 'Choisissez un cinéma',
                 'choice_label' => 'nom',
             ])
         ;

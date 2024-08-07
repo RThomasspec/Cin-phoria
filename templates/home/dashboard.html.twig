@@ -4,10 +4,9 @@
 
     {% for film in films %}
         <article>
-             <h1> nombre de reservation pour le film {{ film.titre }}</h1>
-                    {{ reservationByFilm[film.id] }}
+             <h1> nombre de reservation pour le film {{ film.titre }} : {{ reservationByFilm[film.id] }} Réservations</h1>
+                    
             <div class="content">
-                <p>{{ film.note }}</p>
                 <img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
             </div>
         </article>

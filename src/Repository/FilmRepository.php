@@ -30,6 +30,20 @@ class FilmRepository extends ServiceEntityRepository
         return $query->getResult();
     } 
 
+    public function findFilmsAvis() :array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT f 
+            FROM App\Entity\Film f 
+            INNER JOIN f.avis a 
+            WHERE a.Valide = :Valide'
+       )->setParameter('Valide', 0);
+
+        return $query->getResult();
+    } 
+
 public function findByFilters(?int $cinemaId = null, ?string $genre= null, ?string $jour = null)
 {
     $entityManager = $this->getEntityManager();

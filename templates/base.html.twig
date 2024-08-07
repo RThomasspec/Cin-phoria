@@ -6,11 +6,15 @@
 			{% block title %}Welcome!
 			{% endblock %}
 		</title>
-
-		<link rel="stylesheet" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+    		<link rel="stylesheet" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.3/dist/cerulean/bootstrap.min.css" rel="stylesheet">
+
+
  {% block stylesheets %}
- 		<link rel="stylesheet" href="../css/custom.css">{% endblock %}
+ 		<link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <link href='https://fonts.googleapis.com/css?family=Oswald:300' rel='stylesheet' type='text/css'>
+
+    {% endblock %}
 		  {% block javascripts %}
         <!-- jQuery, Popper.js, and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -24,57 +28,52 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
         
-                   <div class="collapse navbar-collapse" id="navbarColor04">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item dropdown-custom">
-                        <div class="dropdown-custom-content">
+      
 						
-                            <a href="{{ path('cinema_show', {'id': 1}) }}">Cinéphoria de Nantes</a>
-                            <a href="{{ path('cinema_show', {'id': 2}) }}">Cinéphoria de Bordeaux</a>
-                            <a href="{{ path('cinema_show', {'id': 3}) }}">Cinéphoria de Paris</a>
-                            <a href="{{ path('cinema_show', {'id': 4}) }}">Cinéphoria de Toulouse</a>
-                            <a href="{{ path('cinema_show', {'id': 5}) }}">Cinéphoria de Lille</a>
-                            <div class="dropdown-divider"></div>
-                            <div class="dropdown-header">Belgique</div>
-                            <a href="{{ path('cinema_show', {'id': 6}) }}">Cinéphoria de Charleroi</a>
-                            <a href="{{ path('cinema_show', {'id': 7}) }}">Cinéphoria de Liège</a>
-                        </div>
-                    </li>
+                            <a href="{{ path('cinema_show', {'id': 1}) }}" class="btn">Cinéphoria de Nantes</a>
+                            <a href="{{ path('cinema_show', {'id': 2}) }}" class="btn">Cinéphoria de Bordeaux</a>
+                            <a href="{{ path('cinema_show', {'id': 3}) }}" class="btn">Cinéphoria de Paris</a>
+                            <a href="{{ path('cinema_show', {'id': 4}) }}" class="btn">Cinéphoria de Toulouse</a>
+                            <a href="{{ path('cinema_show', {'id': 5}) }}" class="btn">Cinéphoria de Lille</a>
+             
+                            <a href="{{ path('cinema_show', {'id': 6}) }}" class="btn">Cinéphoria de Charleroi</a>
+                            <a href="{{ path('cinema_show', {'id': 7}) }}" class="btn">Cinéphoria de Liège</a>
+                        
                     {% if is_granted('ROLE_CLIENT') and not is_granted('ROLE_EMPLOYE') and not is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('monCompte') }}">Mon espace</a>
-                        </li>
+                        
+                            <a href="{{ path('monCompte') }} " class="btn">Mon espace</a>
+                   
                        
                     {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('contact') }}">Contact</a>
-                    </li>
+               
+                        <a class="btn" href="{{ path('contact') }}">Contact</a>
+                    
                     {% if is_granted('ROLE_EMPLOYE') and not is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('intranet') }}">Intranet</a>
-                        </li>
+                        
+                            <a class="btn" href="{{ path('intranet') }}">Intranet</a>
+                        
                     {% endif %}
                     {% if is_granted('ROLE_EMPLOYE')%}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('dashboard') }}">Dashboard</a>
-                        </li>
+                        
+                            <a class="btn" href="{{ path('dashboard') }}">Dashboard</a>
+                        
                     {% endif %}
                     {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('intranet') }}">Administration</a>
-                        </li>
+                        
+                            <a class="btn" href="{{ path('intranet') }}">Administration</a>
+                        
                     {% endif %}
                     {% if not app.user %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('security_registration') }}">Inscription</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
-                        </li>
+                        
+                            <a class="btn" href="{{ path('security_registration') }}">Inscription</a>
+                        
+                        
+                            <a class="btn" href="{{ path('app_login') }}">Connexion</a>
+                        
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
-                        </li>
+                        
+                            <a class="btn" href="{{ path('app_logout') }}">Déconnexion</a>
+                        
                     {% endif %}
                 </ul>
             </div>
@@ -83,7 +82,7 @@
 			<div class="container">
 				{% block body %}
 
-           <h1>Filter Films</h1>
+           <h1>Appliquer un filtre</h1>
             {{ form_start(formFilter) }}
             {{ form_widget(formFilter) }}
             {{ form_end(formFilter) }}
@@ -187,11 +186,6 @@
     </div>
     <!-- Grid container -->
 
-    <!-- Copyright -->
-    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
-      © 2020 Copyright:
-      <a class="text-body" href="https://mdbootstrap.com/">MDBootstrap.com</a>
-    </div>
     <!-- Copyright -->
   </footer>
   <!-- Footer -->

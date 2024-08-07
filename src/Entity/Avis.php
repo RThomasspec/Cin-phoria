@@ -26,6 +26,9 @@ class Avis
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column]
+    private ?bool $Valide = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +78,18 @@ class Avis
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function isValide(): ?bool
+    {
+        return $this->Valide;
+    }
+
+    public function setValide(bool $Valide): static
+    {
+        $this->Valide = $Valide;
 
         return $this;
     }

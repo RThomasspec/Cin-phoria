@@ -534,7 +534,7 @@ NbPlacesSelect.addEventListener('change', function() {
 
 		{% if not app.user %}
 
-			<button class="btn btn-primary" id="redirect-button" >Réserver</a>
+			<a class="btn" href="{{ path('app_login') }}">Réserver</a>
 
 		{% else %}
 			<button type="submit" class="btn btn-primary" id="submit-button">
