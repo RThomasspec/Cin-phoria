@@ -3,16 +3,16 @@
 
 {% block body %}
 
-{% for film in filmsAvis %}
+{% for avis in avisListe %}
 						<article>
 							<h2>
-								{{ film.titre}}
+								{{ avis.film.titre}}
 							</h2>
 							<div class="content">
 
-					<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
+					<img src="{{ asset('uploads/images/' ~ avis.film.idImage) }}" alt="{{ avis.film.titre }}">
 
-                    {% for avis in film.avis %}
+            
                     <div class="comment">
 				<div class="row">
 				<div class="col-3">
@@ -28,7 +28,7 @@
 
 					<a href="{{ path('avis_valide', {'id': avis.id}) }}" class="btn btn-primary"> Valider cet avis</a>
                         <a href="{{ path('avis_delete', {'id': avis.id}) }}" class="btn btn-primary"> Supprimer cet avis</a>
-{% endfor %}
+
 							</div>
 						</article>
 

@@ -469,12 +469,17 @@ class MenuController extends AbstractController
 
     #[IsGranted('ROLE_EMPLOYE', message: 'You are not allowed to access the admin dashboard.')]
     #[Route('/intranet/valideAvis', name: 'valideAvis')]
-    public function valideAvis(FilmRepository $filmRepository, ReservationRepository $reservationRepository)
+    public function valideAvis(AvisRepository $avisRepository, ReservationRepository $reservationRepository)
     {   
-      $filmsAvis = $filmRepository->findFilmsAvis();
+
+          $avis = $avisRepository->findInvalidAvis();
+
+  
+
 
         return $this->render('home/valideAvis.html.twig', [
-            'filmsAvis' => $filmsAvis
+
+            'avisListe' => $avis
             
         ]);
     }

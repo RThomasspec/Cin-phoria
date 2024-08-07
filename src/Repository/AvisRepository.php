@@ -50,7 +50,18 @@ class AvisRepository extends ServiceEntityRepository
         return $query->getResult();
     } 
 
-
+    public function findInvalidAvis(): array
+    {
+        $entityManager = $this->getEntityManager();
+    
+        $query = $entityManager->createQuery(
+            'SELECT a
+             FROM App\Entity\Avis a
+             WHERE a.Valide = 0'
+        );
+    
+        return $query->getResult();
+    }
     public function FilmGetAvis(int $filmId, int $utilisateurId): int
     {
         $entityManager = $this->getEntityManager();
