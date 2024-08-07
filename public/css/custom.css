@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #010101;
+    background-color: #ffffff;
     padding: 20px;
 }
 
@@ -8,7 +8,21 @@ body {
     position: relative;
     display: inline-block;
 }
+.navbar {
+  /* Dimensions de la barre de navigation */
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background-color: #333; /* Couleur de fond de la barre de navigation */
+}
 
+.navbar img {
+  /* Dimensions du logo */
+  height: 100px; /* Ajustez la hauteur selon vos besoins */
+  width: 50px; /* Maintient les proportions de l'image */
+}
 .dropdown-button {
     background-color: #4CAF50;
     color: white;
@@ -23,6 +37,19 @@ body {
     background-color: #3e8e41;
 }
 
+body {
+  color: white; /* Changer la couleur du texte par défaut en blanc */
+}
+
+/* Optionnel : Changer la couleur des liens */
+a {
+  color: white; /* Changer la couleur des liens en blanc */
+}
+
+/* Optionnel : Changer la couleur du texte dans les éléments spécifiques */
+h1, h2, h3, h4, h5, h6, p {
+  color: white; /* Assurez-vous que le texte des titres et paragraphes est également blanc */
+}
 .dropdown-content {
     display: none;
     position: absolute;
