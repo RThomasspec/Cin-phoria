@@ -7,17 +7,17 @@
 			{{ film.titre }}
 		</h2>
 		<div class="content">
-			<h5>
+			<h6>
 				{{ film.description }}
-			</h5>
+			</h6>
 			<h1> Age minimum </h1>
-			<H5>
+			<h6>
 				{{ film.AgeMinimum }}
-			</h5>
+			</h6>
 			<h1> Note :</h1>
-			<h5>
+			<h6>
 				{{note}} / 5
-			</h5>
+			</h6>
 			<img
 			src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
 		{# if personne connecté est du personnel alors l'utilisateur à un bouton qui le redirige vers le lien du film pour le modifier

@@ -37,11 +37,11 @@
 								            });
 	                          
 								
-								 
-							const dataHoraire = await responseSeance.json();
+								      
+								                const dataHoraire = await responseSeance.json();
 												
 												
-							const horaires = dataHoraire.horaireArraySeance;
+	                        					const horaires = dataHoraire.horaireArraySeance;
 	                   
 	                       
 	
@@ -89,7 +89,7 @@
 								            });
 	                          
 								
-								            if (responseSeance.ok) {
+								     
 								                const dataSeance = await responseSeance.json();
 												
 												const nbPlaceSeance = dataSeance.seanceArray;
@@ -126,7 +126,7 @@
 												}	
 	                     
 	                          
-											}
+											
 	                        } catch (error) {
 	                            console.error('Erreur lors de la requête:', error);
 	                        }
@@ -159,7 +159,7 @@
 								            });
 	                          
 								
-								            if (responseSeance.ok) {
+						
 								                const dataSeance = await responseSeance.json();
 												
 												const nbPlaceSeance = dataSeance.seanceArray;
@@ -197,7 +197,7 @@
 							}
 	                     
 	                          
-											}
+											
 	                        } catch (error) {
 	                            console.error('Erreur lors de la requête:', error);
 	                        }
