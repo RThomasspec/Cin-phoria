@@ -37,11 +37,11 @@
 								            });
 	                          
 								
-								            if (responseSeance.ok) {
-								                const dataHoraire = await responseSeance.json();
+								 
+							const dataHoraire = await responseSeance.json();
 												
 												
-	                        					const horaires = dataHoraire.horaireArraySeance;
+							const horaires = dataHoraire.horaireArraySeance;
 	                   
 	                       
 	
@@ -64,10 +64,7 @@
 								}
 	                            
 	                          })
-	                          
-	                            } else {
-	                                console.error('Erreur lors du chargement des seances:', responseSeance.statusText);
-	                            }
+	                         
 	                      
 	                        } catch (error) {
 	                            console.error('Erreur lors de la requête:', error);
