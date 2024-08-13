@@ -341,11 +341,11 @@ class MenuController extends AbstractController
             foreach ($avis as $noteAvis) {
                 $totalNote += $noteAvis->getNote();
                 $note = round($totalNote / $countAvis);
-    }
-}else {
+                }
+            }else {
 
-    $note = 0;
-}
+                $note = 0;
+            }
 
         
         return $this->render('home/showFilm.html.twig', [
