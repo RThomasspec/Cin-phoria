@@ -44,6 +44,16 @@ class FilmRepository extends ServiceEntityRepository
         return $query->getResult();
     } 
 
+    public function findDistinctFilmsSortedByTitle():array
+    {
+        $dql = 'SELECT DISTINCT f.titre
+        FROM App\Entity\Film f';
+                
+        $query = $this->getEntityManager()->createQuery($dql);
+        
+        return $query->getResult();
+    }
+
 public function findByFilters(?int $cinemaId = null, ?string $genre= null, ?string $jour = null)
 {
     $entityManager = $this->getEntityManager();

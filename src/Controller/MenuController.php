@@ -59,6 +59,19 @@ class MenuController extends AbstractController
         $films = $filmRepository->findAll();
         $cinemas = $cinemaRepository->findAll();
 
+
+// Filtrer les doublons par titre
+$uniqueFilms = [];
+foreach ($films as $film) {
+    $title = $film->getTitre();
+    if (!isset($uniqueFilms[$title])) {
+        $uniqueFilms[$title] = $film;
+    }
+}
+
+// Convertir les valeurs du tableau associative en array indexé
+$uniqueFilms = array_values($uniqueFilms);
+
         $formFilter = $this->createForm(FilmFilterType::class);
         $formFilter->handleRequest($request);
         $filmsFilter = [];
@@ -84,7 +97,7 @@ class MenuController extends AbstractController
 
 
         return $this->render('base.html.twig', [
-            'films' => $films,
+            'films' => $uniqueFilms,
             'filmsFilter' => $filmsFilter,
             'formFilter' => $formFilter->createView(),
             'cinemas' => $cinemas
