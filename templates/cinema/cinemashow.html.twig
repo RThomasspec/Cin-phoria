@@ -4,27 +4,11 @@
 	{% for film in films %}
 
 		<article>
-        <h1> Titre</h1>
 			<h2>
 				{{ film.titre}}
 			</h2>
 			<div class="content">
-            <h1> Description</h1>
-				<p>
-					{{film.description}}
-				</p>
-                <h1> Age minimum</h1>
-				<p>
-					{{film.AgeMinimum}}
-				</p>
 
-                <h1> Note :</h1>
-				<p>
-					{{film.note}}
-				</p>
-
-
-			
 					<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
 						<a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-primary"> Sélectionner le film</a>
 
