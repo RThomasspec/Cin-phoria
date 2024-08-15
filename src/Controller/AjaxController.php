@@ -83,7 +83,7 @@ class AjaxController extends AbstractController
 
     }
 
-    #[Route('/ajax/get-seances-by-film', name: 'ajax_get_seances_by_film', methods: ['GET','POST'])]
+    #[Route('/ajax/get-seances-by-film', name: 'ajax_get_seances_by_film', methods: ['POST'])]
 
     public function getSeancesByFilm(Request $request, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
     {
