@@ -3,3 +3,8 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+get_seances_by_film:
+    path: /ajax/get-seances-by-film
+    controller: App\Controller\YourController::getSeancesByFilm
+    methods: [POST]
