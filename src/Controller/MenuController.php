@@ -361,7 +361,7 @@ $uniqueFilms = array_values($uniqueFilms);
             }
 
         
-        return $this->render('home/showFilm.html.twig', [
+        return $this->render('home/showFIlm.html.twig', [
             'film' => $film,
             'avis' => $avis, 
             'note' => $note
