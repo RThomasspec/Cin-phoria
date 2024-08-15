@@ -212,11 +212,7 @@
 
 	NbPlacesSelect.addEventListener('change', calculatePrice);
     NbPlacesPMRSelect.addEventListener('change', calculatePrice);
-	{% if not app.user %}
-	document.getElementById('redirect-button').addEventListener('click', function(event) {
-    //saveFormDataAndRedirect(event);
-});
-	{% endif %}
+
 	
 
 
