@@ -22,7 +22,8 @@
 			src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
 		{# if personne connecté est du personnel alors l'utilisateur à un bouton qui le redirige vers le lien du film pour le modifier
 		<a href="{{film_show}}" class="btn btn-primary"> </a>
-		#}	 
+		#}	   
+		
 			<a href="{{ path('film_reservation', {'id': film.id}) }}" class="btn btn-outline-success"> Réserver maintenant</a>
 				<section id="commentaires">
 				{% for avi in avis %}
