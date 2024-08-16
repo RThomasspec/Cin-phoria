@@ -45,9 +45,6 @@ class AjaxController extends AbstractController
         
             }
 
-            var_dump($horaireArraySeance);
-            die();
-
         return new JsonResponse([
         
             'horaireArraySeance' => $horaireArraySeance
