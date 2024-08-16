@@ -301,7 +301,7 @@ $uniqueFilms = array_values($uniqueFilms);
             $manager->flush();
     
             // Rediriger ou retourner une réponse appropriée
-            return $this->redirectToRoute('intranet'); // Remplacez 'success_page' par la route de votre choix
+            return $this->redirectToRoute('ModifyOrDeleteSalle'); // Remplacez 'success_page' par la route de votre choix
         
   
     }
