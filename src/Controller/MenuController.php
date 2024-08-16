@@ -37,10 +37,10 @@ use App\Repository\SeanceRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Commande;
 use App\Form\AvisType;
-use App\Form\ContactType;
+use App\Form\FilmFilterType;
 use App\Repository\ReservationRepository;
 use App\Repository\UtilisateurRepository;
-use App\Form\FilmFilterType;
+
 use App\Repository\AvisRepository;
 use PhpParser\Node\Expr\Instanceof_;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -72,7 +72,7 @@ foreach ($films as $film) {
 // Convertir les valeurs du tableau associative en array indexé
 $uniqueFilms = array_values($uniqueFilms);
 
-        $formFilter = $this->createForm(FilmFilterType::class);
+        $formFilter = $this->createForm(FilmFilterType::class); 
         $formFilter->handleRequest($request);
         $filmsFilter = [];
         
