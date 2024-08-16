@@ -16,7 +16,8 @@ class Horaire
 
     #[ORM\ManyToOne(inversedBy: 'horaires')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Salle $salle = null;
+    private ?Salle $salle = null;  
+    
 
     #[ORM\Column(length: 255)]
     private ?string $jour = null;
