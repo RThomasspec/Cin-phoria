@@ -17,6 +17,41 @@ use Symfony\Component\Validator\Constraints\Json;
 
 class AjaxController extends AbstractController
 {
+
+
+    #[Route('/ajax/get-seances-by-film', name: 'ajax_get_seances_by_film', methods: ['POST'])]
+
+    public function getSeancesByFilm(Request $request, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
+    {
+        $data = json_decode($request->getContent(), true); 
+
+        $filmId = $data['film_Id'];
+        $horaires = $horaireRepository->findHoraireByFilm($filmId);
+
+   
+        $horaireArraySeance = [];
+
+        foreach ($horaires as $horaire) {
+            $seances = $seanceRepository->findSeanceByHoraire($horaire->getId());
+    
+            $seance = $seances[0];
+                $horaireArraySeance[] = [
+                        'id' => $horaire->getId(),
+                        'jour' => $horaire->getJour(),
+                        'debut' => $horaire->getDebut()->format('H:i'),
+                        'qualite' => $seance->getQualite(),
+                        'fin' => $horaire->getFin()->format('H:i'),
+                        
+                    ];
+        
+            }
+
+        return new JsonResponse([
+        
+            'horaireArraySeance' => $horaireArraySeance
+        ]);
+    }
+    
     #[Route('/ajax/get-salles', name: 'ajax_get_salles', methods: ['POST'])]
     public function getSalles(Request $request, CinemaRepository $cinemaRepository, SalleRepository $salleRepository, HoraireRepository $horaireRepository)
     {
@@ -83,38 +118,6 @@ class AjaxController extends AbstractController
 
     }
 
-    #[Route('/ajax/get-seances-by-film', name: 'ajax_get_seances_by_film', methods: ['POST'])]
-
-    public function getSeancesByFilm(Request $request, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
-    {
-        $data = json_decode($request->getContent(), true); 
-
-        $filmId = $data['film_Id'];
-        $horaires = $horaireRepository->findHoraireByFilm($filmId);
-
-   
-        $horaireArraySeance = [];
-
-        foreach ($horaires as $horaire) {
-            $seances = $seanceRepository->findSeanceByHoraire($horaire->getId());
-    
-            $seance = $seances[0];
-                $horaireArraySeance[] = [
-                        'id' => $horaire->getId(),
-                        'jour' => $horaire->getJour(),
-                        'debut' => $horaire->getDebut()->format('H:i'),
-                        'qualite' => $seance->getQualite(),
-                        'fin' => $horaire->getFin()->format('H:i'),
-                        
-                    ];
-        
-            }
-
-        return new JsonResponse([
-        
-            'horaireArraySeance' => $horaireArraySeance
-        ]);
-    }
 
 
     #[Route('/ajax/get-seances-by-horaire', name: 'ajax_get_seances_by_horaire', methods: ['POST'])]
