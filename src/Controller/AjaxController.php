@@ -27,7 +27,6 @@ class AjaxController extends AbstractController
 
         $filmId = $data['film_Id'];
         $horaires = $horaireRepository->findHoraireByFilm($filmId);
-
    
         $horaireArraySeance = [];
 
@@ -46,12 +45,15 @@ class AjaxController extends AbstractController
         
             }
 
+            var_dump($horaireArraySeance);
+            die();
+
         return new JsonResponse([
         
             'horaireArraySeance' => $horaireArraySeance
         ]);
     }
-    
+
     #[Route('/ajax/get-salles', name: 'ajax_get_salles', methods: ['POST'])]
     public function getSalles(Request $request, CinemaRepository $cinemaRepository, SalleRepository $salleRepository, HoraireRepository $horaireRepository)
     {
