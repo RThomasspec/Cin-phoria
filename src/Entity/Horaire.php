@@ -36,12 +36,12 @@ class Horaire
         return $this->id;
     }
 
-    public function getSalle(): ?salle
+    public function getSalle(): ?Salle
     {
         return $this->salle;
     }
 
-    public function setSalle(?salle $salle): static
+    public function setSalle(?Salle $salle): static
     {
         $this->salle = $salle;
 

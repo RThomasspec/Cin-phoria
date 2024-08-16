@@ -34,6 +34,7 @@ use App\Repository\FilmRepository;
 use App\Repository\HoraireRepository;
 use App\Repository\SalleRepository;
 use App\Repository\SeanceRepository;
+use App\Entity\Horaire;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Commande;
 use App\Form\AvisType;
@@ -511,14 +512,10 @@ $uniqueFilms = array_values($uniqueFilms);
             $userId = $property->getValue($user);
             
         } 
-        // film, date heure, nbplace, prix, staut
-     
+        // film, date heure, nbplace, prix, stau   
         
         $reservations = $reservationRepository->findReservationByUtilisateur($userId);
-     
-       
 
-   
         $seanceReservations = [];
 
         for ($i = 0; $i < count($reservations); $i++) {
@@ -648,10 +645,34 @@ $uniqueFilms = array_values($uniqueFilms);
 
         if($form->isSubmitted() && $form->isValid()){
 
-            $manager->persist($salle);
-            $manager->flush();
+                $manager->persist($salle);
+                $manager->flush();
 
-            return $this->redirectToRoute('intranet');
+                $jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+                $horaires = [
+                    ['09:00:00', '10:00:00'],
+                    ['11:00:00', '12:00:00'],
+                    ['13:00:00', '14:00:00'],
+                    ['15:00:00', '16:00:00'],
+                    ['17:00:00', '18:00:00'],
+                ];
+        
+                foreach ($jours as $jour) {
+                    foreach ($horaires as $horaireData) {
+                        $horaire = new Horaire();
+                        $horaire->setJour($jour);
+                        $horaire->setSalle($salle);
+                        $horaire->setDebut(new \DateTime($horaireData[0]));
+                        $horaire->setFin(new \DateTime($horaireData[1]));
+                        
+                        $manager->persist($horaire);
+                        $manager->flush();
+                    }
+                }
+
+
+
+        return $this->redirectToRoute('intranet');
         }
         return $this->render('home/createSalle.html.twig', [
             'editMode' => $salle->getId() !== null,

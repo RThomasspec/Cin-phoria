@@ -31,7 +31,7 @@ class Salle
     #[ORM\JoinColumn(nullable: false)]
     private ?Cinema $cinema = null;
 
-    /**
+       /**
      * @var Collection<int, Horaire>
      */
     #[ORM\OneToMany(targetEntity: Horaire::class, mappedBy: 'salle', orphanRemoval: true)]
