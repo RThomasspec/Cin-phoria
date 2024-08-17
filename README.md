@@ -23,7 +23,10 @@ composer install
 Configurer l'environnement
 cp .env .env.local
 
+
 DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/db_name?serverVersion=5.7"
+
+Importez les données du fichier Cinephoria(6).sql dans la bdd via phpmyadmin
 
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
