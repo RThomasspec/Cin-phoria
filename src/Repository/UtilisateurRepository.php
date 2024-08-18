@@ -16,6 +16,35 @@ class UtilisateurRepository extends ServiceEntityRepository
         parent::__construct($registry, Utilisateur::class);
     }
 
+
+    public function isMailUsed(string $email):int
+    {
+        $entityManager = $this->getEntityManager();
+
+    $query = $entityManager->createQuery(
+        'SELECT COUNT(u.id) 
+        FROM App\Entity\Utilisateur u 
+        WHERE u.mail = :email'
+    )->setParameter('email', $email);
+
+    return (int) $query->getSingleScalarResult();
+    }
+
+
+    public function findUserByEmail(string $email): ?Utilisateur
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT u
+            FROM App\Entity\Utilisateur u
+            WHERE u.mail = :email'
+        )->setParameter('email', $email);
+
+        // Retourne un utilisateur correspondant ou null s'il n'existe pas
+        return $query->getOneOrNullResult();
+    
+        }
     //    /**
     //     * @return Utilisateur[] Returns an array of Utilisateur objects
     //     */

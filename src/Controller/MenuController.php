@@ -525,6 +525,8 @@ $uniqueFilms = array_values($uniqueFilms);
             $horaires = $horaireRepository->findHoraireBySeance($seance->getId());
             $horaire = $horaireRepository->find($horaires[0]->getId());
 
+
+
             $avis = $avisRepository->FilmGetAvis($seance->getFilm()->getId(),$reservation->getUtilisateur()->getId() );
 
             if($avis > 0){

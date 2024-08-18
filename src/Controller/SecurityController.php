@@ -39,38 +39,38 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, Request $request, RouterInterface $router): Response
     {
-        if ($this->getUser()) {
-            $refererUrl = $request->headers->get('referer');
+        // if ($this->getUser()) {
+        //     $refererUrl = $request->headers->get('referer');
 
-            // Analyser l'URL pour obtenir le chemin
-            $pathInfo = parse_url($refererUrl, PHP_URL_PATH);
-        
-            // Faire correspondre le chemin à une route
-            $routeInfo = $router->match($pathInfo);
-        
-            // Obtenir le nom de la route
-            $refererRoute = $routeInfo['_route'];
-        
-            // Obtenir les paramètres de la route
-            $routeParams = $routeInfo;
-            if(isset($routeParams['id'])){
-            $id = $routeParams['id'];
-            }
-            unset($routeParams['_route']);
+        //     // Analyser l'URL pour obtenir le chemin
+        //     $pathInfo = parse_url($refererUrl, PHP_URL_PATH);
 
-        if($routeParams){
-            if ($refererRoute == "film_reservation") {
-                // Supprimer la clé de session une fois utilisée
-                // Rediriger l'utilisateur vers l'URL enregistrée après la connexion['id' => $film->getId()]
-               return $this->redirectToRoute('film_reservation', ['id' => $id ]);
-            }
-        }else{
-             
-                // Rediriger l'utilisateur vers une autre page s'il est déjà connecté
-                return $this->redirectToRoute('home'); // Remplacez 'dashboard' par la route souhaitée
-            
-        }
-        }
+        //     // Faire correspondre le chemin à une route
+        //     $routeInfo = $router->match($pathInfo);
+
+        //     // Obtenir le nom de la route
+        //     $refererRoute = $routeInfo['_route'];
+
+        //     // Obtenir les paramètres de la route
+        //     $routeParams = $routeInfo;
+        //     if (isset($routeParams['id'])) {
+        //         $id = $routeParams['id'];
+        //     }
+        //     unset($routeParams['_route']);
+
+        //     if ($routeParams) {
+        //         if ($refererRoute == "film_reservation") {
+        //             // Supprimer la clé de session une fois utilisée
+        //             // Rediriger l'utilisateur vers l'URL enregistrée après la connexion['id' => $film->getId()]
+        //             return $this->redirectToRoute('film_reservation', ['id' => $id]);
+        //         }
+        //     } else {
+
+        //         // Rediriger l'utilisateur vers une autre page s'il est déjà connecté
+        //         return $this->redirectToRoute('home'); // Remplacez 'dashboard' par la route souhaitée
+
+        //     }
+        // }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -86,63 +86,69 @@ class SecurityController extends AbstractController
 
 
     #[Route('/login/forgotPassword', name: 'forgot_password')]
-    public function  forgotPassword(ObjectManager $manager, UrlGeneratorInterface $urlGenerator, EntityManagerInterface $entityManagerInterface, UtilisateurRepository $utilisateurRepository,Request $request,
-    EntityManagerInterface $entityManager, MailerInterface $mailer)
-    {   
+    public function  forgotPassword(
+        ObjectManager $manager,
+        UrlGeneratorInterface $urlGenerator,
+        EntityManagerInterface $entityManagerInterface,
+        UtilisateurRepository $utilisateurRepository,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer
+    ) {
 
-            $form = $this->createForm(PasswordResetRequestType::class);
-            $form->handleRequest($request);
+        $form = $this->createForm(PasswordResetRequestType::class);
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $email = $form->get('email')->getData();
-            
+
             $user = $utilisateurRepository->findOneBy(['mail' => $email]);
 
             if (!$user) {
                 // L'utilisateur n'a pas été trouvé
                 return;
             }
-    
+
             $token = bin2hex(random_bytes(32)); // Génération du token
             $user->setToken($token);
             $entityManager->flush();
-    
+
             $resetUrl = $urlGenerator->generate(
                 'reset_password',   // Nom de la route
                 ['token' => $token],    // Paramètres de la route
                 UrlGeneratorInterface::ABSOLUTE_URL // URL absolue
             );
-    
+
             $email = (new Email())
                 ->from('ccinephoria@gmail.com')
                 ->to($user->getMail())
                 ->subject('Réinitialisation de mot de passe')
                 ->html(
-                    "<p>Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant :</p>".
-                    "<p><a href='{$resetUrl}'>Réinitialiser mon mot de passe</a></p>");
-    
+                    "<p>Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant :</p>" .
+                        "<p><a href='{$resetUrl}'>Réinitialiser mon mot de passe</a></p>"
+                );
+
             $mailer->send($email);
 
 
-            if ($user){
+            if ($user) {
 
-            $this->addFlash('success', 'Un lien de réinitialisation a été envoyé à votre adresse e-mail.');
-        }else{
-            $this->addFlash('error', 'Aucun utilisateur trouvé avec cette adresse e-mail.');
-           
-        }
-        return $this->redirectToRoute('app_login');
+                $this->addFlash('success', 'Un lien de réinitialisation a été envoyé à votre adresse e-mail.');
+            } else {
+                $this->addFlash('error', 'Aucun utilisateur trouvé avec cette adresse e-mail.');
+            }
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('security/forgotPassword.html.twig', [
-           'form' => $form
+            'form' => $form
         ]);
     }
 
     #[Route(path: '/login/forgotPassword/resetPassword/{token}', name: 'reset_password')]
-    public function resetPassword(string $token,Request $request, UtilisateurRepository $UtilisateurRepository,  UserPasswordHasherInterface $encoder, ObjectManager $manager)
-    {       
-     
+    public function resetPassword(string $token, Request $request, UtilisateurRepository $UtilisateurRepository,  UserPasswordHasherInterface $encoder, ObjectManager $manager)
+    {
+
         $user = $UtilisateurRepository->findOneBy(['token' => $token]);
 
         if (!$user) {
@@ -153,24 +159,24 @@ class SecurityController extends AbstractController
         $form = $this->createForm(ResetPasswordType::class);
         $form->handleRequest($request);
 
-        if( $form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $newPassword = $form->get('password')->getData();
             $hash = $encoder->hashPassword($user, $newPassword);
-            
+
 
             $user->setPassword($hash);
             $user->setToken(null); // Efface le token
-        
+
             $manager->persist($user);
-            $manager->flush(); 
+            $manager->flush();
 
             return $this->redirectToRoute('app_login');
         }
 
         return $this->render('security/resetPassword.html.twig', [
             'formNewPassword' => $form
-         ]);
+        ]);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
@@ -181,22 +187,23 @@ class SecurityController extends AbstractController
 
 
     #[Route('/inscription/employe', name: 'security_registration_employe')]
-    public function registrationEmploye(Request $request, ObjectManager $manager, UserPasswordHasherInterface $encoder ): Response
+    public function registrationEmploye(Request $request,UtilisateurRepository $utilisateurRepository, ObjectManager $manager, UserPasswordHasherInterface $encoder): Response
     {
 
         $user = new Utilisateur();
 
-        $form = $this->createForm(RegistrationEmployeType::class,$user);
+        $form = $this->createForm(RegistrationEmployeType::class, $user);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             // mon form sera remplis lors de la request
             // Liste des statut : 
             // ROLE_USER : Le rôle de base pour tous les utilisateurs.
             // ROLE_ADMIN : Le rôle pour les administrateurs.
             // ROLE_EMPLOYE : Le rôle pour les employés.
             // ROLE_CLIENT : Le rôle pour les clients.
+                      
             $user->setRoles(["ROLE_EMPLOYE"]);
             $user->setPrenom("EMPLOYE");
             $user->setNom("EMPLOYE");
@@ -215,22 +222,23 @@ class SecurityController extends AbstractController
 
 
     #[Route('/inscription', name: 'security_registration')]
-    public function registration(Request $request, ObjectManager $manager, UserPasswordHasherInterface $encoder ): Response
+    public function registration(Request $request, ObjectManager $manager, UserPasswordHasherInterface $encoder, UtilisateurRepository $utilisateurRepository): Response
     {
 
         $user = new Utilisateur();
 
-        $form = $this->createForm(RegistrationType::class,$user);
+        $form = $this->createForm(RegistrationType::class, $user);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             // mon form sera remplis lors de la request
             // Liste des statut : 
 
             // ROLE_ADMIN : Le rôle pour les administrateurs.
             // ROLE_EMPLOYEE : Le rôle pour les employés.
             // ROLE_CLIENT : Le rôle pour les clients.
+            
             $user->setRoles(["ROLE_CLIENT"]);
             $hash = $encoder->hashPassword($user, $user->getpassword());
             $user->setpassword($hash);
@@ -244,7 +252,4 @@ class SecurityController extends AbstractController
             'form' => $form->createView()
         ]);
     }
-
 }
-
-
