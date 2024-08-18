@@ -25,7 +25,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class APIMobilController extends AbstractController
 {
-    #[Route('/api/qr-code', name: 'generate_qr_code"', methods: ['POST'])]
+    #[Route('/api/reservations', name: 'list_reservation"', methods: ['POST'])]
 
     public function getSeanceByHoraire(Request $request, ReservationRepository $reservationRepo)
     {
@@ -39,6 +39,7 @@ class APIMobilController extends AbstractController
             for ($i = 0; $i < count($reservations); $i++) {
                 $reservation = $reservations[$i];
          $reservationDetails[] = [
+            'idReservation' => $reservation->getId(),
             'film' => $reservation->getSeance()->getFilm()->getTitre(),
             'affiche' => $reservation->getSeance()->getFilm()->getAffichage(),
             'jour' => $reservation->getSeance()->getHoraire()->getJour(),
@@ -48,6 +49,36 @@ class APIMobilController extends AbstractController
             'nbPlacesReserve' => $reservation->getNbSieges()
         ];
     }
+    // Encoder les informations de la séance en JSON 
+    $jsonReservation = json_encode($reservationDetails);
+
+        return new JsonResponse([
+            'jsonReservation' => $jsonReservation,
+            'reservationDetails' => $reservationDetails
+        ]);
+    }
+
+    #[Route('/api/qr-code', name: 'generate_qr_code"', methods: ['POST'])]
+
+    public function getqrcode(Request $request, ReservationRepository $reservationRepo)
+    {
+        $data = json_decode($request->getContent(), true); 
+        $reservationId = $data['reservation_id'];
+
+        $reservation = $reservationRepo->find($reservationId);
+         // Récupérer les informations de la séance
+         $reservationDetails = [];
+
+         $reservationDetails[] = [
+            'film' => $reservation->getSeance()->getFilm()->getTitre(),
+            'affiche' => $reservation->getSeance()->getFilm()->getAffichage(),
+            'jour' => $reservation->getSeance()->getHoraire()->getJour(),
+            'salle' => $reservation->getSeance()->getSalle()->getNom(),
+            'debut' => $reservation->getSeance()->getHoraire()->getDebut()->format('H:i'),
+            'fin' => $reservation->getSeance()->getHoraire()->getFin()->format('H:i'),
+            'nbPlacesReserve' => $reservation->getNbSieges()
+        ];
+    
     // Encoder les informations de la séance en JSON pour le QR Code
     $qrData = json_encode($reservationDetails);
 
