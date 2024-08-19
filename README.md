@@ -1,3 +1,12 @@
+
+
+
+
+## Lien vers le Diagramme d’utilisation
+https://lucid.app/lucidspark/fdf934e8-8fd9-4137-bad4-1f37b4a40023/edit?viewport_loc=-10436%2C-633%2C9549%2C5255%2C0_0&invitationId=inv_0c73e5d2-58fc-4ddf-8194-532f273ec3e7
+
+
+
 Guide de Déploiement Local
 
 ## Prérequis
