@@ -5,10 +5,14 @@
 ## Lien vers le Diagramme d’utilisation
 https://lucid.app/lucidchart/b720c13c-e8e5-4645-bc24-4f341dd9b9c0/edit?beaconFlowId=C9E81DE598663CB4&invitationId=inv_7bf4cc1f-1ebe-4010-b103-7803df32261b&page=0_0#
 
-## Lien vers le Diagramme de séquance utilisateur
+## Lien vers le Diagramme de séquance (Utilisateur)
 https://lucid.app/lucidchart/b720c13c-e8e5-4645-bc24-4f341dd9b9c0/edit?viewport_loc=715%2C89%2C4376%2C2419%2C0_0&invitationId=inv_7bf4cc1f-1ebe-4010-b103-7803df32261b
 
+## Lien vers le Diagramme de séquance (Employe)
 
+## Lien vers le Diagramme de séquance (Visiteur)
+
+## Lien vers le Diagramme de séquance (Administrateur)
 
 
 
@@ -43,3 +47,11 @@ Importez les données du fichier Cinephoria(6).sql dans la bdd via phpmyadmin
 
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
+
+## Environement de test
+
+installer php unit : composer require --dev phpunit/phpunit
+
+-- Pour éxécuter un test spécifique : ./vendor/bin/phpunit tests/DirectoryName/TestFileName.php
+
+
