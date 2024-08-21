@@ -3,7 +3,12 @@
 
 
 ## Lien vers le Diagramme d’utilisation
-https://lucid.app/lucidspark/fdf934e8-8fd9-4137-bad4-1f37b4a40023/edit?viewport_loc=-10436%2C-633%2C9549%2C5255%2C0_0&invitationId=inv_0c73e5d2-58fc-4ddf-8194-532f273ec3e7
+https://lucid.app/lucidchart/b720c13c-e8e5-4645-bc24-4f341dd9b9c0/edit?beaconFlowId=C9E81DE598663CB4&invitationId=inv_7bf4cc1f-1ebe-4010-b103-7803df32261b&page=0_0#
+
+## Lien vers le Diagramme de séquance utilisateur
+https://lucid.app/lucidchart/b720c13c-e8e5-4645-bc24-4f341dd9b9c0/edit?viewport_loc=715%2C89%2C4376%2C2419%2C0_0&invitationId=inv_7bf4cc1f-1ebe-4010-b103-7803df32261b
+
+
 
 
 
@@ -15,7 +20,6 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 
 - [PHP 8.1+](https://www.php.net/)
 - [Composer](https://getcomposer.org/)
-- [Node.js](https://nodejs.org/) et [npm](https://www.npmjs.com/)
 - [Symfony CLI](https://symfony.com/download)
 - [MySQL](https://www.mysql.com/) ou tout autre SGBD compatible
 
