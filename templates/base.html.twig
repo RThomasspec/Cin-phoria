@@ -38,15 +38,9 @@
        <li class="dropdown">
                 <a href="#" class="dropbtn">Cinémas</a>
                 <div class="dropdown-content">
-                     <a href="{{ path('cinema_show', {'id': 1}) }}" class="btn">Cinéphoria de Nantes</a>
-                            <a href="{{ path('cinema_show', {'id': 2}) }}" class="btn">Cinéphoria de Bordeaux</a>
-                            <a href="{{ path('cinema_show', {'id': 3}) }}" class="btn">Cinéphoria de Paris</a>
-                            <a href="{{ path('cinema_show', {'id': 4}) }}" class="btn">Cinéphoria de Toulouse</a>
-                            <a href="{{ path('cinema_show', {'id': 5}) }}" class="btn">Cinéphoria de Lille</a>
-             
-                            <a href="{{ path('cinema_show', {'id': 6}) }}" class="btn">Cinéphoria de Charleroi</a>
-                            <a href="{{ path('cinema_show', {'id': 7}) }}" class="btn">Cinéphoria de Liège</a>
-                        
+                {% for cinema in get_cinemas() %}
+                     <a href="{{ path('cinema_show', {'id': cinema.id}) }}" class="btn"> {{cinema.nom}}</a>
+                     {% endfor %}   
                 </div>
             </li>
 

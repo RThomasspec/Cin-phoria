@@ -41,7 +41,7 @@ use App\Form\AvisType;
 use App\Form\FilmFilterType;
 use App\Repository\ReservationRepository;
 use App\Repository\UtilisateurRepository;
-
+use App\Service\CinemaService;
 use App\Repository\AvisRepository;
 use PhpParser\Node\Expr\Instanceof_;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -49,8 +49,6 @@ use Symfony\Component\Validator\Constraints\IsTrue;
 class MenuController extends AbstractController
 
 {
-
-
 
 
     #[Route('/', name: 'home')]

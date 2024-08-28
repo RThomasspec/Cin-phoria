@@ -31,6 +31,7 @@ use App\Form\RegistrationEmployeType;
 use App\Form\ResetPasswordType;
 use App\Repository\FilmRepository;
 use App\Repository\UtilisateurRepository;
+use App\Service\CinemaService;
 
 class SecurityController extends AbstractController
 {
