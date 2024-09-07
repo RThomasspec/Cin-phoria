@@ -17,9 +17,30 @@ security:
                 # Il va rechercher les utilisateur par leur email
                 property: mail
     firewalls:
+ # Firewall pour le login API
+        login:
+            pattern: ^/api/login
+            stateless: true
+            json_login:
+                check_path: /api/login
+                username_path: email
+                password_path: password
+                success_handler: App\Security\CustomAuthenticationSuccessHandler
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                provider: in_database
+  # Firewall pour les requêtes API authentifiées
+        api:
+            pattern: ^/api
+            stateless: true
+            jwt: ~ 
+            provider: in_database
+            
+ # Firewall pour les devs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+ # Firewall pour les pages web
         main:
             lazy: true
             provider: in_database
@@ -32,7 +53,7 @@ security:
                 #username_parameter: username
                 #password_parameter: password
             custom_authenticator: App\Security\LoginFormAuthenticator
-            # Définit qule authenticateur utiliser en premier 
+            # Définit quel authenticateur utiliser en premier 
             entry_point: App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout

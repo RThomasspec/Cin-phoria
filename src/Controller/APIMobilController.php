@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Service\CinemaService;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Endroid\QrCode\Builder\Builder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Utilisateur;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Repository\ReservationRepository;
@@ -42,7 +44,7 @@ class APIMobilController extends AbstractController
          $reservationDetails[] = [
             'idReservation' => $reservation->getId(),
             'film' => $reservation->getSeance()->getFilm()->getTitre(),
-            'affiche' => $reservation->getSeance()->getFilm()->getAffichage(),
+            'idImage' => $reservation->getSeance()->getFilm()->getIdImage(),
             'jour' => $reservation->getSeance()->getHoraire()->getJour(),
             'salle' => $reservation->getSeance()->getSalle()->getNom(),
             'debut' => $reservation->getSeance()->getHoraire()->getDebut()->format('H:i'),
@@ -72,7 +74,6 @@ class APIMobilController extends AbstractController
 
          $reservationDetails[] = [
             'film' => $reservation->getSeance()->getFilm()->getTitre(),
-            'affiche' => $reservation->getSeance()->getFilm()->getAffichage(),
             'jour' => $reservation->getSeance()->getHoraire()->getJour(),
             'salle' => $reservation->getSeance()->getSalle()->getNom(),
             'debut' => $reservation->getSeance()->getHoraire()->getDebut()->format('H:i'),
@@ -80,21 +81,8 @@ class APIMobilController extends AbstractController
             'nbPlacesReserve' => $reservation->getNbSieges()
         ];
     
-    // Encoder les informations de la séance en JSON pour le QR Code
-    $qrData = json_encode($reservationDetails);
-
-    // Créer le QR code sous forme d'image
-    $result = Builder::create()
-        ->data($qrData)
-        ->size(300)
-        ->margin(10)
-        ->build();
-
-    // Encoder l'image du QR code en base64
-    $qrCodeBase64 = base64_encode($result->getString());
 
         return new JsonResponse([
-            'qr_code' => $qrCodeBase64,
             'reservation_details' => $reservationDetails,
         ]);
     }
@@ -160,11 +148,13 @@ class APIMobilController extends AbstractController
     #[Route('/api/login', name: 'api_login"', methods: ['POST'])]
     public function loginAPI( Request $request, 
     UserPasswordHasherInterface $encoder, 
-    UtilisateurRepository $utilisateurRepository, ): JsonResponse
+    UtilisateurRepository $utilisateurRepository, AuthenticationUtils $authenticationUtils, JWTTokenManagerInterface $jwtManager): JsonResponse
 {
     $dataLogin = json_decode($request->getContent(), true);
     $email = $dataLogin['email'] ?? '';
     $password = $dataLogin['password'] ?? '';
+
+    
 
     $user = $utilisateurRepository->findUserByEmail($email);
         if (!$user) {
@@ -174,6 +164,8 @@ class APIMobilController extends AbstractController
     if (!$encoder->isPasswordValid($user, $password)) {
         return new JsonResponse(['error' => 'Invalid credentials'], 401);
     }
+
+    $token = $this->$jwtManager->create($user);
     // Vérifier les identifiants ici et retourner un token si valide
     // ...
     return new JsonResponse([
@@ -181,6 +173,7 @@ class APIMobilController extends AbstractController
         'user' => [
             'id' => $user->getId(),
             'email' => $user->getMail(),
+            'token' => $token
             // Ajoutez d'autres informations utilisateur si nécessaire
         ],
     ]);
