@@ -40,10 +40,17 @@ class Salle
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
+    /**
+     * @var Collection<int, Installations>
+     */
+    #[ORM\OneToMany(targetEntity: Installations::class, mappedBy: 'salle_id', orphanRemoval: true)]
+    private Collection $installations;
+
     public function __construct()
     {
         $this->seances = new ArrayCollection();
         $this->horaires = new ArrayCollection();
+        $this->installations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -155,6 +162,36 @@ class Salle
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Installations>
+     */
+    public function getInstallations(): Collection
+    {
+        return $this->installations;
+    }
+
+    public function addInstallation(Installations $installation): static
+    {
+        if (!$this->installations->contains($installation)) {
+            $this->installations->add($installation);
+            $installation->setSalle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInstallation(Installations $installation): static
+    {
+        if ($this->installations->removeElement($installation)) {
+            // set the owning side to null (unless already changed)
+            if ($installation->getSalle() === $this) {
+                $installation->setSalle(null);
+            }
+        }
 
         return $this;
     }

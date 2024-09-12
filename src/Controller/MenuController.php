@@ -633,7 +633,7 @@ $uniqueFilms = array_values($uniqueFilms);
 
     #[Route('/salle/new', name: 'form_salle')]
     #[Route('/salle/{id}/new', name: 'salle_edit')]
-    public function formClasse (Request $request, Salle $salle = null, SalleRepository $salleRepository, ObjectManager $manager)
+    public function formSalle (Request $request, Salle $salle = null, SalleRepository $salleRepository, ObjectManager $manager)
     {
         if(!$salle){
         $salle = new Salle();

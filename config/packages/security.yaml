@@ -28,6 +28,17 @@ security:
                 success_handler: App\Security\CustomAuthenticationSuccessHandler
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
                 provider: in_database
+
+        login_employee:
+            pattern: ^/api/login/employe
+            stateless: true
+            json_login:
+                check_path: /api/login/employe
+                username_path: email
+                password_path: password
+                success_handler: App\Security\EmployeeAuthenticationSuccessHandler
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                provider: in_database
   # Firewall pour les requêtes API authentifiées
         api:
             pattern: ^/api

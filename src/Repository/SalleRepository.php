@@ -16,7 +16,18 @@ class SalleRepository extends ServiceEntityRepository
         parent::__construct($registry, Salle::class);
     }
 
+    public function findsallesBycinema(int $cinemaid): array
+    {
+        $entityManager = $this->getEntityManager();
 
+        $query = $entityManager->createQuery(
+            'SELECT s
+            FROM App\Entity\Salle s
+            WHERE s.cinema = :cinemaid'
+        )->setParameter('cinemaid', $cinemaid);
+
+        return $query->getResult();
+    }
 
 
     //    /**

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Installations;
 use App\Service\CinemaService;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,10 +11,13 @@ use Symfony\Component\Routing\Attribute\Route;
 use Endroid\QrCode\Builder\Builder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Utilisateur;
+use App\Repository\CinemaRepository;
+use App\Repository\InstallationsRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Repository\ReservationRepository;
+use App\Repository\SalleRepository;
 use App\Repository\UtilisateurRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -28,7 +32,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class APIMobilController extends AbstractController
 {
-    #[Route('/api/reservations', name: 'list_reservation"', methods: ['POST'])]
+    #[Route('/api/reservations', name: 'list_reservation', methods: ['POST'])]
 
     public function getSeanceByHoraire(Request $request, ReservationRepository $reservationRepo)
     {
@@ -61,7 +65,7 @@ class APIMobilController extends AbstractController
         ]);
     }
 
-    #[Route('/api/qr-code', name: 'generate_qr_code"', methods: ['POST'])]
+    #[Route('/api/qr-code', name: 'generate_qr_code', methods: ['POST'])]
 
     public function getqrcode(Request $request, ReservationRepository $reservationRepo)
     {
@@ -90,7 +94,7 @@ class APIMobilController extends AbstractController
 
 
 
-    #[Route('/api/register', name: 'api_register"', methods: ['POST'])]
+    #[Route('/api/register', name: 'api_register', methods: ['POST'])]
     public function registerAPI(Request $request,UtilisateurRepository $utilisateurRepository,UserPasswordHasherInterface $encoder ,ValidatorInterface $validator, ObjectManager $manager): JsonResponse
     {
         $user = new Utilisateur();
@@ -145,7 +149,7 @@ class APIMobilController extends AbstractController
     }
 
 
-    #[Route('/api/login', name: 'api_login"', methods: ['POST'])]
+    #[Route('/api/login', name: 'api_login', methods: ['POST'])]
     public function loginAPI( Request $request, 
     UserPasswordHasherInterface $encoder, 
     UtilisateurRepository $utilisateurRepository, AuthenticationUtils $authenticationUtils, JWTTokenManagerInterface $jwtManager): JsonResponse
@@ -177,6 +181,177 @@ class APIMobilController extends AbstractController
             // Ajoutez d'autres informations utilisateur si nécessaire
         ],
     ]);
+
+
+}
+
+
+
+
+
+
+#[Route('/api/login/employe', name: 'api_login_employe', methods: ['POST'])]
+public function loginAPIEmploye( Request $request, 
+UserPasswordHasherInterface $encoder, 
+UtilisateurRepository $utilisateurRepository, AuthenticationUtils $authenticationUtils, JWTTokenManagerInterface $jwtManager): JsonResponse
+{
+$dataLogin = json_decode($request->getContent(), true);
+$email = $dataLogin['email'] ?? '';
+$password = $dataLogin['password'] ?? '';
+
+
+
+$user = $utilisateurRepository->findUserByEmail($email);
+    if (!$user) {
+        return new JsonResponse(['error' => 'Invalid credentials'], 401);
+    }
+
+if (!$encoder->isPasswordValid($user, $password)) {
+    return new JsonResponse(['error' => 'Invalid credentials'], 401);
+}
+
+$token = $this->$jwtManager->create($user);
+// Vérifier les identifiants ici et retourner un token si valide
+// ...
+return new JsonResponse([
+    'message' => 'Login successful',
+    'user' => [
+        'id' => $user->getId(),
+        'email' => $user->getMail(),
+        'token' => $token
+        // Ajoutez d'autres informations utilisateur si nécessaire
+    ],
+]);
+
+
+}
+
+
+
+
+
+
+#[Route('/api/cinema', name: 'api_login_cinema', methods: ['GET'])]
+public function APICinema(CinemaRepository $cinemaRepository): JsonResponse
+{
+
+    
+    $cinemas = $cinemaRepository->findAll();
+
+    $cinemasArray = [];
+    foreach ($cinemas as $cinema) {
+        $cinemasArray[] = [
+            'id' => $cinema->getId(),
+            'name' => $cinema->getNom(),
+        ];
+    }
+
+// Vérifier les identifiants ici et retourner un token si valide
+// ...
+return new JsonResponse([
+    'cinemasArray' => $cinemasArray,
+   
+]);
+
+
+}
+
+
+
+#[Route('/api/salle', name: 'api_login_salle', methods: ['POST'])]
+public function APISalle(Request $request,SalleRepository $salleRepository): JsonResponse
+{
+
+    $dataCinema = json_decode($request->getContent(), true);
+    $salles = $salleRepository->findsallesBycinema($dataCinema['cinema_id']);
+
+    $SallesArray = [];
+    foreach ($salles as $salle) {
+        $SallesArray[] = [
+            'id' => $salle->getId(),
+            'name' => $salle->getNom(),
+        ];
+    }
+
+// Vérifier les identifiants ici et retourner un token si valide
+// ...
+return new JsonResponse([
+    'SallesArray' => $SallesArray,
+   
+]);
+
+
+}
+
+
+#[Route('/api/installations', name: 'api_login_installations', methods: ['POST'])]
+public function APIInstallations(Request $request,InstallationsRepository $installationsRepository): JsonResponse
+{
+
+    $datasalle = json_decode($request->getContent(), true);
+    $installations = $installationsRepository->findInstallationsBySalle($datasalle['salle_id']);
+
+    $InstallationsArray = [];
+    foreach ($installations as $installation) {
+        $InstallationsArray[] = [
+            'id' => $installation->getId(),
+            'salle_id' => $installation->getSalle()->getId(),
+            'date_signalement' => $installation->getDateSignalement(),
+            'employe_id' => $installation->getEmploye()->getId(),
+            'numero_siege' => $installation->getNumeroSiege(),
+            'description_probleme' => $installation->getDescriptionProbleme(),
+            'etat_reparation' => $installation->isEtatReparation(),
+
+        ];
+    }
+
+// Vérifier les identifiants ici et retourner un token si valide
+// ...
+return new JsonResponse([
+    'InstallationsArray' => $InstallationsArray,
+   
+]);
+
+
+}
+
+
+
+#[Route('/api/Createinstallations', name: 'api_login_Createinstallations', methods: ['POST'])]
+public function APICreateinstallations(Request $request, ObjectManager $manager,SalleRepository $salleRepository, UtilisateurRepository $utilisateurRepository): JsonResponse
+{
+    $installation = new Installations();
+
+
+    $dataInstallations= json_decode($request->getContent(), true);
+    $employe = $utilisateurRepository->find($dataInstallations['employe_id']);
+    $salle = $salleRepository->find($dataInstallations['salle_id']);
+
+    $dateSignalement = ($dataInstallations['date_signalement']);
+    if (is_string($dateSignalement)) {
+        // Conversion de la chaîne en DateTime
+        try {
+            $date_signalement = new \DateTime($dateSignalement);
+        } catch (\Exception $e) {
+            throw new \InvalidArgumentException("Invalid date format");
+        }
+    }
+
+    $installation = $installation->setDateSignalement($date_signalement);
+    $installation = $installation->setDescriptionProbleme($dataInstallations['description_probleme']);
+    $installation = $installation->setEtatReparation(0);
+
+    $installation = $installation->setNumeroSiege($dataInstallations['numero_siege']);
+    $installation = $installation->setEmploye($employe);
+    $installation = $installation->setSalle($salle);
+
+    $manager->persist($installation);
+    $manager->flush();
+    
+return new JsonResponse([
+    'message' => 'Le signalement a été enregistré. '
+   
+]);
 
 
 }

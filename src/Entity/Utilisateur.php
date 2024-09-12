@@ -59,12 +59,19 @@ class Utilisateur implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $token = null;
 
+    /**
+     * @var Collection<int, Installations>
+     */
+    #[ORM\OneToMany(targetEntity: Installations::class, mappedBy: 'employe', orphanRemoval: true)]
+    private Collection $installations;
+
 
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
         $this->commandes = new ArrayCollection();
         $this->avis = new ArrayCollection();
+        $this->installations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -268,6 +275,36 @@ class Utilisateur implements PasswordAuthenticatedUserInterface, UserInterface
     public function setToken(?string $token): static
     {
         $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Installations>
+     */
+    public function getInstallations(): Collection
+    {
+        return $this->installations;
+    }
+
+    public function addInstallation(Installations $installation): static
+    {
+        if (!$this->installations->contains($installation)) {
+            $this->installations->add($installation);
+            $installation->setEmploye($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInstallation(Installations $installation): static
+    {
+        if ($this->installations->removeElement($installation)) {
+            // set the owning side to null (unless already changed)
+            if ($installation->getEmploye() === $this) {
+                $installation->setEmploye(null);
+            }
+        }
 
         return $this;
     }
