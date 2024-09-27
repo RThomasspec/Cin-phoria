@@ -188,39 +188,36 @@ class APIMobilController extends AbstractController
 
 
 
-
-
 #[Route('/api/login/employe', name: 'api_login_employe', methods: ['POST'])]
 public function loginAPIEmploye( Request $request, 
 UserPasswordHasherInterface $encoder, 
-UtilisateurRepository $utilisateurRepository, AuthenticationUtils $authenticationUtils, JWTTokenManagerInterface $jwtManager): JsonResponse
+UtilisateurRepository $utilisateurRepository, AuthenticationUtils $authenticationUtils, JWTTokenManagerInterface $jwtManagerEmploye): JsonResponse
 {
 $dataLogin = json_decode($request->getContent(), true);
 $email = $dataLogin['email'] ?? '';
 $password = $dataLogin['password'] ?? '';
 
-
-
 $user = $utilisateurRepository->findUserByEmail($email);
     if (!$user) {
-        return new JsonResponse(['error' => 'Invalid credentials'], 401);
+        return new JsonResponse(['error' => 'Email invalide'], 401);
     }
 
 if (!$encoder->isPasswordValid($user, $password)) {
-    return new JsonResponse(['error' => 'Invalid credentials'], 401);
+    return new JsonResponse(['error' => 'Mot de passe invalide'], 401);
+}
+// La fonction in_array() est une fonction PHP qui vérifie si une valeur donnée se trouve dans un tableau.
+
+if (!in_array('ROLE_EMPLOYE', $user->getRoles()) && !in_array('ROLE_ADMIN', $user->getRoles())) {
+    return new JsonResponse(['error' => 'Compte employe ou administrateur requis'], 401);
 }
 
-$token = $this->$jwtManager->create($user);
+
 // Vérifier les identifiants ici et retourner un token si valide
 // ...
 return new JsonResponse([
     'message' => 'Login successful',
-    'user' => [
-        'id' => $user->getId(),
-        'email' => $user->getMail(),
-        'token' => $token
-        // Ajoutez d'autres informations utilisateur si nécessaire
-    ],
+
+        'id' => $user->getId()
 ]);
 
 
@@ -242,7 +239,7 @@ public function APICinema(CinemaRepository $cinemaRepository): JsonResponse
     foreach ($cinemas as $cinema) {
         $cinemasArray[] = [
             'id' => $cinema->getId(),
-            'name' => $cinema->getNom(),
+            'nom' => $cinema->getNom(),
         ];
     }
 
@@ -284,6 +281,25 @@ return new JsonResponse([
 }
 
 
+
+
+#[Route('/api/maxPlaces', name: 'api_max_places', methods: ['POST'])]
+public function APIMaxPlaces(Request $request,SalleRepository $salleRepository): JsonResponse
+{
+    $dataSalleId = json_decode($request->getContent(), true);
+
+    $nbPlaces = $salleRepository->getNbPlacesMax($dataSalleId['salle_id'])+5;
+
+return new JsonResponse([
+    'nbPlaces' => $nbPlaces,
+   
+]);
+
+
+}
+
+
+
 #[Route('/api/installations', name: 'api_login_installations', methods: ['POST'])]
 public function APIInstallations(Request $request,InstallationsRepository $installationsRepository): JsonResponse
 {
@@ -295,11 +311,14 @@ public function APIInstallations(Request $request,InstallationsRepository $insta
     foreach ($installations as $installation) {
         $InstallationsArray[] = [
             'id' => $installation->getId(),
+            'salle' => $installation->getSalle()->getNom(),
             'salle_id' => $installation->getSalle()->getId(),
             'date_signalement' => $installation->getDateSignalement(),
+            'employe' => $installation->getEmploye()->getNom(),
             'employe_id' => $installation->getEmploye()->getId(),
             'numero_siege' => $installation->getNumeroSiege(),
             'description_probleme' => $installation->getDescriptionProbleme(),
+            
             'etat_reparation' => $installation->isEtatReparation(),
 
         ];
@@ -327,17 +346,9 @@ public function APICreateinstallations(Request $request, ObjectManager $manager,
     $employe = $utilisateurRepository->find($dataInstallations['employe_id']);
     $salle = $salleRepository->find($dataInstallations['salle_id']);
 
-    $dateSignalement = ($dataInstallations['date_signalement']);
-    if (is_string($dateSignalement)) {
-        // Conversion de la chaîne en DateTime
-        try {
-            $date_signalement = new \DateTime($dateSignalement);
-        } catch (\Exception $e) {
-            throw new \InvalidArgumentException("Invalid date format");
-        }
-    }
+    $dateToday = new \DateTime();
 
-    $installation = $installation->setDateSignalement($date_signalement);
+    $installation = $installation->setDateSignalement($dateToday);
     $installation = $installation->setDescriptionProbleme($dataInstallations['description_probleme']);
     $installation = $installation->setEtatReparation(0);
 

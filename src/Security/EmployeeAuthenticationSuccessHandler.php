@@ -10,11 +10,11 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 class EmployeeAuthenticationSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
-    private $jwtManager;
+    private $jwtManagerEmploye;
 
-    public function __construct(JWTTokenManagerInterface $jwtManager)
+    public function __construct(JWTTokenManagerInterface $jwtManagerEmploye)
     {
-        $this->jwtManager = $jwtManager;
+        $this->jwtManagerEmploye = $jwtManagerEmploye;
     }
 
 
@@ -24,11 +24,11 @@ class EmployeeAuthenticationSuccessHandler implements AuthenticationSuccessHandl
         /** @var \App\Entity\Utilisateur $user */
         $user = $token->getUser();
 
-        if (!$user->getRoles() == 'ROLE_EMPLOYEE') {
+        if (!$user->getRoles() == 'ROLE_EMPLOYEE' || !$user->getRoles() == 'ROLE_ADMIN' ) {
             throw new AccessDeniedException('Accès réservé aux employés.');
         }
 
-        $jwt = $this->jwtManager->create($user);
+        $jwt = $this->jwtManagerEmploye->create($user);
 
         $data = [
             'token' => $jwt,

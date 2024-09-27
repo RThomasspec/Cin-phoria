@@ -30,6 +30,23 @@ class SalleRepository extends ServiceEntityRepository
     }
 
 
+    public function getNbPlacesMax(int $salleId): int
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT s.nbPlaces
+            FROM App\Entity\Salle s
+            WHERE s.id = :salleId'
+        )->setParameter('salleId', $salleId);
+
+        $result = $query->getSingleScalarResult();
+
+        // Vérifier si le résultat est nul, et retourner 0 ou une autre valeur par défaut si nécessaire
+        return $result !== null ? (int)$result : 0; 
+    }
+
+
     //    /**
     //     * @return Salle[] Returns an array of Salle objects
     //     */
