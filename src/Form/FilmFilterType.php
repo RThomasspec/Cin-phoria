@@ -70,7 +70,7 @@ class FilmFilterType extends AbstractType
                 'placeholder' => 'Choisissez un jour de la semaine',
             ])
             ->add('filtre', SubmitType::class, [
-            'label' => 'Apply Filters',
+            'label' => 'Appliquer le filtre',
         'attr' => ['class' => 'btn btn-primary']]);
     
     }

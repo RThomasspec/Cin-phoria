@@ -234,12 +234,7 @@ $uniqueFilms = array_values($uniqueFilms);
                 $manager->persist($seance);
                 $manager->flush();
             }
-
-         
-
-           
-
-
+            
             return $this->redirectToRoute('film_validation', ['id' => $film->getId()]);
         }
 
