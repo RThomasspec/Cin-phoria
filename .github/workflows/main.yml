@@ -1,0 +1,26 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main  # Ce workflow se déclenche sur chaque push dans la branche main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Add SSH Key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy code to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@ec2-13-38-118-50.eu-west-3.compute.amazonaws.com "
+          cd /var/www/html/Cin-phoria && \
+          git pull origin main 
+          "
