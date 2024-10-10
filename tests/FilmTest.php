@@ -158,7 +158,7 @@ class FilmTest extends WebTestCase
 
     // Vérifiez que le film a bien été créé en base de données
     $entityManager = self::getContainer()->get(EntityManagerInterface::class);
-    $film = $entityManager->getRepository(Film::class)->findOneBy(['titre' => 'testhhh']);
+    $film = $entityManager->getRepository(Film::class)->findOneBy(['titre' => 'TRAP']);
     
     $this->assertNotNull($film);
     $this->assertEquals('Trap', $film->getTitre());
