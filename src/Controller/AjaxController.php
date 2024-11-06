@@ -104,11 +104,8 @@ class AjaxController extends AbstractController
                     'fin' => $horaire->getFin()->format('H:i')
          
                 ];
-
             }
-
         }
-
         return new JsonResponse([
             'horairesArray' => $horairesArayDisponible,
             'horairesUtilise' => $horairesUtilise

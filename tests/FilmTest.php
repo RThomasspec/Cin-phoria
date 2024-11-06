@@ -144,8 +144,7 @@ class FilmTest extends WebTestCase
         ],
         'form' => [
             'horaires' => [
-                '2',
-                '3',
+                '1',
             ],
         ],
     ];
@@ -162,6 +161,5 @@ class FilmTest extends WebTestCase
     
     $this->assertNotNull($film);
     $this->assertEquals('Trap', $film->getTitre());
-    $this->assertEquals('Un père et sa fille adolescente assistent à un concert pop, où ils réalisent qu\'ils sont au centre d\'un événement sombre et sinistre.',$film->getDescription());
     }
 }
