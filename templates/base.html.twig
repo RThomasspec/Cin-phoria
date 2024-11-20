@@ -58,7 +58,8 @@
           <a class="btn" href="{{ path('intranet') }}">Intranet</a>
           {% endif %}
         </li>
-
+ 
+ 
         <li class="nav-item">
           {% if is_granted('ROLE_EMPLOYE')%}
           <a class="btn" href="{{ path('dashboard') }}">Dashboard</a>

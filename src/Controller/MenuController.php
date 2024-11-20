@@ -43,6 +43,11 @@ use App\Repository\ReservationRepository;
 use App\Repository\UtilisateurRepository;
 use App\Service\CinemaService;
 use App\Repository\AvisRepository;
+use App\Service\AvisService;
+use App\Service\CommandeService;
+use App\Service\FilmService;
+use App\Service\ReservationService;
+use App\Service\SalleService;
 use PhpParser\Node\Expr\Instanceof_;
 use Symfony\Component\Validator\Constraints\IsTrue;
 
@@ -138,7 +143,7 @@ $uniqueFilms = array_values($uniqueFilms);
     // dans mon cas j'ai deux route alors pour la route sans id, il ne pourra pas me récupérer mon film et ce n'est pas ce que je veux
     // il va donc falloir que je dise en paramtre que le Film peut etre null et si il est null on viens l'intancier pour qu'il soit vide
     // mais si je n'ai pas de Film via son id je veux une véritable instance de mon film d'ou la condition
-    public function formFilm(Film $film = null, Request $request, ObjectManager $manager , HoraireRepository $horaireRepository, SalleRepository $salleRepository)
+    public function formFilm(CinemaRepository $cinemaRepository,FilmService $filmService, Film $film = null, Request $request, ObjectManager $manager , HoraireRepository $horaireRepository, SalleRepository $salleRepository)
     {   
      
         $imagePath = '/public/uploads/images/';
@@ -146,95 +151,13 @@ $uniqueFilms = array_values($uniqueFilms);
         if (!$film) {
             $film = new Film();
         }
+        $film = $film ?? new Film();
         $formFilm = $this->createForm(FilmType::class, $film);
-            // A REPRENDRE
-       // $form = $this->createForm(FilmType::class, $film, [
-       //     'horaire_choices' =>$this->getHoraireChoices($horaireRepository, $film),
-       // ]);
-        //$imageAbsolutePath = $this->getParameter('kernel.project_dir') .$imagePath.$film->getIdImage();
-        //$imageFile = new File($imageAbsolutePath);
-        //$form->get('affichage')->setData($imageFile);
 
         $formFilm->handleRequest($request);
 
-
         if ($formFilm->isSubmitted() && $formFilm->isValid()) {
-            // La docblock @var UploadedFile $file informe l'éditeur et les outils d'analyse 
-            //statique que la variable $file est de type UploadedFile.
-            /** @var UploadedFile $file */
-            $file = $formFilm->get('affichage')->getData();
-            $cinema = $formFilm->get('cinema')->getData();
-
-
-            if ($file) {
-
-                    // Redimensionner l'image
-                $imagine = new Imagine();
-                $image = $imagine->open($file);
-                $size = new Box(150, 200); // Taille cible
-                $image->resize($size);
-                $newFilename = uniqid() . '.' . $file->guessExtension();
-
-                try {
-                    
-                    //déplace le fichier vers ce répertoire avec le nouveau nom de fichier.
-                      // Sauvegarder l'image redimensionnée dans le répertoire de destination
-            $image->save($this->getParameter('images_directory') . '/' . $newFilename, [
-                'format' => $file->guessExtension(),
-                $file->guessExtension() . '_quality' => 90 // Ajustez la qualité si nécessaire
-            ]);
-
-
-                    //Si le déplacement est réussi, setIdImage($newFilename) met à jour 
-                    //l'entité Film avec le nouveau nom de fichier (chemin relatif), permettant ainsi de référencer l'image stockée.
-                    $film->setIdImage($newFilename);
-                    $film->setAffichage(($file));
-                } catch (FileException $e) {
-                    // Handle exception if something happens during file upload
-                }
-            }
-            $manager->persist($film);
-            $manager->flush();
-
-            $diffusion = new Diffusion();
-            $diffusion->setCinemas($cinema);
-            $diffusion->setFilms($film);
-
-            $manager->persist($diffusion);
-            $manager->flush();
-
-
-            $formData = $request->request->all(); 
-            $horairesSelectionnes = $formData['form']['horaires'];
-            $PlaceDispoPMR = 5;
-
-         //éder directement aux horaires sélectionnés
-
-            // Vérifier les données reçues
-   
-
-            // $seances est un tableau contenant les IDs des séances sélectionnées
-            foreach ($horairesSelectionnes as $horaireId) {
-                $salle = $formFilm->get('salles')->getData();
-            
-                $prix =  $formFilm->get('prix')->getData();
-                $seance = new Seance();
-                $seance = $seance->setFilm($film);
-                $seance = $seance->setQualite($salle->getQualite());
-                $seance = $seance->setCinema($cinema);
-                $seance = $seance->setHeureDebut($horaireRepository->find($horaireId)->getDebut());
-                $seance = $seance->setHeureFin($horaireRepository->find($horaireId)->getFin());
-                $seance = $seance->setHoraire($horaireRepository->find($horaireId));
-                $seance = $seance->setSalle($salleRepository->find($salle->getId()));
-                $seance = $seance->setPrix($prix);
-                $seance = $seance->setPlaceDispoPMR($PlaceDispoPMR);
-                $seance = $seance->setPlaceDispo($salle->getNbPlaces());
-
-
-                $manager->persist($seance);
-                $manager->flush();
-            }
-            
+            $filmService->handleFilmForm($film, $cinemaRepository,$request, $horaireRepository, $salleRepository);
             return $this->redirectToRoute('film_validation', ['id' => $film->getId()]);
         }
 
@@ -338,21 +261,10 @@ $uniqueFilms = array_values($uniqueFilms);
     }
 
     #[Route('/filmshow/{id}', name: 'film_show')]
-    public function filmShow(Film $film, AvisRepository $avisRepository)
+    public function filmShow(Film $film, AvisRepository $avisRepository, AvisService $avisService)
     {   
         $avis = $avisRepository->findAvisValidebyFilm($film->getId());
-        $totalNote = 0;
-        $countAvis = count($avis);
-
-        if ($countAvis > 0) {
-            foreach ($avis as $noteAvis) {
-                $totalNote += $noteAvis->getNote();
-                $note = round($totalNote / $countAvis);
-                }
-            }else {
-
-                $note = 0;
-            }
+        $note = $avisService->calculerMoyenneAvis($avis);
 
         
         return $this->render('home/showFIlm.html.twig', [
@@ -363,7 +275,7 @@ $uniqueFilms = array_values($uniqueFilms);
     }
 
     #[Route('/filmshow/reservation/{id}', name: 'film_reservation')]
-    public function reservation(Request $request, TokenStorageInterface $tokenStorage, Film $film,ObjectManager $manager, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
+    public function reservation(Request $request,ReservationService $reservationService, TokenStorageInterface $tokenStorage, Film $film,ObjectManager $manager, SeanceRepository $seanceRepository, HoraireRepository $horaireRepository)
     {   
         
 
@@ -380,59 +292,9 @@ $uniqueFilms = array_values($uniqueFilms);
         if ($form->isSubmitted() && $form->isValid()) {
 
     
-            $commande = $commande->setUtilisateur($user);
-            $commande = $commande->setStatut("Confirmé");
-            $manager->persist($commande);
-            $manager->flush();
-
             $formData = $request->request->all(); 
 
-            $nbPlacesPMR = $formData['dataContentPMR'] ?? null; 
-            $nbPlaces = $formData['dataContentPlace'] ?? null; 
-
-            $prix = $formData['dataContentPrix'] ?? null; 
-
-            $nbSieges = 0;
-            if($nbPlacesPMR >= 1 && $nbPlaces == 0){
-                $seanceIdPMR = $form->get('NbPlacesPMR')->getData();
-                $seance = $seanceRepository->find($seanceIdPMR);
-                $nbSieges = $nbPlacesPMR;
-                $nbPlacesDispoPMR = $seance->getPlaceDispoPMR() - $nbPlacesPMR;
-                
-                $seance = $seance->setPlaceDispoPMR($nbPlacesDispoPMR);
-            }else if($nbPlaces >= 1 && $nbPlacesPMR == 0){
-                $seanceId = $form->get('NbPlaces')->getData();
-                $nbSieges = $nbPlaces ;
-                $seance = $seanceRepository->find($seanceId);
-                
-                $nbPlacesDispo = $seance->getPlaceDispo() - $nbPlaces;
-
-                $seance = $seance->setPlaceDispo($nbPlacesDispo);
-            }else{
-                $nbSieges = $nbPlaces + $nbPlacesPMR;
-                $seanceId = $formData['reservation']['NbPlaces'];
-                $seance = $seanceRepository->find($seanceId);
-
-
-                $nbPlacesDispoPMR = $seance->getPlaceDispoPMR() - $nbPlacesPMR;
-                $seance = $seance->setPlaceDispoPMR($nbPlacesDispoPMR);
-
-                $nbPlacesDispo = $seance->getPlaceDispo() - $nbPlaces;
-                $seance = $seance->setPlaceDispo($nbPlacesDispo);
-            }
-
-            $reservation = $reservation->setCommande($commande);
-            $reservation = $reservation->setUtilisateur($user);
-            $reservation = $reservation->setSeance($seance);    
-            $reservation = $reservation->setNbSieges($nbSieges);
-            $reservation = $reservation->setPrix($prix);
-            $reservation = $reservation->setStatut("Confirmée");
-
-            $manager->persist($reservation);
-            $manager->flush();
-
-            $manager->persist($seance);
-            $manager->flush();
+            $reservation = $reservationService->createReservation($formData, $form, $manager, $seanceRepository, $user);
 
             return $this->redirectToRoute('home');
         }
@@ -493,7 +355,7 @@ $uniqueFilms = array_values($uniqueFilms);
 
     #[IsGranted('ROLE_CLIENT', message: 'You are not allowed to access.')]
     #[Route('/monCompte/commande', name: 'commande')]
-    public function commande(AvisRepository $avisRepository,HoraireRepository $horaireRepository, SeanceRepository $seanceRepository, TokenStorageInterface $tokenStorage, ReservationRepository $reservationRepository)
+    public function commande(CommandeService $commandeService,AvisRepository $avisRepository,HoraireRepository $horaireRepository, SeanceRepository $seanceRepository, TokenStorageInterface $tokenStorage, ReservationRepository $reservationRepository)
     {   
         $token = $tokenStorage->getToken();
         $user = $token->getUser();
@@ -505,46 +367,7 @@ $uniqueFilms = array_values($uniqueFilms);
             $userId = $property->getValue($user);
             
         } 
-        // film, date heure, nbplace, prix, stau   
-        
-        $reservations = $reservationRepository->findReservationByUtilisateur($userId);
-
-        $seanceReservations = [];
-
-        for ($i = 0; $i < count($reservations); $i++) {
-
-            $reservation = $reservations[$i];
-            $seance = $seanceRepository->find($reservation->getSeance()->getId());
-            $horaires = $horaireRepository->findHoraireBySeance($seance->getId());
-            $horaire = $horaireRepository->find($horaires[0]->getId());
-
-
-
-            $avis = $avisRepository->FilmGetAvis($seance->getFilm()->getId(),$reservation->getUtilisateur()->getId() );
-
-            if($avis > 0){
-                $avis = false;
-            }else{
-                $avis = true;
-            }
-            
-
-                $seanceReservations[] = [
-                        'nbSieges' => $reservation->getNbSieges(),
-                        'prix' => $reservation->getPrix(),
-                        'statut' => $reservation->getStatut(),
-                        'titre' => $seance->getFilm()->getTitre(),
-                        'filmId' => $seance->getFilm()->getId(),
-                        'utilisateurId' => $reservation->getUtilisateur()->getId(),
-                        'jour' => $horaire->getJour(),
-                        'avisAlreadyGive' => $avis,
-                        'debut' => $seance->getHeureDebut()->format('H:i'),
-                        'fin' => $seance->getHeureFin()->format('H:i'),
-                        
-                    ];
-        
-            }
-        
+        $seanceReservations = $commandeService->getSeanceReservations($userId);
 
         return $this->render('home/commande.html.twig', [
             'seanceReservations' => $seanceReservations,
@@ -566,7 +389,7 @@ $uniqueFilms = array_values($uniqueFilms);
 
     #[IsGranted('ROLE_CLIENT', message: 'You are not allowed to access.')]
     #[Route('/monCompte/commande/avis/{id}/{utilisateurId}', name: 'avis')]
-    public function Avis(Film $film, int $utilisateurId, ObjectManager $manager, Avis $avis = null, Request $request, UtilisateurRepository $utilisateurRepository)
+    public function Avis(AvisService $avisService, Film $film, int $utilisateurId, ObjectManager $manager, Avis $avis = null, Request $request, UtilisateurRepository $utilisateurRepository)
     {   
         $utilisateur = $utilisateurRepository->find($utilisateurId);
         if (!$avis) {
@@ -579,11 +402,7 @@ $uniqueFilms = array_values($uniqueFilms);
 
         if($formAvis->isSubmitted() && $formAvis->isValid()){
             
-            $avis = $avis->setUtilisateur($utilisateur);
-            $avis = $avis->setFilm($film);
-            $avis = $avis->setValide(false);
-            $manager->persist($avis);
-            $manager->flush();
+            $avisService->saveAvis($avis, $film, $utilisateur);
 
             return $this->redirectToRoute('commande');
         }
@@ -628,7 +447,7 @@ $uniqueFilms = array_values($uniqueFilms);
 
     #[Route('/salle/new', name: 'form_salle')]
     #[Route('/salle/{id}/new', name: 'salle_edit')]
-    public function formSalle (Request $request, Salle $salle = null, SalleRepository $salleRepository, ObjectManager $manager)
+    public function formSalle (SalleService $salleService,Request $request, Salle $salle = null, SalleRepository $salleRepository, ObjectManager $manager)
     {
         if(!$salle){
         $salle = new Salle();
@@ -640,8 +459,6 @@ $uniqueFilms = array_values($uniqueFilms);
 
         if($form->isSubmitted() && $form->isValid()){
 
-                $manager->persist($salle);
-                $manager->flush();
 
                 $jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
                 $horaires = [
@@ -651,20 +468,7 @@ $uniqueFilms = array_values($uniqueFilms);
                     ['15:00:00', '16:00:00'],
                     ['17:00:00', '18:00:00'],
                 ];
-        
-                foreach ($jours as $jour) {
-                    foreach ($horaires as $horaireData) {
-                        $horaire = new Horaire();
-                        $horaire->setJour($jour);
-                        $horaire->setSalle($salle);
-                        $horaire->setDebut(new \DateTime($horaireData[0]));
-                        $horaire->setFin(new \DateTime($horaireData[1]));
-                        
-                        $manager->persist($horaire);
-                        $manager->flush();
-                    }
-                }
-
+                $salleService->saveSalle($salle, $jours, $horaires);
 
 
         return $this->redirectToRoute('intranet');

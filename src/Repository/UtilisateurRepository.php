@@ -45,6 +45,10 @@ class UtilisateurRepository extends ServiceEntityRepository
         return $query->getOneOrNullResult();
     
         }
+
+
+
+        
     //    /**
     //     * @return Utilisateur[] Returns an array of Utilisateur objects
     //     */

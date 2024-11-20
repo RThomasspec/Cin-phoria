@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Installations;
 use App\Service\CinemaService;
+use App\Service\ReservationServiceAPI;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,28 +35,17 @@ class APIMobilController extends AbstractController
 {
     #[Route('/api/reservations', name: 'list_reservation', methods: ['POST'])]
 
-    public function getSeanceByHoraire(Request $request, ReservationRepository $reservationRepo)
+    public function getSeanceByUtilisateur(Request $request, ReservationServiceAPI $reservationServiceAPI)
     {
-        $data = json_decode($request->getContent(), true); 
-        $utilisateurId = $data['utilisateur_id'];
+        $data = json_decode($request->getContent(), true);
+    $utilisateurId = $data['utilisateur_id'] ?? null;
 
-        $reservations = $reservationRepo->findReservationByUtilisateur($utilisateurId);
-         // Récupérer les informations de la séance
-         $reservationDetails = [];
-
-            for ($i = 0; $i < count($reservations); $i++) {
-                $reservation = $reservations[$i];
-         $reservationDetails[] = [
-            'idReservation' => $reservation->getId(),
-            'film' => $reservation->getSeance()->getFilm()->getTitre(),
-            'idImage' => $reservation->getSeance()->getFilm()->getIdImage(),
-            'jour' => $reservation->getSeance()->getHoraire()->getJour(),
-            'salle' => $reservation->getSeance()->getSalle()->getNom(),
-            'debut' => $reservation->getSeance()->getHoraire()->getDebut()->format('H:i'),
-            'fin' => $reservation->getSeance()->getHoraire()->getFin()->format('H:i'),
-            'nbPlacesReserve' => $reservation->getNbSieges()
-        ];
+    if (!$utilisateurId) {
+        return new JsonResponse(['error' => 'Utilisateur ID is required'], 400);
     }
+
+    $reservationDetails = $reservationServiceAPI->getReservationDetailsByUser($utilisateurId);
+
     // Encoder les informations de la séance en JSON 
     $jsonReservation = json_encode($reservationDetails);
 

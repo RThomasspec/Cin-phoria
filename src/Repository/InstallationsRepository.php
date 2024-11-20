@@ -29,6 +29,8 @@ class InstallationsRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+
+    
     //    /**
     //     * @return Installations[] Returns an array of Installations objects
     //     */
