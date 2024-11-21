@@ -6,13 +6,9 @@
 parameters:
     images_directory: '%kernel.project_dir%/public/uploads/images'
 services:
-
+    App\ServiceAPI\ReservationServiceAPI: ~
 
 # config/services.yaml
-    App\Twig\AppExtension:
-            arguments:
-                $cinemaService: '@App\Service\CinemaService'
-            tags: ['twig.extension']
 
     App\Service\PasswordResetService:
 

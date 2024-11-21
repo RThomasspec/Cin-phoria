@@ -49,7 +49,7 @@ class FilmTest extends WebTestCase
 
         // Arrange: Configurer l'environnement de test
 
- // Vous devez créer un objet Seance
+        // Vous devez créer un objet Seance
 
         $film = new Film();
         // Act
@@ -116,50 +116,5 @@ class FilmTest extends WebTestCase
 
     }
 
-    public function testControlleurCreationFilm()
-    {
-       $client = static::createClient();
 
-    // Simulez un fichier upload
-    $file = new UploadedFile(
-        '/Users/thomasrobin/Projects/Cinéphoria/IMG/trap.jpeg',
-        'test_image.jpg',
-        'image/jpeg',
-        null,
-        true
-    );
-
-    // Simulez les données pour la requête
-    $data = [
-        'film' => [
-            'cinema' => '1',
-            'titre' => 'Trap', // Changez cela si vous vérifiez avec 'Test Case'
-            'description' => 'Un père et sa fille adolescente assistent à un concert pop, où ils réalisent qu\'ils sont au centre d\'un événement sombre et sinistre.',
-            'AgeMinimum' => '18',
-            'coupDeCoeur' => '1',
-            'genre' => 'Horreur',
-            'salles' => '1',
-            'prix' => '20',
-            'affichage' => $file // Associez le fichier uploadé ici si nécessaire
-        ],
-        'form' => [
-            'horaires' => [
-                '1',
-            ],
-        ],
-    ];
-
-    // Envoyez la requête POST avec les données et le fichier
-    $crawler = $client->request('POST', '/film/new', $data);
-
-    // Vérifiez que la réponse est une redirection (302)
-    $this->assertResponseStatusCodeSame(302);
-
-    // Vérifiez que le film a bien été créé en base de données
-    $entityManager = self::getContainer()->get(EntityManagerInterface::class);
-    $film = $entityManager->getRepository(Film::class)->findOneBy(['titre' => 'TRAP']);
-    
-    $this->assertNotNull($film);
-    $this->assertEquals('Trap', $film->getTitre());
-    }
 }

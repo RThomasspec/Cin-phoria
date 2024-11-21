@@ -1,7 +1,7 @@
 <?php
 // src/Service/CinemaService.php
 
-namespace App\Service;
+namespace App\ServiceAPI;
 use App\Entity\Reservation;
 use App\Entity\Commande;
 use App\Repository\ReservationRepository;
