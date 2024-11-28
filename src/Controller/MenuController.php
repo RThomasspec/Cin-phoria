@@ -55,59 +55,54 @@ class MenuController extends AbstractController
 
 {
 
-
     #[Route('/', name: 'home')]
     public function home(FilmRepository $filmRepository, CinemaRepository $cinemaRepository, Request $request)
     {   
-        $cinema = new Cinema();
+        // Récupération de tous les films et cinémas
         $films = $filmRepository->findAll();
         $cinemas = $cinemaRepository->findAll();
-
-
-// Filtrer les doublons par titre
-$uniqueFilms = [];
-foreach ($films as $film) {
-    $title = $film->getTitre();
-    if (!isset($uniqueFilms[$title])) {
-        $uniqueFilms[$title] = $film;
-    }
-}
-
-// Convertir les valeurs du tableau associative en array indexé
-$uniqueFilms = array_values($uniqueFilms);
-
+    
+        // Filtrer les doublons par titre
+        $uniqueFilms = [];
+        foreach ($films as $film) {
+            $title = $film->getTitre();
+            if (!isset($uniqueFilms[$title])) {
+                $uniqueFilms[$title] = $film;
+            }
+        }
+    
+        // Convertir les valeurs du tableau associative en array indexé
+        $uniqueFilms = array_values($uniqueFilms);
+    
+        // Création du formulaire de filtre
         $formFilter = $this->createForm(FilmFilterType::class); 
         $formFilter->handleRequest($request);
         $filmsFilter = [];
-        
+    
+        // Vérification de la soumission du formulaire
         if ($formFilter->isSubmitted() && $formFilter->isValid()) {
-
-
+            // Récupération des données du formulaire
             $cinema = $formFilter->get('cinema')->getData();
-            if($cinema){
-                $cinemaId = $cinema->getId();
-            }else{
-                $cinemaId = null;
-            }
-
-
-
-            $films = $filmRepository->findByFilters(
+            $cinemaId = $cinema ? $cinema->getId() : null;
+    
+            // Application des filtres
+            $filmsFilter = $filmRepository->findByFilters(
                 $cinemaId,
                 $formFilter->get('genre')->getData(),
                 $formFilter->get('jour')->getData()
             );
         }
-
-
+    
+        // Rendu de la vue
         return $this->render('base.html.twig', [
-            'films' => $uniqueFilms,
-            'filmsFilter' => $filmsFilter,
+            // On laisse 'films' vide si on ne veut pas l'afficher
+            'films' => $uniqueFilms, 
+            'filmsFilter' => $filmsFilter, // Liste filtrée
             'formFilter' => $formFilter->createView(),
-            'cinemas' => $cinemas
+            'cinemas' => $cinemas, // Liste des cinémas
         ]);
     }
-
+    
     #[Route('/intranet/ModifyOrDelteFilm', name: 'ModifyOrDelteFilm')]
     public function ModifyOrDelteFilm(FilmRepository $repo, CinemaRepository $cinemaRepository)
     {   
@@ -342,8 +337,6 @@ $uniqueFilms = array_values($uniqueFilms);
     {   
 
           $avis = $avisRepository->findInvalidAvis();
-
-  
 
 
         return $this->render('home/valideAvis.html.twig', [

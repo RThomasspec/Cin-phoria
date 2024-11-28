@@ -20,59 +20,59 @@ class FilmFilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('cinema', EntityType::class, [
-                'class' => Cinema::class,
-                'choice_label' => 'nom',
-                'required' => false,
-                'placeholder' => 'Selectionner un Cinema',  
-                "mapped" => false
-            ])
-            ->add('genre', ChoiceType::class, [
-                'choices' => [
-                    'Comédie' => "Comédie",
-                    'Horreur' => "Horreur",
-                    'Drame' => "Drame",
-                    'Fantastique' => "Fantastique",
-                    'Animation' => "Animation",
-                    'Musical' => "Musical",
-                    'Documentaire' => "Documentaire",
-                    'Guerre' => "Guerre",
-                    'Western' => "Western",
-                    'Biopic' => "Biopic",
-                    'Comédie romantique' => "Comédie romantique",
-                    'Historique' => "Historique",
-                    'Retransmission' => "Retransmission",
-                    'Court métrage' => "Court métrage",
-                    'Thriller' => "Thriller",
-                    'Action / Aventure' => "Action / Aventure",
-                    'Science-fiction' => "Science-fiction",
-                    'Comédie dramatique' => "Comédie dramatique",
-                ],
-                'attr' => ['class' => 'form-select'],
-                'placeholder' => 'Choisissez un genre',
-                'required' => false
-                
-            ])
-            ->add('jour',ChoiceType::class, [
-                'attr' => ['class' => 'form-control'],
-                'label' => 'Jour',
-                'choices' => [
-                    'Lundi' => "Lundi",
-                    'Mardi' => "Mardi",
-                    'Mercredi' => "Mercredi",
-                    'Jeudi' => "Jeudi",
-                    'Vendredi' => "Vendredi",
-                    'Samedi' => "Samedi",
-                    'Dimanche' => "Dimanche"
-                ],
-                'required' =>false,
-                'mapped' => false,
-                'placeholder' => 'Choisissez un jour de la semaine',
-            ])
-            ->add('filtre', SubmitType::class, [
+        ->add('cinema', EntityType::class, [
+            'class' => Cinema::class,
+            'choice_label' => 'nom',
+            'required' => false,
+            'placeholder' => 'Sélectionner un Cinéma',  
+            'attr' => ['class' => 'custom-select'],
+            "mapped" => false
+        ])
+        ->add('genre', ChoiceType::class, [
+            'choices' => [
+                'Comédie' => "Comédie",
+                'Horreur' => "Horreur",
+                'Drame' => "Drame",
+                'Fantastique' => "Fantastique",
+                'Animation' => "Animation",
+                'Musical' => "Musical",
+                'Documentaire' => "Documentaire",
+                'Guerre' => "Guerre",
+                'Western' => "Western",
+                'Biopic' => "Biopic",
+                'Comédie romantique' => "Comédie romantique",
+                'Historique' => "Historique",
+                'Retransmission' => "Retransmission",
+                'Court métrage' => "Court métrage",
+                'Thriller' => "Thriller",
+                'Action / Aventure' => "Action / Aventure",
+                'Science-fiction' => "Science-fiction",
+                'Comédie dramatique' => "Comédie dramatique",
+            ],
+            'attr' => ['class' => 'custom-select'],
+            'placeholder' => 'Choisissez un genre',
+            'required' => false
+        ])
+        ->add('jour', ChoiceType::class, [
+            'attr' => ['class' => 'custom-select'],
+            'label' => 'Jour',
+            'choices' => [
+                'Lundi' => "Lundi",
+                'Mardi' => "Mardi",
+                'Mercredi' => "Mercredi",
+                'Jeudi' => "Jeudi",
+                'Vendredi' => "Vendredi",
+                'Samedi' => "Samedi",
+                'Dimanche' => "Dimanche"
+            ],
+            'required' => false,
+            'mapped' => false,
+            'placeholder' => 'Choisissez un jour de la semaine',
+        ])
+        ->add('filtre', SubmitType::class, [
             'label' => 'Appliquer le filtre',
-        'attr' => ['class' => 'btn btn-primary']]);
-    
+            'attr' => ['class' => 'custom-button']
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

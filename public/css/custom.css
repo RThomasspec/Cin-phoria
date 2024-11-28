@@ -1,119 +1,651 @@
+/* Styles de base pour la navbar */
 body {
     font-family: Arial, sans-serif;
-    background-color: #ffffff;
-    padding: 20px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo {
+  height: 40px; /* Hauteur par défaut */
+  margin-right: 10px;
+}
+
+.brand-text {
+  font-size: 1.2rem;
+  color: white; /* Adaptez à votre thème */
+} 
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.navbar .navbar-brand {
+    color: white;
+    font-size: 24px;
+    text-decoration: none;
+}
+
+.navbar-links {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.navbar-links li {
+    margin-left: 20px;
+}
+
+.navbar-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 5px;
+}
+
+.navbar-links a:hover {
+    background-color: #0056b3; /* Change couleur au survol */
+}
+
+/* Dropdown styles */
 .dropdown {
     position: relative;
     display: inline-block;
 }
-.navbar {
-  /* Dimensions de la barre de navigation */
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  background-color: #333; /* Couleur de fond de la barre de navigation */
-}
 
-.navbar img {
-  /* Dimensions du logo */
-  height: 100px; /* Ajustez la hauteur selon vos besoins */
-  width: 50px; /* Maintient les proportions de l'image */
-}
-.dropdown-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
-
-.dropdown-button:hover,
-.dropdown-button:focus {
-    background-color: #3e8e41;
-}
-
-body {
-  color: white; /* Changer la couleur du texte par défaut en blanc */
-}
-
-/* Optionnel : Changer la couleur des liens */
-a {
-  color: white; /* Changer la couleur des liens en blanc */
-}
-
-/* Optionnel : Changer la couleur du texte dans les éléments spécifiques */
-h1, h2, h3, h4, h5, h6, p {
-  color: white; /* Assurez-vous que le texte des titres et paragraphes est également blanc */
-}
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
+    background-color: #007bff;
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
+    border-radius: 5px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+.dropdown-menu {
+  position: absolute; /* Permet de positionner le menu par rapport à son parent */
+  top: 100%; /* Place le menu juste en dessous du bouton déclencheur */
+  left: 0; /* Aligne le menu avec le bord gauche */
+  z-index: 1000; /* Assure que le menu est au-dessus des autres éléments */
+}
+.navbar-nav .dropdown-menu {
+  z-index: 1050; /* Bootstrap utilise généralement des z-index de cette valeur */
 }
 
 .dropdown-content a {
-    color: black;
+    color: white;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
 
 .dropdown-content a:hover {
-    background-color: #f1f1f1;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
+    background-color: #0056b3;
 }
 
 
 
-table {
-    border-collapse: collapse;
-    border: 2px solid rgb(140 140 140);
-    font-family: sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+
+
+/*  filtrage */
+.filter-banner {
+  background-color: #f8f9fa; /* Couleur de fond douce */
+  padding: 1rem; /* Espacement interne */
+  border-radius: 0.5rem; /* Coins arrondis */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre légère */
+  margin-bottom: 2rem; /* Espacement en bas pour séparer du contenu suivant */
+  display: flex; /* Utilisation de flexbox pour le layout */
+  flex-direction: column; /* Empiler les éléments verticalement sur mobile */
+}
+
+.custom-select {
+  border: 2px solid #353535; /* Bordure personnalisée */
+  border-radius: 0.5rem; /* Arrondi des coins */
+  padding: 0.5rem; /* Espacement interne */
+  width: 100%; /* S'assurer qu'il prend toute la largeur */
+  margin-bottom: 1rem; /* Espacement entre les sélecteurs */
+}
+
+/* Style pour le label */
+.form-label {
+  font-weight: bold; /* Texte en gras */
+  color: #353535; /* Couleur du texte */
+  margin-bottom: 0.5rem; /* Espacement en bas du label */
+}
+
+/* Style pour le bouton de filtrage */
+.custom-button {
+  background-color: #3f3f3f; /* Couleur de fond personnalisée */
+  border: none; /* Supprimer la bordure par défaut */
+  padding: 0.5rem; /* Espacement interne */
+  border-radius: 0.25rem; /* Arrondi des coins */
+  color: white; /* Couleur du texte */
+  font-size: 1rem; /* Taille du texte */
+  transition: background-color 0.3s; /* Transition douce */
+  cursor: pointer; /* Curseur pointer pour le bouton */
+}
+
+.custom-button:hover {
+  background-color: #f6f6f6; /* Couleur de fond au survol */
+  color: #484848;
+}
+
+
+
+/* Affichage des films */
+
+.film-list {
+  display: flex; /* Utilisation de flexbox pour un layout responsive */
+  flex-wrap: wrap; /* Permet aux éléments de se déplacer sur plusieurs lignes si nécessaire */
+  justify-content: space-between; /* Espacement entre les cartes */
+  margin: 20px 0; /* Marges autour de la liste */
+}
+
+.film-card {
+  background-color: #ffffff; /* Couleur de fond blanche */
+  border: 1px solid #ddd; /* Bordure légère */
+  border-radius: 0.5rem; /* Coins arrondis */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre pour effet de profondeur */
+  margin-bottom: 20px; /* Espacement entre les cartes */
+  overflow: hidden; /* Évite les débordements */
+  transition: transform 0.3s; /* Animation lors du survol */
+  width: calc(33% - 20px); /* Largeur des cartes, trois par ligne avec espacement */
+}
+
+.film-card:hover {
+  transform: scale(1.05); /* Agrandissement au survol */
+}
+
+.film-image {
+  width: 100%; /* Image prend toute la largeur de la carte */
+  height: auto; /* Hauteur automatique pour garder les proportions */
+}
+
+.film-title {
+  font-size: 1.25rem; /* Taille du titre */
+  margin: 0; /* Supprime les marges par défaut */
+}
+
+.bouton-selection{
+  display: flex;
+  justify-content: center;
+}
+
+.film-rating {
+  color: #777; /* Couleur du texte pour la note */
+  margin: 5px 0; /* Espacement entre la note et le titre */
+}
+
+
+.btn-select {
+  background-color: #3f3f3f; /* Couleur de fond personnalisée pour le bouton */
+  color: white; /* Couleur du texte du bouton */
+  padding: 10px 15px; /* Espacement interne pour le bouton */
+  border-radius: 0.25rem; /* Coins arrondis pour le bouton */
+  text-decoration: none; /* Pas de soulignement */
+  transition: background-color 0.3s; /* Transition douce pour le changement de couleur */
+}
+
+.btn-select:hover {
+  background-color: #050505; /* Couleur au survol du bouton */
+}
+
+/* Déatil des films */
+
+/* Styles généraux */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* Article principal */
+.film-details {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 1.5rem;
+}
+
+.film-title {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Section description et info */
+.film-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.film-description h3,
+.film-info h3 {
+  font-size: 1.25rem;
+  color: #34495e;
+  margin-bottom: 0.5rem;
+}
+
+.film-description p,
+.film-info p {
+  font-size: 1rem;
+  color: #555;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Image */
+.film-image {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+
+.film-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer - Bouton d'action */
+.film-actions {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.film-actions .btn {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #5b5b5b;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.film-actions .btn:hover {
+  background-color: #219150;
+}
+
+/* Section commentaires */
+.comments-section {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.comments-section h3 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+/* Commentaires */
+.comment {
+  border-bottom: 1px solid #ddd;
+  padding: 1rem 0;
+}
+
+.comment:last-child {
+  border-bottom: none;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  color: #34495e;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.comment-rating {
+  color: #f39c12;
+  font-weight: bold;
+}
+
+.comment-body {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.4;
+}
+/* Formulaire de réservation */
+
+/* Conteneur principal */
+.reservation-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Titre du film */
+.film-title {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Affiche du film */
+.film-poster img {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Champs du formulaire */
+.form-field {
+  margin-bottom: 1.5rem;
+}
+
+.field-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #34495e;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.field-input {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+
+.field-input:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* Boutons */
+.form-actions {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  color: #fff;
+  background: #3498db;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: #2980b9;
+}
+
+.btn-login {
+  background: #e74c3c;
+}
+
+.btn-login:hover {
+  background: #c0392b;
+}
+
+.btn-primary {
+  background: #3a3a3a;
+}
+
+.btn-primary:hover {
+  background: #3a3a3a;
+}
+/* Styles pour le champ de réservation */
+.film-reservation-fieldset {
+  border: 2px solid #333; /* Bordure du fieldset */
+  border-radius: 8px; /* Coins arrondis */
+  padding: 20px; /* Espacement interne */
+  margin: 20px auto; /* Centre le fieldset horizontalement */
+  width: 90%; /* Largeur à 90% pour s'adapter à l'écran mobile */
+  max-width: 600px; /* Largeur maximum pour garder un aspect compact */
+  background-color: #f9f9f9; /* Couleur de fond */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ajoute une ombre douce */
+}
+
+
+
+.image-form{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.film-title {
+  font-size: 1.8rem; /* Taille du titre du film */
+  margin-bottom: 15px; /* Espacement sous le titre */
+  color: #333; /* Couleur du texte */
+}
+
+/* Styles pour l'image du film */
+.film-image {
+  max-width: 100%; /* S'assure que l'image ne dépasse pas le conteneur */
+  height: auto; /* Hauteur automatique pour garder les proportions */
+  border-radius: 8px; /* Coins arrondis pour l'image */
+  margin-bottom: 15px; /* Espacement sous l'image */
+}
+
+/* Styles pour les groupes de formulaire */
+.custom-form-group {
+  margin-bottom: 1.5rem; /* Espacement entre les groupes */
+}
+
+/* Styles pour les étiquettes */
+.custom-form-label {
+  font-weight: bold; /* Étiquette en gras */
+  display: block; /* Étiquette sur une nouvelle ligne */
+  margin-bottom: 0.5rem; /* Espacement sous l'étiquette */
+}
+
+/* Styles pour les contrôles de formulaire */
+.custom-form-control {
+  width: 100%; /* Largeur à 100% */
+  padding: 10px; /* Espacement interne */
+  border: 2px solid #ccc; /* Bordure standard */
+  border-radius: 4px; /* Coins arrondis */
+  transition: border-color 0.3s; /* Transition pour la couleur de la bordure */
+}
+
+/* Au focus */
+.custom-form-control:focus {
+  border-color: #4caf50; /* Change la couleur de la bordure au focus */
+  outline: none; /* Supprime l'outline par défaut */
+}
+
+/* Styles pour la case à cocher */
+.custom-form-check {
+  display: flex; /* Flexbox pour aligner la case et l'étiquette */
+  align-items: center; /* Aligne verticalement */
+  margin-bottom: 1.5rem; /* Espacement entre les vérifications */
+}
+
+/* Styles pour la case à cocher personnalisée */
+.custom-form-check-input {
+  width: 1.5rem; /* Taille de la case à cocher */
+  height: 1.5rem; /* Taille de la case à cocher */
+  margin-left: 1rem; /* Espacement à droite de la case */
+  cursor: pointer; /* Curseur pointer */
+  appearance: none; /* Supprime le style par défaut */
+  background-color: #fff; /* Fond blanc */
+  border: 3px solid #3a3a3a; /* Bordure plus épaisse et verte */
+  border-radius: 4px; /* Coins légèrement arrondis */
+}
+
+/* Au survol */
+.custom-form-check-input:hover {
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.6); /* Glow vert */
+}
+
+/* Quand cochée */
+.custom-form-check-input:checked {
+  background-color: #3a3a3a; /* Fond vert */
+  border-color: #3a3a3a; /* Bordure plus foncée */
+}
+
+/* Étiquette pour la case à cocher */
+.custom-form-check-label {
+  font-size: 1.2rem; /* Taille de police */
+  color: #333; /* Couleur du texte */
+  cursor: pointer; /* Curseur pointer */
+}
+
+/* Styles pour le bouton */
+.custom-btn {
+  background-color: #3a3a3a; /* Fond vert */
+  color: white; /* Couleur du texte */
+  padding: 10px 15px; /* Espacement interne */
+  border: none; /* Pas de bordure */
+  border-radius: 4px; /* Coins arrondis */
+  text-decoration: none; /* Pas de soulignement */
+  cursor: pointer; /* Curseur pointer */
+  transition: background-color 0.3s; /* Transition douce */
+}
+
+
+.image-reservation {
+  max-width: 75%;
+  height: 50%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Au survol du bouton */
+.custom-btn:hover {
+  background-color: #3a3a3a; /* Couleur au survol */
+}
+
+
+/* Cible uniquement les écrans mobiles */
+@media (max-width: 767.98px) {
+
+  /* Nabar */
+  .logo {
+    display: none; /* Réduire la taille de l'image */
   }
-  
-  caption {
-    caption-side: bottom;
-    padding: 10px;
-    font-weight: bold;
+
+  .navbar-collapse {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-in-out;
   }
-  
-  thead,
-  tfoot {
-    background-color: rgb(228 240 245);
+
+  .navbar-collapse.show {
+      max-height: 300px; /* Ajustez en fonction du contenu */
   }
-  
-  th,
-  td {
-    border: 1px solid rgb(160 160 160);
-    padding: 8px 10px;
+
+  .navbar-toggler {
+      border: none;
+      background-color: #333;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
   }
-  
-  td:last-of-type {
-    text-align: center;
+
+  .navbar-toggler-icon {
+      background-image: none;
+      display: inline-block;
+      width: 1.5rem;
+      height: 0.2rem;
+      background-color: white;
+      position: relative;
   }
-  
-  tbody > tr:nth-of-type(even) {
-    background-color: rgb(237 238 242);
+
+  .navbar-toggler-icon::before,
+  .navbar-toggler-icon::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: white;
   }
-  
-  tfoot th {
-    text-align: right;
+
+  .navbar-toggler-icon::before {
+      top: -0.5rem;
   }
-  
-  tfoot td {
-    font-weight: bold;
+
+  .navbar-toggler-icon::after {
+      top: 0.5rem;
   }
+
+    /* Filtre */
+
+    .filter-banner {
+      flex-direction: row; /* Passer en mode horizontal sur les grands écrans */
+      justify-content: space-between; /* Espacement entre les éléments */
+    }
   
+    .custom-select {
+      margin-bottom: 0; /* Supprimer l'espacement entre les sélecteurs sur les grands écrans */
+      margin-right: 1rem; /* Espacement droit entre les sélecteurs */
+    }
+  
+    .custom-button {
+      margin-top: 0; /* Enlever le margine supérieur pour les écrans larges */
+    }
+
+
+
+
+
+      /* Affichage des films  */
+
+
+      .film-card {
+        width: 100%; /* Une carte par ligne sur mobile */
+      }
+    
+      .film-title {
+        font-size: 1rem; /* Taille de police réduite pour les petits écrans */
+      }
+    
+      .btn-select {
+        font-size: 0.9rem; /* Taille du bouton ajustée */
+        padding: 8px 12px; /* Réduction de l'espacement interne */
+      }
+}

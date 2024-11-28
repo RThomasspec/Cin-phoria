@@ -38,6 +38,8 @@ class AvisService
      */
     public function saveAvis(Avis $avis, Film $film, Utilisateur $utilisateur): void
     {
+        try{ 
+        $this->entityManager->beginTransaction();
         $avis->setUtilisateur($utilisateur);
         $avis->setFilm($film);
         $avis->setValide(false); // L'avis n'est pas validé par défaut
@@ -45,6 +47,17 @@ class AvisService
         // Persiste l'avis dans la base de données
         $this->entityManager->persist($avis);
         $this->entityManager->flush();
+        
+        $this->entityManager->commit();
+
+    } catch (\Exception $e) {
+        // Annule la transaction en cas d'erreur
+        $this->entityManager->rollback();
+
+        // Relancer l'exception ou gérer l'erreur ici
+        throw $e;
+    }
+
     }
 }
 

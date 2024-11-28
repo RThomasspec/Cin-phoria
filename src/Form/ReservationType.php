@@ -50,8 +50,8 @@ class ReservationType extends AbstractType
                 ])
 
              ->add('PersonneAMobiliteReduite', CheckboxType::class, [
-                'attr' => ['class' => 'form-check-input'],
-                'label' => 'Personne à mobilité réduite',
+                'attr' => ['class' => 'custom-form-check enhanced-checkbox'],
+                'label' => 'Personne à mobilité réduite ',
                 'required' => false,
                 "mapped" => false,
             ])

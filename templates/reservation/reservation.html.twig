@@ -465,77 +465,56 @@ NbPlacesSelect.addEventListener('change', function() {
 
 {% block body %}
 
-	{# Affiche du film avec ces informations #}
+<fieldset class="film-reservation-fieldset">
+    <legend class="film-title">{{ film.titre }}</legend>
+    <div class="image-form">
+    <img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}" class="image-reservation">
+    </div>
+    {{ form_start(formReservation) }}
 
+    <div class="custom-form-group">
+        {{ form_label(formReservation.horaire, 'Séances de la semaine : ', {'label_attr': {'class': 'custom-form-label'}}) }}
+        {{ form_widget(formReservation.horaire, {'attr': {'class': 'custom-form-control'}}) }}
+        {{ form_errors(formReservation.horaire) }}
+    </div>
 
-	<fieldset>
-		<legend>
-			{{ film.titre }}</legend>
+    <div class="custom-form-check enhanced-checkbox">
+        {{ form_label(formReservation.PersonneAMobiliteReduite, 'Personne à mobilité réduite :    ', {'label_attr': {'class': 'custom-form-check-label'}}) }}
+        {{ form_widget(formReservation.PersonneAMobiliteReduite , {'attr': {'class': 'custom-form-check-input'}}) }}
+        {{ form_errors(formReservation.PersonneAMobiliteReduite) }}
+    </div>
 
-		<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
+    <div class="custom-form-group">
+        {{ form_label(formReservation.NbPlacesPMR, 'Sélectionnez le nombre de place(s) (PMR) : ', {'label_attr': {'class': 'custom-form-label mt-4'}}) }}
+        {{ form_widget(formReservation.NbPlacesPMR, {'attr': {'class': 'custom-form-control'}}) }}
+        {{ form_errors(formReservation.NbPlacesPMR) }}
+        <div class="notValuePmr"></div>
+    </div>
 
-		{{ form_start(formReservation) }}
+    <div class="custom-form-group">
+        {{ form_label(formReservation.NbPlaces, 'Sélectionnez le nombre de place(s) que vous souhaitez réserver :', {'label_attr': {'class': 'custom-form-label mt-4'}}) }}
+        {{ form_widget(formReservation.NbPlaces, {'attr': {'class': 'custom-form-control'}}) }}
+        {{ form_errors(formReservation.NbPlaces) }}
+    </div>
 
-		{# Selection de la SEANCE proposé par le cinéma #}
-		<div class="form-group">
-			
-				{{ form_label(formReservation.horaire, 'Séances de la semaine : ', {'label_attr': {'class': 'form-check-label'}}) }}
-				{{ form_widget(formReservation.horaire, {'attr': {'class': 'form-control'}}) }}
-				{{ form_errors(formReservation.horaire) }}
-			
-		</div>
+    <div class="custom-form-group">
+        {{ form_label(formReservation.Prix, 'Prix ', {'label_attr': {'class': 'custom-form-label mt-4'}}) }}
+        {{ form_widget(formReservation.Prix, {'attr': {'class': 'custom-form-control'}}) }}
+        {{ form_errors(formReservation.Prix) }}
+    </div>
 
-		{# une CASE A COCHER pour savoir si PMR affichera également une liste déroulante pour donner la liste déroulante pour les place dispo PMR #}
+    <br>
 
-		<div class="form-check">
-			{{ form_label(formReservation.PersonneAMobiliteReduite, 'Personne à mobilité réduite : ', {'label_attr': {'class': 'form-check-label'}}) }}
-			{{ form_widget(formReservation.PersonneAMobiliteReduite , {'attr': {'disabled': true}}) }}
-			{{ form_errors(formReservation.PersonneAMobiliteReduite) }}
-		</div>
+    {% if not app.user %}
+        <a class="custom-btn" href="{{ path('app_login') }}">Réserver</a>
+    {% else %}
+        <button type="submit" class="custom-btn custom-btn-primary" id="submit-button">
+            Réserver
+        </button>
+    {% endif %}
+    {{ form_end(formReservation) }}
 
-		{# Une fois sélectionner on donne le NB PLACEPMR ( si case à chocher == True ) pour l'utilisatuer  #}
-		<div class="form-group">
-			{{ form_label(formReservation.NbPlacesPMR, 'Sélectionnez le nombre de place(s) (PMR) : ', {'label_attr': {'class': 'form-label mt-4'}}) }}
-			{{ form_widget(formReservation.NbPlacesPMR, {'attr': {'disabled': true}})  }}
-			{{ form_errors(formReservation.NbPlacesPMR) }}
-			<div class = "notValuePmr">
-			
-			</div>
-		</div>
-		{# Une fois sélectionner on donne le NB PLACE pour l'utilisatuer  #}
-		<div class="form-group">
-			{{ form_label(formReservation.NbPlaces, 'Sélectionnez le nombre de place(s) que vous souhaitez réserver :', {'label_attr': {'class': 'form-label mt-4'}}) }}
-			{{ form_widget(formReservation.NbPlaces, {'attr': {'disabled': true}})  }}
-			{{ form_errors(formReservation.NbPlaces) }}
-		</div>
+</fieldset>
 
-		<span>
-			<div class="form-group">
+{% endblock %}
 
-				{{ form_label(formReservation.Prix, 'Prix ',  {'label_attr': {'class': 'form-label mt-4'}})}}
-				{{ form_widget(formReservation.Prix, {'attr': {'disabled': true}}) }}
-				{{ form_errors(formReservation.Prix) }}
-			</div>
-
-			{# Si plus de place == 0 dans ce cas Message "Il n'y a plus de place pour la séance selectionné "  #}
-
-	
-
-
-		</fieldset>
-<br> 
-
-		{% if not app.user %}
-
-			<a class="btn" href="{{ path('app_login') }}">Réserver</a>
-
-		{% else %}
-			<button type="submit" class="btn btn-primary" id="submit-button">
-				Réserver
-			</button>
-			
-
-		{% endif %}
-				{{ form_end(formReservation) }}
-
-	{% endblock %}

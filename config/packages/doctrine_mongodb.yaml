@@ -1,0 +1,9 @@
+doctrine_mongodb:
+    connections:
+        default:
+            server: '%env(MONGODB_URI)%'
+            options: {}
+    default_database: 'my_database' # Remplace par le nom de ta base de données
+    document_managers:
+        default:
+            auto_mapping: true

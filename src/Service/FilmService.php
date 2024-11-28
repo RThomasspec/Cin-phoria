@@ -71,7 +71,7 @@ class FilmService
         return $newFilename;
     }
 
-    private function createDiffusion(Film $film, Cinema $cinema)
+    public function createDiffusion(Film $film, Cinema $cinema)
     {
         $diffusion = new Diffusion();
         $diffusion->setCinemas($cinema);

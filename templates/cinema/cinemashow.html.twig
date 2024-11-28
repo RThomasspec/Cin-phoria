@@ -1,19 +1,17 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
+<div class="film-list">
 	{% for film in films %}
 
-		<article>
-			<h2>
-				{{ film.titre}}
-			</h2>
-			<div class="content">
-
-					<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
-						<a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-primary"> Sélectionner le film</a>
-
+    <article class="film-card">
+		<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}" class="film-image">
+		    <div class="film-info">
+            	<h3 class="film-title">{{ film.titre }}</h3>
+            	<a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-select">Sélectionner le film</a>
 			</div>
 		</article>
-	{% endfor %}
 
+	{% endfor %}
+</div>
 {% endblock %}

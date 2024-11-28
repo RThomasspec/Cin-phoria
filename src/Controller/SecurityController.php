@@ -223,7 +223,7 @@ class SecurityController extends AbstractController
 
 
     #[Route('/inscription', name: 'security_registration')]
-    public function registration(Request $request, ObjectManager $manager, UserPasswordHasherInterface $encoder, UtilisateurRepository $utilisateurRepository): Response
+    public function registration(Request $request, ObjectManager $manager, UserPasswordHasherInterface $encoder): Response
     {
 
         $user = new Utilisateur();

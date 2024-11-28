@@ -1,48 +1,52 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
+<article class="film-details">
+    <header>
+        <h2 class="film-title">{{ film.titre }}</h2>
+    </header>
 
-	<article>
-		<h2>
-			Titre : {{ film.titre }}
-		</h2>
-		<div class="content">
-			<h6>
-				Description : {{ film.description }}
-			</h6>
-			<h2> Age minimum </h2>
-			<h6>
-				{{ film.AgeMinimum }}
-			</h6>
-			<h1> Note :</h1>
-			<h6>
-				{{note}} / 5
-			</h6>
-			<img
-			src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
-		{# if personne connecté est du personnel alors l'utilisateur à un bouton qui le redirige vers le lien du film pour le modifier
-		<a href="{{film_show}}" class="btn btn-primary"> </a>
-		#}	   
-		
-			<a href="{{ path('film_reservation', {'id': film.id}) }}" class="btn btn-outline-success"> Réserver maintenant</a>
-				<section id="commentaires">
-				{% for avi in avis %}
-				<div class="comment">
-				<div class="row">
-				<div class="col-3">
-					{{avi.utilisateur.prenom}} {{avi.utilisateur.nom}} 
-					<br>
-					Note donnée : {{avi.note}} / 5
-				</div>
-				<div class="col">
-				{{avi.description | raw }}
-				</div
-				</div>
-				</div>
-				{% endfor %}
-				</section
-				
-				
-		</article>
+    <section class="film-content">
+        <div class="film-description">
+            <h3>Description :</h3>
+            <p>{{ film.description }}</p>
+        </div>
 
-	{% endblock %}
+        <div class="film-info">
+            <h3>Âge minimum :</h3>
+            <p>{{ film.AgeMinimum }}</p>
+
+            <h3>Note :</h3>
+            <p>{{ note }} / 5</p>
+        </div>
+
+        <div class="film-image">
+            <img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="Affiche de {{ film.titre }}">
+        </div>
+    </section>
+
+    <footer class="film-actions">
+        <a href="{{ path('film_reservation', {'id': film.id}) }}" class="btn btn-outline-success">
+            Réserver maintenant
+        </a>
+    </footer>
+</article>
+
+<section id="commentaires" class="comments-section">
+    <h3>Commentaires</h3>
+
+    {% for avi in avis %}
+        <div class="comment">
+            <div class="comment-header">
+                <strong>{{ avi.utilisateur.prenom }} {{ avi.utilisateur.nom }}</strong>
+                <span class="comment-rating">Note : {{ avi.note }} / 5</span>
+            </div>
+            <div class="comment-body">
+                <p>{{ avi.description | raw }}</p>
+            </div>
+        </div>
+    {% else %}
+        <p>Aucun commentaire pour ce film pour le moment.</p>
+    {% endfor %}
+</section>
+{% endblock %}

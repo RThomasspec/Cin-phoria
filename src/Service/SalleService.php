@@ -40,4 +40,7 @@ class SalleService
         // Flush pour sauvegarder les horaires
         $this->entityManager->flush();
     }
+
+
+    
 }

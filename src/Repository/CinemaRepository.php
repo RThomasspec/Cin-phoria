@@ -15,21 +15,16 @@ class CinemaRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Cinema::class);
     }
+    public function getAllCinemas():array
+    {
+        $entityManager = $this->getEntityManager();
 
-    //    /**
-    //     * @return Cinema[] Returns an array of Cinema objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+        $query = $entityManager->createQuery(
+            'SELECT c
+            FROM App\Entity\Cinema c');
+
+        return $query->getResult();
+    }
 
     //    public function findOneBySomeField($value): ?Cinema
     //    {
