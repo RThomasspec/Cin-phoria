@@ -101,8 +101,9 @@
         <img src="{{ asset('uploads/images/' ~ filmfilter.idImage) }}" alt="{{ filmfilter.titre }}" class="film-image">
         <div class="film-info">
             <h3 class="film-title">{{ filmfilter.titre }}</h3>
-            <p class="film-rating">Note : {{ filmfilter.note }}</p>
-            <a href="{{ path('film_show', {'id': filmfilter.id}) }}" class="btn btn-select">Sélectionner le film</a>
+            <div class="bouton-selection">
+            <a href="{{ path('film_show', {'id': filmfilter.id}) }}" class="btn-select">Sélectionner le film</a>
+            </div>
         </div>
     </article>
     {% endfor %}

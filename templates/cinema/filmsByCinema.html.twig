@@ -22,13 +22,8 @@
 				<p>
 					{{film.note}}
 				</p>
-
-
-				
 					<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}">
                     <a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-outline-success"> Sélectionner le film</a>
-
-
 			</div>
 		</article>
 	{% endfor %}

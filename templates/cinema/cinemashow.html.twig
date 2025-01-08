@@ -8,7 +8,9 @@
 		<img src="{{ asset('uploads/images/' ~ film.idImage) }}" alt="{{ film.titre }}" class="film-image">
 		    <div class="film-info">
             	<h3 class="film-title">{{ film.titre }}</h3>
-            	<a href="{{ path('film_show', {'id': film.id}) }}" class="btn btn-select">Sélectionner le film</a>
+				<div class="bouton-selection">
+            	<a href="{{ path('film_show', {'id': film.id}) }}" class="btn-select">Sélectionner le film</a>
+				</div>
 			</div>
 		</article>
 

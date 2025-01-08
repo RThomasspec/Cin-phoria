@@ -164,7 +164,7 @@ body {
   margin-bottom: 20px; /* Espacement entre les cartes */
   overflow: hidden; /* Évite les débordements */
   transition: transform 0.3s; /* Animation lors du survol */
-  width: calc(33% - 20px); /* Largeur des cartes, trois par ligne avec espacement */
+  width: calc(25% - 20px); /* Largeur des cartes, trois par ligne avec espacement */
 }
 
 .film-card:hover {
